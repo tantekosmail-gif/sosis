@@ -21,15 +21,46 @@ export function useAnalyze() {
 
       setError("");
 
-      const response = await analyze({
+      let response = await analyze({
         platform,
         keyword,
       });
 
-      const dashboard = transformDashboard(
-        platform,
-        response
-      );
+      if (response.data.status === "not_found") {
+        response = {
+          success: true,
+          data: {
+            status: "ready",
+            query: "",
+            keyword_id: "",
+            stats: {
+              total_videos: 0,
+              total_comments: 0,
+              total_analyzed: 0,
+              coverage_pct: 0,
+            },
+            sentiment: {
+              positif: {
+                count: 0,
+                percentage: 0,
+              },
+              negatif: {
+                count: 0,
+                percentage: 0,
+              },
+              netral: {
+                count: 0,
+                percentage: 0,
+              },
+              dominant: "",
+            },
+            videos: [],
+            comments: [],
+          },
+        };
+      }
+
+      const dashboard = transformDashboard(platform, response);
 
       setDashboard(dashboard);
 

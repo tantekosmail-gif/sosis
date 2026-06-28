@@ -4,23 +4,25 @@ export function transformYoutube(response: any): DashboardData {
   const videos = response?.data?.videos ?? [];
   const comments = response?.data?.comments ?? [];
 
-  const { total_videos, total_comments } = response?.data?.stats ?? {};
+  const { total_videos, total_comments, total_like } =
+    response?.data?.stats ?? {};
 
   // SUMMARY
-  const totalPosts = total_videos;
-
-  const totalComments = total_comments;
 
   const reach = videos.reduce(
     (sum: number, item: any) => sum + (Number(item.view_count) || 0),
     0,
   );
 
-  const engagement = videos.reduce(
-    (sum: number, item: any) =>
-      sum + (Number(item.like_count) || 0) + (Number(item.comment_count) || 0),
-    0,
-  );
+  // const engagement = videos.reduce(
+  //   (sum: number, item: any) =>
+  //     sum + (Number(item.like_count) || 0) + (Number(item.comment_count) || 0),
+  //   0,
+  // );
+
+  const totalLike = total_like ?? 0;
+
+  const engagement = total_comments + totalLike;
 
   // SENTIMENT
   const sentiment = {
@@ -51,7 +53,7 @@ export function transformYoutube(response: any): DashboardData {
   const platformDistribution = [
     {
       platform: "Youtube",
-      total: totalPosts,
+      total: total_videos,
     },
   ];
 
@@ -121,8 +123,8 @@ export function transformYoutube(response: any): DashboardData {
 
   return {
     summary: {
-      totalPosts,
-      totalComments,
+      totalPosts: total_videos,
+      totalComments: total_comments,
       engagement,
       reach,
     },

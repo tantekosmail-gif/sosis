@@ -13,6 +13,7 @@ import TopPostsSection from "@/features/dashboard/sections/TopPostsSection";
 import WordCloud from "@/components/dashboard/WordCloud";
 
 import { useDashboardStore } from "@/store/dashboard.store";
+import FilterBar from "@/components/filters/FilterBar";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -45,7 +46,9 @@ export default function DashboardPage() {
     <DashboardLayout>
       <DashboardHeader />
 
-      <AnalysisPanel />
+      <FilterBar />
+
+      {/* <AnalysisPanel /> */}
 
       {loading && (
         <div className="rounded-xl border bg-white p-10 text-center">

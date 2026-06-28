@@ -23,7 +23,8 @@ interface FilterState {
 export const useFilterStore = create<FilterState>((set) => ({
   topic: "Tim Urai Kemacetan",
 
-  platform: "global",
+  // platform: "global",
+  platform: "youtube",
 
   interval: "1d",
 

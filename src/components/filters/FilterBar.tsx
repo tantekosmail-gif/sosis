@@ -44,7 +44,7 @@ export default function FilterBar() {
           </label>
 
           <input
-            placeholder="Masukkan keyword..."
+            placeholder="Keyword"
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
             className="w-full rounded-xl border px-3 py-2"
@@ -52,7 +52,7 @@ export default function FilterBar() {
         </div>
 
         {/* DATE FROM */}
-        <div>
+        {/* <div>
           <label className="mb-2 block text-sm font-medium text-gray-600">
             Date From
           </label>
@@ -63,10 +63,10 @@ export default function FilterBar() {
             onChange={(e) => setStartDate(e.target.value)}
             className="w-full rounded-xl border px-3 py-2"
           />
-        </div>
+        </div> */}
 
         {/* DATE TO */}
-        <div>
+        {/* <div>
           <label className="mb-2 block text-sm font-medium text-gray-600">
             Date To
           </label>
@@ -77,7 +77,7 @@ export default function FilterBar() {
             onChange={(e) => setEndDate(e.target.value)}
             className="w-full rounded-xl border px-3 py-2"
           />
-        </div>
+        </div> */}
 
         {/* BUTTON */}
         <div className="flex items-end">
