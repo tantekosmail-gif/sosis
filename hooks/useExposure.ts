@@ -23,7 +23,7 @@ export function useExposure() {
 
       /**
        * IMPORTANT:
-       * sesuaikan dengan response API kamu
+       * sesuaikan dengan response API
        */
       setCards({
         total: res?.total ?? 0,
