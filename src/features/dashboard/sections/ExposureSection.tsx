@@ -3,11 +3,13 @@
 import DashboardCardGrid from "@/components/dashboard/DashboardCardGrid";
 import ExposureChart from "@/components/dashboard/ExposureChart";
 
-import { useExposure } from "@/features/exposure/hooks/useExposure";
-
-export default function ExposureSection({data, timeline}) {
-
-
+export default function ExposureSection({
+  data,
+  timeline,
+}: {
+  data: any;
+  timeline: any;
+}) {
   const chartData =
     timeline?.map((item: any) => ({
       date: item.date,

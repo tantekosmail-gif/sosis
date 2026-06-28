@@ -29,7 +29,7 @@ export function useExposure() {
         type: "",
       };
 
-      const response = await executeExposure(payload);
+      const response = await executeExposure();
 
       /**
        * IMPORTANT:

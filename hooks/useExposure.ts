@@ -1,7 +1,7 @@
 "use client";
 
+import { executeExposure } from "@/features/exposure/services/exposure.service";
 import { useState } from "react";
-import { executeExposure } from "../services/exposure.service";
 
 export function useExposure() {
   const [loading, setLoading] = useState(false);
@@ -15,11 +15,11 @@ export function useExposure() {
 
   const [timeline, setTimeline] = useState<any[]>([]);
 
-  async function reload(payload: any) {
+  async function reload() {
     try {
       setLoading(true);
 
-      const res = await executeExposure(payload);
+      const res = await executeExposure();
 
       /**
        * IMPORTANT:
