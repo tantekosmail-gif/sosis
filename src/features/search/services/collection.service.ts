@@ -1,0 +1,23 @@
+import { api } from "@/lib/api";
+
+interface CollectPayload {
+  keyword: string;
+  platform: string;
+  maxPages?: number;
+  maxCommentsPerVideo?: number;
+  maxCommentPages?: number;
+}
+
+export async function collect(payload: CollectPayload) {
+  const endpoint = `/api/v1/${payload.platform}/smart-search`;
+
+  const { data } = await api.post(endpoint, {
+    q: payload.keyword,
+    max_pages: payload.maxPages,
+    max_comments_per_video: payload.maxCommentsPerVideo,
+    max_comment_pages: payload.maxCommentPages,
+    force_refresh: false,
+  });
+
+  return data;
+}

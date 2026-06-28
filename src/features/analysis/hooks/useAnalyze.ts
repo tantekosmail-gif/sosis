@@ -3,14 +3,15 @@
 import { useState } from "react";
 
 import { analyze } from "../services/analysis.service";
-
 import { transformDashboard } from "../transformers";
 
+import { collect } from "@/features/search/services/collection.service";
 import { useDashboardStore } from "@/store/dashboard.store";
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export function useAnalyze() {
   const setDashboard = useDashboardStore((s) => s.setDashboard);
-
   const setLoading = useDashboardStore((s) => s.setLoading);
 
   const [error, setError] = useState("");
@@ -18,7 +19,6 @@ export function useAnalyze() {
   async function execute(platform: string, keyword: string) {
     try {
       setLoading(true);
-
       setError("");
 
       let response = await analyze({
@@ -26,47 +26,54 @@ export function useAnalyze() {
         keyword,
       });
 
+      // ============================
+      // Belum ada data -> mulai scraping
+      // ============================
       if (response.data.status === "not_found") {
-        response = {
-          success: true,
-          data: {
-            status: "ready",
-            query: "",
-            keyword_id: "",
-            stats: {
-              total_videos: 0,
-              total_comments: 0,
-              total_analyzed: 0,
-              coverage_pct: 0,
-            },
-            sentiment: {
-              positif: {
-                count: 0,
-                percentage: 0,
-              },
-              negatif: {
-                count: 0,
-                percentage: 0,
-              },
-              netral: {
-                count: 0,
-                percentage: 0,
-              },
-              dominant: "",
-            },
-            videos: [],
-            comments: [],
-          },
-        };
+        await collect({
+          platform,
+          keyword,
+          maxPages: 2,
+          maxCommentsPerVideo: 50,
+          maxCommentPages: 2,
+        });
+
+        let retries = 20;
+
+        while (retries > 0) {
+          await sleep(2000);
+
+          response = await analyze({
+            platform,
+            keyword,
+          });
+
+          if (response.data.status === "ready") {
+            break;
+          }
+
+          retries--;
+        }
+
+        if (response.data.status !== "ready") {
+          throw new Error(
+            "Data masih diproses. Silakan coba lagi beberapa saat.",
+          );
+        }
       }
 
+      // ============================
+      // Dashboard
+      // ============================
       const dashboard = transformDashboard(platform, response);
 
       setDashboard(dashboard);
 
       return dashboard;
     } catch (err: any) {
-      setError(err.message);
+      console.error(err);
+
+      setError(err?.message || "Terjadi kesalahan");
 
       throw err;
     } finally {
