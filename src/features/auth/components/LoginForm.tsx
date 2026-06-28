@@ -26,12 +26,28 @@ export default function LoginForm() {
   } = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "buqen@gmail.com",
-      password: "Admin1234",
+      email: "",
+      password: "",
     },
   });
 
   async function onSubmit(data: LoginSchema) {
+    // for temporary
+    const ACCESS_TOKEN =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZjE5ODc3Yi1iMDU0LTQ5MzUtOTE5Yi1kZDQ1ZjQwYTY0MjYiLCJleHAiOjE3ODUyMzQyODAsInR5cGUiOiJhY2Nlc3MiLCJyb2xlIjoidXNlciJ9.i92pl1B9lpLQ7F0nwyFPA6ZWQEYXFEmwJya003ctdvo";
+    localStorage.setItem("access_token", ACCESS_TOKEN);
+    localStorage.setItem("refresh_token", ACCESS_TOKEN);
+    localStorage.setItem(
+      "user",
+      JSON.stringify({
+        username: "buqen@gmail.com",
+        email: "Admin1234",
+        role: "Administrator",
+      }),
+    );
+    router.replace("/dashboard");
+    // for temporary
+
     setError("");
 
     try {
