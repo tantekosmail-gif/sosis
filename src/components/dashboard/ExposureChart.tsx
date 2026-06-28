@@ -1,13 +1,13 @@
 "use client";
 
 import {
+  ResponsiveContainer,
   LineChart,
   Line,
-  ResponsiveContainer,
-  CartesianGrid,
-  Tooltip,
   XAxis,
   YAxis,
+  CartesianGrid,
+  Tooltip,
 } from "recharts";
 
 interface Props {
@@ -19,10 +19,8 @@ interface Props {
 
 export default function ExposureChart({ data }: Props) {
   return (
-    <div className="bg-white rounded-xl border p-5 shadow-sm">
-      <h2 className="text-lg font-semibold mb-4">
-        Exposure Trend
-      </h2>
+    <div className="rounded-xl border bg-white p-5 shadow-sm">
+      <h2 className="mb-4 text-lg font-semibold">Exposure Trend</h2>
 
       <div className="h-80">
         <ResponsiveContainer width="100%" height="100%">
@@ -36,9 +34,11 @@ export default function ExposureChart({ data }: Props) {
             <Tooltip />
 
             <Line
-              dataKey="total"
-              strokeWidth={3}
               type="monotone"
+              dataKey="total"
+              stroke="#2563eb"
+              strokeWidth={3}
+              dot={{ r: 4 }}
             />
           </LineChart>
         </ResponsiveContainer>

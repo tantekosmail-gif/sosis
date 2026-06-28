@@ -1,56 +1,100 @@
+// "use client";
+
+// import { useEffect, useState } from "react";
+// import { getDashboard } from "../services/dashboard.service";
+// import { useFilterStore } from "@/stores/filterStore";
+// import { useTopicStore } from "@/store/topic.store";
+
+// export function useDashboard() {
+//   const topicId = useTopicStore((s) => s.topicId);
+
+//   const {
+//     platform,
+//     startDate,
+//     endDate,
+//   } = useFilterStore();
+
+//   const [loading, setLoading] = useState(false);
+
+//   const [dashboard, setDashboard] = useState<any>(null);
+
+//   async function reload() {
+//     if (!topicId) return;
+
+//     setLoading(true);
+
+//     try {
+//       const res = await getDashboard({
+//         topicId,
+//         platform,
+//         dateFrom: startDate,
+//         dateTo: endDate,
+//       });
+
+//       setDashboard(res);
+//     } finally {
+//       setLoading(false);
+//     }
+//   }
+
+//   useEffect(() => {
+//     reload();
+//   }, [topicId, platform, startDate, endDate]);
+
+//   return {
+//     loading,
+//     reload,
+//     dashboard,
+//   };
+// }
+
+
 "use client";
 
 import { useEffect, useState } from "react";
-import { getDashboard } from "../../../../supabase/src/features/dashboard/services/dashboard.service";
+import { getDashboard } from "../services/dashboard.service";
+import { useFilterStore } from "@/stores/filterStore";
+import { useTopicStore } from "@/store/topic.store";
 
-export function useDashboard(topicId: string) {
+export function useDashboard() {
+  const topicId = useTopicStore((s) => s.topicId);
+
+  const {
+    platform,
+    startDate,
+    endDate,
+  } = useFilterStore();
+
   const [loading, setLoading] = useState(false);
 
-  const [data, setData] = useState<any>({
-    dashboard: [],
-    sentiment: [],
-    timeline: [],
-    topPosts: [],
-    wordCloud: [],
-  });
+  const [dashboard, setDashboard] = useState<any>(null);
 
-  useEffect(() => {
+  async function reload() {
     if (!topicId) return;
 
-    const fetchData = async () => {
-      try {
-        setLoading(true);
+    setLoading(true);
 
-        const res = await getDashboard(topicId);
+    try {
+      const res = await getDashboard({
+        topicId,
+        platform,
+        dateFrom: startDate,
+        dateTo: endDate,
+      });
 
-        setData({
-          dashboard: res?.dashboard ?? {},
-          sentiment: res?.sentiment ?? [],
-          timeline: res?.timeline ?? [],
-          topPosts: res?.topPosts ?? [],
-          wordCloud: res?.wordCloud ?? [],
-        });
-      } catch (err) {
-        console.error("Dashboard error:", err);
+      setDashboard(res);
+    } finally {
+      setLoading(false);
+    }
+  }
 
-        // SAFE FALLBACK (BIAR TIDAK CRASH UI)
-        setData({
-          dashboard: {},
-          sentiment: [],
-          timeline: [],
-          topPosts: [],
-          wordCloud: [],
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [topicId]);
+  useEffect(() => {
+    reload();
+  }, [topicId, platform, startDate, endDate]);
 
   return {
     loading,
-    ...data,
+    reload,
+    dashboard,
   };
 }
