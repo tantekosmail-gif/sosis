@@ -4,10 +4,12 @@ export function transformYoutube(response: any): DashboardData {
   const videos = response?.data?.videos ?? [];
   const comments = response?.data?.comments ?? [];
 
-  // SUMMARY
-  const totalPosts = videos.length;
+  const { total_videos, total_comments } = response?.data?.stats ?? {};
 
-  const totalComments = comments.length;
+  // SUMMARY
+  const totalPosts = total_videos;
+
+  const totalComments = total_comments;
 
   const reach = videos.reduce(
     (sum: number, item: any) => sum + (Number(item.view_count) || 0),
@@ -27,6 +29,7 @@ export function transformYoutube(response: any): DashboardData {
     negative: 0,
   };
 
+  // TODO: Belum ambil data sentiment, tapi comment
   comments.forEach((item: any) => {
     switch (String(item.sentiment).toLowerCase()) {
       case "positif":
@@ -92,6 +95,7 @@ export function transformYoutube(response: any): DashboardData {
       total,
     }))
     .sort((a, b) => a.date.localeCompare(b.date));
+
   // WORD CLOUD
   const wordMap = new Map<string, number>();
 
