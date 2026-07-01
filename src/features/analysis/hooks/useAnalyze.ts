@@ -4,77 +4,86 @@ import { useState } from "react";
 
 import { analyze } from "../services/analysis.service";
 import { transformDashboard } from "../transformers";
+import { mergeGlobalDashboard } from "../transformers/global.transformer";
+import { transformDateSearch } from "../transformers/dateSearch.transformer";
 
 import { collect } from "@/features/search/services/collection.service";
 import { useDashboardStore } from "@/store/dashboard.store";
+import { useFilterStore } from "@/stores/filterStore";
+
+const ALL_PLATFORMS = ["youtube", "tiktok", "instagram", "facebook"];
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export function useAnalyze() {
   const setDashboard = useDashboardStore((s) => s.setDashboard);
   const setLoading = useDashboardStore((s) => s.setLoading);
+  const startDate = useFilterStore((s) => s.startDate);
+  const endDate = useFilterStore((s) => s.endDate);
 
   const [error, setError] = useState("");
+
+  async function executeSingle(platform: string, keyword: string) {
+    const usingDateSearch = !!(startDate && endDate);
+
+    let response = await analyze({
+      platform,
+      keyword,
+      dateFrom: startDate || undefined,
+      dateTo: endDate || undefined,
+    });
+
+    // date-search pakai auto_crawl — tidak perlu collect + polling manual
+    if (!usingDateSearch && response.status === "not_found") {
+      await collect({ platform, keyword, maxPages: 2, maxCommentsPerVideo: 50, maxCommentPages: 2 });
+
+      let retries = 20;
+      while (retries > 0) {
+        await sleep(2000);
+        response = await analyze({ platform, keyword });
+        if (response.status === "ready") break;
+        retries--;
+      }
+
+      if (response.status !== "ready") {
+        throw new Error("Data masih diproses. Silakan coba lagi beberapa saat.");
+      }
+    }
+
+    // Pakai transformer yang sesuai dengan format response
+    if (usingDateSearch) {
+      return transformDateSearch(response, platform, keyword);
+    }
+    return transformDashboard(platform, response, keyword);
+  }
 
   async function execute(platform: string, keyword: string) {
     try {
       setLoading(true);
       setError("");
 
-      let response = await analyze({
-        platform,
-        keyword,
-      });
+      let dashboard;
 
-      // ============================
-      // Belum ada data -> mulai scraping
-      // ============================
-      if (response.data.status === "not_found") {
-        await collect({
-          platform,
-          keyword,
-          maxPages: 2,
-          maxCommentsPerVideo: 50,
-          maxCommentPages: 2,
-        });
+      if (platform === "global") {
+        // Jalankan semua platform paralel, abaikan yang gagal
+        const results = await Promise.allSettled(
+          ALL_PLATFORMS.map((p) => executeSingle(p, keyword))
+        );
+        const fulfilled = results
+          .filter((r): r is PromiseFulfilledResult<any> => r.status === "fulfilled")
+          .map((r) => r.value);
 
-        let retries = 20;
-
-        while (retries > 0) {
-          await sleep(2000);
-
-          response = await analyze({
-            platform,
-            keyword,
-          });
-
-          if (response.data.status === "ready") {
-            break;
-          }
-
-          retries--;
-        }
-
-        if (response.data.status !== "ready") {
-          throw new Error(
-            "Data masih diproses. Silakan coba lagi beberapa saat.",
-          );
-        }
+        if (fulfilled.length === 0) throw new Error("Semua platform gagal diakses.");
+        dashboard = mergeGlobalDashboard(fulfilled, keyword);
+      } else {
+        dashboard = await executeSingle(platform, keyword);
       }
 
-      // ============================
-      // Dashboard
-      // ============================
-      const dashboard = transformDashboard(platform, response);
-
       setDashboard(dashboard);
-
       return dashboard;
     } catch (err: any) {
       console.error(err);
-
       setError(err?.message || "Terjadi kesalahan");
-
       throw err;
     } finally {
       setLoading(false);

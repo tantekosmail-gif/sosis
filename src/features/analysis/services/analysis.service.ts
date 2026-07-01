@@ -1,45 +1,39 @@
 import { smartSearch } from "@/features/search/services/search.service";
+import { dateSearch } from "@/features/search/services/dateSearch.service";
 
-interface AnalyzePayload {
+export interface AnalyzePayload {
   platform: string;
   keyword: string;
+  dateFrom?: string;
+  dateTo?: string;
 }
 
+const SUPPORTED = ["youtube", "tiktok", "instagram", "facebook"];
+
 export async function analyze(payload: AnalyzePayload) {
-  switch (payload.platform) {
-    case "youtube":
-      return smartSearch({
-        platform: "youtube",
-        keyword: payload.keyword,
-        limitVideos: 20,
-        limitComments: 20,
-      });
+  const { platform, keyword, dateFrom, dateTo } = payload;
 
-    case "tiktok":
-      return smartSearch({
-        platform: "tiktok",
-        keyword: payload.keyword,
-        limitVideos: 20,
-        limitComments: 20,
-      });
-
-    case "instagram":
-      return smartSearch({
-        platform: "instagram",
-        keyword: payload.keyword,
-        limitVideos: 20,
-        limitComments: 20,
-      });
-
-    case "facebook":
-      return smartSearch({
-        platform: "facebook",
-        keyword: payload.keyword,
-        limitVideos: 20,
-        limitComments: 20,
-      });
-
-    default:
-      throw new Error("Platform belum didukung");
+  if (!SUPPORTED.includes(platform)) {
+    throw new Error("Platform belum didukung");
   }
+
+  // Gunakan date-search jika filter tanggal aktif
+  if (dateFrom && dateTo) {
+    return dateSearch({
+      platform,
+      keyword,
+      dateFrom,
+      dateTo,
+      includeSentiment: true,
+      limit: 20,
+    });
+  }
+
+  // Fallback ke smart-search
+  return smartSearch({
+    platform,
+    keyword,
+    limitVideos: 20,
+    limitComments: 20,
+  });
 }

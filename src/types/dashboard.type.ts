@@ -14,6 +14,19 @@ export interface DashboardSentiment {
 export interface DashboardTimeline {
   date: string;
   total: number;
+  positive?: number;
+  neutral?: number;
+  negative?: number;
+}
+
+export interface DashboardComment {
+  id: string;
+  author: string;
+  content: string;
+  sentiment: "positive" | "neutral" | "negative";
+  publishedAt: string;
+  videoUrl?: string;
+  likes?: number;
 }
 
 export interface DashboardWord {
@@ -40,15 +53,15 @@ export interface DashboardPlatform {
 }
 
 export interface DashboardData {
+  platform: string;
+  keyword: string;
   summary: DashboardSummary;
-
   sentiment: DashboardSentiment;
-
   timeline: DashboardTimeline[];
-
   topPosts: DashboardPost[];
-
   wordCloud: DashboardWord[];
-
   platformDistribution: DashboardPlatform[];
+  comments: DashboardComment[];
+  videos: any[];
+  stats: any;
 }

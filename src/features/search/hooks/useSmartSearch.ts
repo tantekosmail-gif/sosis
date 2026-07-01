@@ -11,23 +11,16 @@ interface SmartSearchPayload {
 }
 
 export function useSmartSearch() {
-  const { setDashboard, setLoading, setError, loading } = useDashboardStore();
+  const { setDashboard, setLoading, loading } = useDashboardStore();
 
   async function execute(payload: SmartSearchPayload) {
     try {
       setLoading(true);
-      setError(null);
-
       const result = await smartSearch(payload);
-
       setDashboard(result);
-
       return result;
     } catch (error) {
       console.error(error);
-
-      setError("Failed to analyze data.");
-
       throw error;
     } finally {
       setLoading(false);

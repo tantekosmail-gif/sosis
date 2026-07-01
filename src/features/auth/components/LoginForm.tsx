@@ -2,22 +2,17 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-import { Mail, Lock, LogIn } from "lucide-react";
-
+import { Mail, Lock, LogIn, Eye, EyeOff } from "lucide-react";
 import { loginSchema, LoginSchema } from "../types/login.schema";
 import { login } from "../services/auth.service";
-
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 export default function LoginForm() {
   const router = useRouter();
-
   const [error, setError] = useState("");
+  const [showPw, setShowPw] = useState(false);
 
   const {
     register,
@@ -25,31 +20,11 @@ export default function LoginForm() {
     formState: { errors, isSubmitting },
   } = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
+    defaultValues: { email: "", password: "" },
   });
 
   async function onSubmit(data: LoginSchema) {
-    // for temporary
-    const ACCESS_TOKEN =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZjE5ODc3Yi1iMDU0LTQ5MzUtOTE5Yi1kZDQ1ZjQwYTY0MjYiLCJleHAiOjE3ODUyMzQyODAsInR5cGUiOiJhY2Nlc3MiLCJyb2xlIjoidXNlciJ9.i92pl1B9lpLQ7F0nwyFPA6ZWQEYXFEmwJya003ctdvo";
-    localStorage.setItem("access_token", ACCESS_TOKEN);
-    localStorage.setItem("refresh_token", ACCESS_TOKEN);
-    localStorage.setItem(
-      "user",
-      JSON.stringify({
-        username: "buqen@gmail.com",
-        email: "Admin1234",
-        role: "Administrator",
-      }),
-    );
-    router.replace("/dashboard");
-    // for temporary
-
     setError("");
-
     try {
       await login(data.email, data.password);
       router.replace("/dashboard");
@@ -61,60 +36,45 @@ export default function LoginForm() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="space-y-6 rounded-2xl border border-slate-200 bg-white p-8 shadow-xl"
+      className="space-y-5 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm"
     >
+      {/* Email */}
       <div>
-        <h2 className="text-2xl font-bold text-slate-900">Welcome Back 👋</h2>
-
-        <p className="mt-1 text-sm text-slate-500">
-          Sign in to continue to your dashboard.
-        </p>
-      </div>
-
-      <div>
-        <label className="mb-2 block text-sm font-medium text-slate-700">
-          Email
-        </label>
-
+        <label className="mb-2 block text-sm font-medium text-slate-700">Email</label>
         <div className="relative">
-          <Mail
-            size={18}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-          />
-
+          <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
           <Input
             {...register("email")}
             placeholder="name@company.com"
-            className="h-12 border-slate-300 bg-white pl-10 focus:border-blue-500"
+            className="h-11 pl-10 border-slate-200 bg-slate-50 focus:bg-white"
           />
         </div>
-
         {errors.email && (
-          <p className="mt-2 text-xs text-red-500">{errors.email.message}</p>
+          <p className="mt-1.5 text-xs text-red-500">{errors.email.message}</p>
         )}
       </div>
 
+      {/* Password */}
       <div>
-        <label className="mb-2 block text-sm font-medium text-slate-700">
-          Password
-        </label>
-
+        <label className="mb-2 block text-sm font-medium text-slate-700">Password</label>
         <div className="relative">
-          <Lock
-            size={18}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-          />
-
+          <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
           <Input
-            type="password"
+            type={showPw ? "text" : "password"}
             {...register("password")}
             placeholder="••••••••"
-            className="h-12 border-slate-300 bg-white pl-10 focus:border-blue-500"
+            className="h-11 pl-10 pr-10 border-slate-200 bg-slate-50 focus:bg-white"
           />
+          <button
+            type="button"
+            onClick={() => setShowPw(!showPw)}
+            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+          >
+            {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
+          </button>
         </div>
-
         {errors.password && (
-          <p className="mt-2 text-xs text-red-500">{errors.password.message}</p>
+          <p className="mt-1.5 text-xs text-red-500">{errors.password.message}</p>
         )}
       </div>
 
@@ -124,14 +84,14 @@ export default function LoginForm() {
         </div>
       )}
 
-      <Button
+      <button
         type="submit"
         disabled={isSubmitting}
-        className="h-12 w-full rounded-xl bg-blue-600 text-white hover:bg-blue-700"
+        className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-sm font-semibold text-white shadow shadow-indigo-500/30 transition hover:from-indigo-700 hover:to-violet-700 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
       >
-        <LogIn size={18} className="mr-2" />
-        {isSubmitting ? "Signing In..." : "Sign In"}
-      </Button>
+        <LogIn size={16} />
+        {isSubmitting ? "Signing in..." : "Sign In"}
+      </button>
     </form>
   );
 }

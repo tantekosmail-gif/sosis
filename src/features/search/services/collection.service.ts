@@ -9,15 +9,12 @@ interface CollectPayload {
 }
 
 export async function collect(payload: CollectPayload) {
-  const endpoint = `/api/v1/${payload.platform}/smart-search`;
-
-  const { data } = await api.post(endpoint, {
+  const { data } = await api.post(`/api/v1/${payload.platform}/smart-search`, {
     q: payload.keyword,
     max_pages: payload.maxPages,
     max_comments_per_video: payload.maxCommentsPerVideo,
     max_comment_pages: payload.maxCommentPages,
     force_refresh: false,
   });
-
   return data;
 }

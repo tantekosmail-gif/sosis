@@ -1,71 +1,79 @@
 "use client";
 
-import { Group } from "@visx/group";
-import { Wordcloud } from "@visx/wordcloud";
-import { scaleOrdinal } from "d3-scale";
+import { useEffect, useMemo, useState } from "react";
+import ReactECharts from "echarts-for-react";
+import { Cloud } from "lucide-react";
 
-type WordData = {
-  keyword: string;
-  total: number;
-};
+type WordData = { keyword: string; total: number };
 
 interface Props {
   data: WordData[];
-  width?: number;
-  height?: number;
 }
 
-const colors = scaleOrdinal([
-  "#2563eb",
-  "#dc2626",
-  "#16a34a",
-  "#9333ea",
-  "#ea580c",
-  "#0891b2",
-]);
+export default function WordCloud({ data }: Props) {
+  const [ready, setReady] = useState(false);
 
-export default function WordCloud({ data, width = 800, height = 450 }: Props) {
-  const words = data.map((item) => ({
-    text: item.keyword,
-    value: item.total,
-  }));
+  useEffect(() => {
+    let mounted = true;
+    async function load() {
+      if (typeof window === "undefined") return;
+      await import("echarts-wordcloud");
+      if (mounted) setReady(true);
+    }
+    load();
+    return () => { mounted = false; };
+  }, []);
+
+  const option = useMemo(() => ({
+    tooltip: { trigger: "item" },
+    animationDuration: 800,
+    series: [{
+      type: "wordCloud",
+      shape: "circle",
+      left: "center",
+      top: "center",
+      width: "95%",
+      height: "95%",
+      keepAspect: true,
+      gridSize: 8,
+      sizeRange: [16, 64],
+      rotationRange: [0, 0],
+      drawOutOfBound: false,
+      layoutAnimation: true,
+      textStyle: {
+        fontFamily: "Inter",
+        fontWeight: "bold",
+        color: () => {
+          const colors = ["#6366f1", "#10b981", "#8b5cf6", "#f59e0b", "#ef4444", "#06b6d4", "#ec4899", "#14b8a6"];
+          return colors[Math.floor(Math.random() * colors.length)];
+        },
+      },
+      emphasis: {
+        focus: "self",
+        textStyle: { shadowBlur: 16, shadowColor: "#00000022" },
+      },
+      data: data.map((item) => ({ name: item.keyword, value: item.total })),
+    }],
+  }), [data]);
+
+  if (!ready) {
+    return (
+      <div className="flex h-96 items-center justify-center rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div className="flex flex-col items-center gap-2 text-slate-400">
+          <Cloud size={28} className="animate-pulse" />
+          <span className="text-sm">Memuat word cloud...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="w-full border rounded-xl bg-white">
-      <svg width={width} height={height}>
-        <Wordcloud
-          words={words}
-          width={width}
-          height={height}
-          font="Inter"
-          fontSize={(word) => 12 + word.value * 2}
-          padding={8}
-          spiral="archimedean"
-          rotate={() => 0}
-          random={Math.random}
-        >
-          {(cloudWords) => (
-            <Group top={height / 2} left={width / 2}>
-              {cloudWords.map((word, i) => (
-                <text
-                  key={word.text}
-                  transform={`translate(${word.x}, ${word.y}) rotate(${word.rotate})`}
-                  textAnchor="middle"
-                  fontSize={word.size}
-                  fontFamily={word.font}
-                  fill={colors(String(i))}
-                  style={{
-                    cursor: "pointer",
-                    userSelect: "none",
-                  }}
-                >
-                  {word.text}
-                </text>
-              ))}
-            </Group>
-          )}
-        </Wordcloud>
-      </svg>
+    <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+      <div className="px-6 py-5 border-b border-slate-100">
+        <h2 className="font-semibold text-slate-900">Word Cloud</h2>
+        <p className="mt-0.5 text-xs text-slate-400">50 kata yang paling sering muncul dalam komentar</p>
+      </div>
+      <ReactECharts option={option} style={{ width: "100%", height: 460 }} notMerge lazyUpdate />
     </div>
   );
 }

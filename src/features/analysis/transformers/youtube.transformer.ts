@@ -1,6 +1,6 @@
-import { DashboardData } from "@/types/dashboard.type";
+import { DashboardData, DashboardComment } from "@/types/dashboard.type";
 
-export function transformYoutube(response: any): DashboardData {
+export function transformYoutube(response: any, keyword = ""): DashboardData {
   const videos = response?.data?.videos ?? [];
   const comments = response?.data?.comments ?? [];
 
@@ -80,22 +80,31 @@ export function transformYoutube(response: any): DashboardData {
       };
     });
 
-  // TIMELINE
-  const timelineMap = new Map<string, number>();
+  // TIMELINE with sentiment per day
+  const timelineMap = new Map<string, { total: number; positive: number; neutral: number; negative: number }>();
 
   videos.forEach((video: any) => {
     if (!video.published_at) return;
-
     const date = new Date(video.published_at).toISOString().substring(0, 10);
+    const cur = timelineMap.get(date) ?? { total: 0, positive: 0, neutral: 0, negative: 0 };
+    timelineMap.set(date, { ...cur, total: cur.total + 1 });
+  });
 
-    timelineMap.set(date, (timelineMap.get(date) || 0) + 1);
+  comments.forEach((comment: any) => {
+    const date = comment.published_at
+      ? new Date(comment.published_at).toISOString().substring(0, 10)
+      : null;
+    if (!date) return;
+    const cur = timelineMap.get(date) ?? { total: 0, positive: 0, neutral: 0, negative: 0 };
+    const s = String(comment.sentiment ?? "").toLowerCase();
+    if (s === "positif" || s === "positive") cur.positive++;
+    else if (s === "negatif" || s === "negative") cur.negative++;
+    else cur.neutral++;
+    timelineMap.set(date, cur);
   });
 
   const timeline = Array.from(timelineMap.entries())
-    .map(([date, total]) => ({
-      date,
-      total,
-    }))
+    .map(([date, v]) => ({ date, ...v }))
     .sort((a, b) => a.date.localeCompare(b.date));
 
   // WORD CLOUD
@@ -121,22 +130,39 @@ export function transformYoutube(response: any): DashboardData {
     .sort((a, b) => b.total - a.total)
     .slice(0, 50);
 
+  // COMMENTS
+  const dashboardComments: DashboardComment[] = comments.map((c: any) => {
+    const s = String(c.sentiment ?? "").toLowerCase();
+    const sentiment =
+      s === "positif" || s === "positive" ? "positive" :
+      s === "negatif" || s === "negative" ? "negative" : "neutral";
+    return {
+      id: c.id ?? crypto.randomUUID(),
+      author: c.author ?? "Anonim",
+      content: c.content ?? "",
+      sentiment,
+      publishedAt: c.published_at ?? "",
+      videoUrl: c.video_url ?? "",
+      likes: Number(c.like_count) || 0,
+    };
+  });
+
   return {
+    platform: "youtube",
+    keyword,
     summary: {
       totalPosts: total_videos,
       totalComments: total_comments,
       engagement,
       reach,
     },
-
     sentiment,
-
     timeline,
-
     wordCloud,
-
     topPosts,
-
     platformDistribution,
+    comments: dashboardComments,
+    videos,
+    stats: response?.data?.stats ?? {},
   };
 }

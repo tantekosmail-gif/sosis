@@ -1,10 +1,13 @@
 "use client";
 
+import { ExternalLink, Eye, MessageCircle, Calendar } from "lucide-react";
+
 interface Post {
   id: string;
   title: string;
   author: string;
   thumbnail: string;
+  publishedAt?: string;
   views: number;
   likes: number;
   comments: number;
@@ -12,68 +15,136 @@ interface Post {
   url: string;
 }
 
-interface Props {
-  data: Post[];
+const SENTIMENT_STYLE: Record<string, { pill: string; dot: string }> = {
+  positive: { pill: "bg-emerald-50 text-emerald-700 border-emerald-200", dot: "bg-emerald-500" },
+  negative: { pill: "bg-red-50 text-red-700 border-red-200",            dot: "bg-red-500" },
+  neutral:  { pill: "bg-amber-50 text-amber-700 border-amber-200",      dot: "bg-amber-400" },
+};
+
+const SENTIMENT_LABEL: Record<string, string> = {
+  positive: "Positif",
+  negative: "Negatif",
+  neutral:  "Netral",
+};
+
+const RANK_STYLE: Record<number, string> = {
+  0: "bg-amber-400 text-white",
+  1: "bg-slate-400 text-white",
+  2: "bg-orange-400 text-white",
+};
+
+function formatDate(dateStr?: string) {
+  if (!dateStr) return null;
+  try {
+    return new Date(dateStr).toLocaleDateString("id-ID", {
+      day: "numeric", month: "short", year: "numeric",
+    });
+  } catch {
+    return null;
+  }
 }
 
-export default function TopPostsTable({ data }: Props) {
-  return (
-    <div className="rounded-xl border bg-white p-5 shadow-sm">
-      <h2 className="mb-5 text-lg font-semibold">Top Videos</h2>
+function formatCompact(n: number) {
+  if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + "M";
+  if (n >= 1_000) return (n / 1_000).toFixed(1) + "K";
+  return n.toString();
+}
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b text-left">
-              <th className="py-3">Video</th>
-              <th>Channel</th>
-              <th className="text-right">Views</th>
-              <th className="text-right">Comments</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {data.map((item) => (
-              <tr key={item.id} className="border-b hover:bg-gray-50">
-                <td className="py-4">
-                  <div className="flex gap-3 py-2">
-                    <img
-                      src={item.thumbnail}
-                      alt={item.title}
-                      className="h-16 w-28 rounded-lg object-cover"
-                    />
-
-                    <div>
-                      <a
-                        href={item.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="font-medium hover:text-blue-600"
-                      >
-                        {item.title}
-                      </a>
-
-                      <div className="mt-1 text-xs text-gray-500">
-                        {item.sentiment}
-                      </div>
-                    </div>
-                  </div>
-                </td>
-
-                <td>{item.author}</td>
-
-                <td className="text-right">{item.views.toLocaleString()}</td>
-
-                <td className="text-right">{item.comments.toLocaleString()}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        {data.length === 0 && (
-          <div className="py-10 text-center text-gray-400">Tidak ada data</div>
-        )}
+export default function TopPostsTable({ data }: { data: Post[] }) {
+  if (!data || data.length === 0) {
+    return (
+      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div className="px-6 py-5 border-b border-slate-100">
+          <h2 className="font-semibold text-slate-900">Top Videos</h2>
+          <p className="mt-0.5 text-xs text-slate-400">10 konten terpopuler berdasarkan views</p>
+        </div>
+        <div className="py-16 text-center text-slate-400 text-sm">Tidak ada data</div>
       </div>
+    );
+  }
+
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+      {/* Header */}
+      <div className="px-6 py-5 border-b border-slate-100">
+        <h2 className="font-semibold text-slate-900">Top Videos</h2>
+        <p className="mt-0.5 text-xs text-slate-400">10 konten terpopuler berdasarkan views</p>
+      </div>
+
+      {/* List */}
+      <ul className="divide-y divide-slate-100">
+        {data.map((item, idx) => {
+          const sentiment = item.sentiment?.toLowerCase() ?? "neutral";
+          const sentimentCfg = SENTIMENT_STYLE[sentiment] ?? SENTIMENT_STYLE.neutral;
+          const date = formatDate(item.publishedAt);
+
+          return (
+            <li key={item.id} className="flex items-center gap-4 px-6 py-4 hover:bg-slate-50/70 transition-colors">
+              {/* Rank */}
+              <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-xl text-xs font-bold ${RANK_STYLE[idx] ?? "bg-slate-100 text-slate-500"}`}>
+                {idx + 1}
+              </span>
+
+              {/* Thumbnail */}
+              <div className="h-16 w-28 shrink-0 overflow-hidden rounded-xl bg-slate-100">
+                {item.thumbnail ? (
+                  <img
+                    src={item.thumbnail}
+                    alt=""
+                    className="h-full w-full object-cover"
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                  />
+                ) : (
+                  <div className="h-full w-full flex items-center justify-center text-slate-300 text-xs">No img</div>
+                )}
+              </div>
+
+              {/* Main content */}
+              <div className="flex-1 min-w-0">
+                <a
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-start gap-1"
+                >
+                  <span className="line-clamp-2 text-sm font-medium text-slate-800 group-hover:text-indigo-600 transition-colors leading-snug">
+                    {item.title}
+                  </span>
+                  <ExternalLink size={11} className="mt-0.5 shrink-0 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </a>
+
+                <div className="mt-1.5 flex flex-wrap items-center gap-2">
+                  <span className="text-xs text-slate-500 truncate max-w-[160px]">{item.author}</span>
+
+                  {date && (
+                    <span className="flex items-center gap-1 text-xs text-slate-400">
+                      <Calendar size={10} />
+                      {date}
+                    </span>
+                  )}
+
+                  <span className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[11px] font-semibold ${sentimentCfg.pill}`}>
+                    <span className={`h-1.5 w-1.5 rounded-full ${sentimentCfg.dot}`} />
+                    {SENTIMENT_LABEL[sentiment] ?? sentiment}
+                  </span>
+                </div>
+              </div>
+
+              {/* Stats */}
+              <div className="shrink-0 hidden sm:flex flex-col items-end gap-1.5">
+                <div className="flex items-center gap-1 text-sm font-semibold text-slate-700">
+                  <Eye size={13} className="text-slate-400" />
+                  {formatCompact(item.views)}
+                </div>
+                <div className="flex items-center gap-1 text-xs text-slate-500">
+                  <MessageCircle size={12} className="text-slate-400" />
+                  {formatCompact(item.comments)}
+                </div>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
     </div>
   );
 }

@@ -2,27 +2,32 @@
 
 import * as React from "react"
 import { Progress as ProgressPrimitive } from "radix-ui"
-
 import { cn } from "@/lib/utils"
 
 function Progress({
   className,
   value,
+  indicatorClassName,
   ...props
-}: React.ComponentProps<typeof ProgressPrimitive.Root>) {
+}: React.ComponentProps<typeof ProgressPrimitive.Root> & {
+  indicatorClassName?: string
+}) {
   return (
     <ProgressPrimitive.Root
       data-slot="progress"
       className={cn(
-        "relative flex h-1 w-full items-center overflow-x-hidden rounded-full bg-muted",
+        "relative h-2 w-full overflow-hidden rounded-full bg-slate-100",
         className
       )}
       {...props}
     >
       <ProgressPrimitive.Indicator
         data-slot="progress-indicator"
-        className="size-full flex-1 bg-primary transition-all"
-        style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
+        className={cn(
+          "h-full rounded-full bg-gradient-to-r from-indigo-500 to-violet-500 transition-all duration-500 ease-out",
+          indicatorClassName
+        )}
+        style={{ width: `${value ?? 0}%` }}
       />
     </ProgressPrimitive.Root>
   )

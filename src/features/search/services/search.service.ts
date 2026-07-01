@@ -8,9 +8,7 @@ interface SmartSearchPayload {
 }
 
 export async function smartSearch(payload: SmartSearchPayload) {
-  const endpoint = `/api/v1/${payload.platform}/smart-search`;
-
-  const { data } = await api.get(endpoint, {
+  const { data } = await api.get(`/api/v1/${payload.platform}/smart-search`, {
     params: {
       q: payload.keyword,
       limit_videos: payload.limitVideos,

@@ -4,18 +4,24 @@ import AppHeader from "./AppHeader";
 
 interface Props {
   children: ReactNode;
+  onOpenHistory?: () => void;
+  historyCount?: number;
 }
 
-export default function DashboardLayout({ children }: Props) {
+export default function DashboardLayout({ children, onOpenHistory, historyCount }: Props) {
   return (
-    <div className="flex h-screen bg-[var(--background)]">
-      {/* <Sidebar /> */}
+    <div className="flex h-screen bg-slate-50 overflow-hidden">
+      <AppSidebar />
 
-      <main className="flex-1 overflow-y-auto">
-        {/* <Header /> */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <AppHeader onOpenHistory={onOpenHistory} historyCount={historyCount} />
 
-        <div className="p-6 space-y-6">{children}</div>
-      </main>
+        <main className="flex-1 overflow-y-auto">
+          <div className="p-6 space-y-6 max-w-screen-2xl mx-auto">
+            {children}
+          </div>
+        </main>
+      </div>
     </div>
   );
 }

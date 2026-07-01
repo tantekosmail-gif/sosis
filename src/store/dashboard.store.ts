@@ -1,30 +1,21 @@
-"use client";
-
 import { create } from "zustand";
-import { DashboardData } from "@/types/dashboard.type";
 
-interface DashboardStore {
-  dashboard: DashboardData | null;
-
+interface DashboardState {
   loading: boolean;
 
-  error: string | null;
+  dashboard: any | null;
 
   setLoading: (loading: boolean) => void;
 
-  setDashboard: (dashboard: DashboardData | null) => void;
-
-  setError: (error: string | null) => void;
+  setDashboard: (dashboard: any) => void;
 
   clearDashboard: () => void;
 }
 
-export const useDashboardStore = create<DashboardStore>((set) => ({
-  dashboard: null,
-
+export const useDashboardStore = create<DashboardState>((set) => ({
   loading: false,
 
-  error: null,
+  dashboard: null,
 
   setLoading: (loading) =>
     set({
@@ -34,18 +25,10 @@ export const useDashboardStore = create<DashboardStore>((set) => ({
   setDashboard: (dashboard) =>
     set({
       dashboard,
-      error: null,
-    }),
-
-  setError: (error) =>
-    set({
-      error,
     }),
 
   clearDashboard: () =>
     set({
       dashboard: null,
-      loading: false,
-      error: null,
     }),
 }));
