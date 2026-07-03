@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Flame, LayoutDashboard, Settings, Sparkles } from "lucide-react";
+import { Flame, LayoutDashboard, Settings, Sparkles, TrendingUp } from "lucide-react";
 
 const menus = [
-  { name: "Dashboard",    href: "/dashboard", icon: LayoutDashboard },
-  { name: "Viral Video",  href: "/viral",     icon: Flame           },
-  { name: "Settings",     href: "/settings",  icon: Settings        },
+  { name: "Dashboard",           href: "/dashboard",         icon: LayoutDashboard },
+  { name: "Viral Video",         href: "/viral",             icon: Flame           },
+  { name: "Instagram Trending",  href: "/instagram/trending", icon: TrendingUp     },
+  { name: "Settings",            href: "/settings",          icon: Settings        },
 ];
 
 export default function AppSidebar() {

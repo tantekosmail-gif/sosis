@@ -11,11 +11,13 @@ export function useViralVideos() {
   const [error, setError] = useState("");
   const [q, setQ] = useState("");
   const [limit, setLimit] = useState(20);
+  const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       setError("");
+      setSelectedVideoId(null);
 
       const result = await getViralVideos({ limit, limitComments: 10, q });
       setData(result);
@@ -30,5 +32,19 @@ export function useViralVideos() {
     fetchData();
   }, [fetchData]);
 
-  return { data, loading, error, q, setQ, limit, setLimit, refetch: fetchData };
+  const selectedVideo = data?.items.find((item) => item.video_id === selectedVideoId) ?? null;
+
+  return {
+    data,
+    loading,
+    error,
+    q,
+    setQ,
+    limit,
+    setLimit,
+    refetch: fetchData,
+    selectedVideoId,
+    setSelectedVideoId,
+    selectedVideo,
+  };
 }

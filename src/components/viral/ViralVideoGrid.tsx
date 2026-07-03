@@ -1,13 +1,19 @@
 "use client";
 
-import { ExternalLink, Eye, Flame } from "lucide-react";
+import { ExternalLink, Eye, Flame, MessageCircle } from "lucide-react";
 
-import type { ViralVideoItem } from "@/features/viral/types/viral.types";
+import type { ViralSentimentBreakdown, ViralVideoItem } from "@/features/viral/types/viral.types";
 
 const RANK_STYLE: Record<number, string> = {
   1: "bg-amber-400 text-white",
   2: "bg-slate-400 text-white",
   3: "bg-orange-400 text-white",
+};
+
+const SENTIMENT_BAR_COLOR: Record<string, string> = {
+  positif: "bg-emerald-500",
+  netral: "bg-amber-400",
+  negatif: "bg-red-500",
 };
 
 function formatDate(dateStr?: string) {
@@ -28,7 +34,32 @@ function formatCompact(n: number) {
   return n?.toString() ?? "0";
 }
 
-export default function ViralVideoGrid({ data }: { data: ViralVideoItem[] }) {
+function SentimentBar({ summary }: { summary: ViralSentimentBreakdown }) {
+  const total = summary.positif.count + summary.netral.count + summary.negatif.count;
+  if (total === 0) return null;
+
+  return (
+    <div className="mt-2 flex h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+      {(["positif", "netral", "negatif"] as const).map((key) => (
+        <div
+          key={key}
+          className={SENTIMENT_BAR_COLOR[key]}
+          style={{ width: `${summary[key].percentage}%` }}
+        />
+      ))}
+    </div>
+  );
+}
+
+export default function ViralVideoGrid({
+  data,
+  selectedVideoId,
+  onSelectVideo,
+}: {
+  data: ViralVideoItem[];
+  selectedVideoId?: string | null;
+  onSelectVideo?: (item: ViralVideoItem) => void;
+}) {
   if (!data || data.length === 0) {
     return (
       <div className="rounded-2xl border border-dashed border-slate-300 bg-white py-16 text-center text-sm text-slate-400">
@@ -41,17 +72,22 @@ export default function ViralVideoGrid({ data }: { data: ViralVideoItem[] }) {
     <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {data.map((item) => {
         const date = formatDate(item.published_at);
+        const isSelected = item.video_id === selectedVideoId;
 
         return (
-          <a
+          <div
             key={item.video_id}
-            href={item.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+            className={`group overflow-hidden rounded-2xl border bg-white shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md ${
+              isSelected ? "border-indigo-400 ring-2 ring-indigo-500/20" : "border-slate-200"
+            }`}
           >
             {/* Thumbnail */}
-            <div className="relative aspect-video w-full overflow-hidden bg-slate-100">
+            <a
+              href={item.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="relative block aspect-video w-full overflow-hidden bg-slate-100"
+            >
               {item.thumbnail_url ? (
                 <img
                   src={item.thumbnail_url}
@@ -72,16 +108,21 @@ export default function ViralVideoGrid({ data }: { data: ViralVideoItem[] }) {
                   {item.duration}
                 </span>
               )}
-            </div>
+            </a>
 
             {/* Content */}
             <div className="p-4">
-              <div className="flex items-start gap-1">
+              <a
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-start gap-1"
+              >
                 <h3 className="line-clamp-2 flex-1 text-sm font-semibold leading-snug text-slate-800 group-hover:text-indigo-600 transition-colors">
                   {item.title}
                 </h3>
                 <ExternalLink size={11} className="mt-0.5 shrink-0 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" />
-              </div>
+              </a>
 
               <p className="mt-1.5 truncate text-xs text-slate-500">{item.channel}</p>
 
@@ -99,8 +140,26 @@ export default function ViralVideoGrid({ data }: { data: ViralVideoItem[] }) {
                   {item.keyword}
                 </span>
               )}
+
+              <SentimentBar summary={item.sentiment_summary} />
+
+              <div className="mt-3 flex items-center justify-between border-t border-slate-100 pt-3">
+                <span className="flex items-center gap-1 text-[11px] text-slate-400">
+                  <MessageCircle size={12} />
+                  {item.comment_count} komentar
+                </span>
+
+                <button
+                  type="button"
+                  onClick={() => onSelectVideo?.(item)}
+                  disabled={item.comment_count === 0}
+                  className="text-[11px] font-semibold text-indigo-600 hover:text-indigo-700 disabled:cursor-not-allowed disabled:text-slate-300"
+                >
+                  {isSelected ? "Ditampilkan" : "Lihat komentar"}
+                </button>
+              </div>
             </div>
-          </a>
+          </div>
         );
       })}
     </div>

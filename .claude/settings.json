@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \"console.log\\(Object.keys\\(require\\('/Users/yusufyacobonaola/Documents/dev/admin-dashboard/node_modules/lucide-react'\\)\\).filter\\(k=>/instagram/i.test\\(k\\)\\)\\)\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3000/instagram/trending)",
+      "Bash(curl -s http://localhost:3000/instagram/trending)",
+      "Bash(lsof -p 74161 -a -i -sTCP:LISTEN)",
+      "Bash(lsof -p 74161 -a -i -sTCP:LISTEN -P)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3001/instagram/trending)",
+      "Bash(npm install *)",
+      "Bash(node drive_instagram_trending.mjs)",
+      "Bash(rm -rf /private/tmp/claude-501/-Users-yusufyacobonaola-Documents-dev-admin-dashboard/3e0a509c-9d3a-4fa3-ae16-a23b1c716b45/scratchpad/node_modules /private/tmp/claude-501/-Users-yusufyacobonaola-Documents-dev-admin-dashboard/3e0a509c-9d3a-4fa3-ae16-a23b1c716b45/scratchpad/package*.json)"
+    ],
+    "additionalDirectories": [
+      "/private/tmp/claude-501/-Users-yusufyacobonaola-Documents-dev-admin-dashboard/3e0a509c-9d3a-4fa3-ae16-a23b1c716b45/scratchpad"
+    ]
+  }
+}

@@ -1,3 +1,27 @@
+export interface SentimentBreakdownEntry {
+  count: number;
+  percentage: number;
+}
+
+export interface ViralSentimentBreakdown {
+  positif: SentimentBreakdownEntry;
+  negatif: SentimentBreakdownEntry;
+  netral: SentimentBreakdownEntry;
+}
+
+export interface ViralSentimentOverview extends ViralSentimentBreakdown {
+  dominant: "positif" | "netral" | "negatif" | string;
+  total_analyzed: number;
+}
+
+export interface ViralComment {
+  id: string;
+  content: string;
+  author: string;
+  sentiment: "positif" | "netral" | "negatif" | string;
+  score: number;
+}
+
 export interface ViralVideoItem {
   rank: number;
   video_id: string;
@@ -9,15 +33,16 @@ export interface ViralVideoItem {
   duration: string;
   published_at: string;
   keyword: string;
+  comment_count: number;
+  sentiment_summary: ViralSentimentBreakdown;
+  comments: ViralComment[];
 }
 
-export interface ViralComment {
-  id: string;
-  content: string;
-  author: string;
-  sentiment: "positif" | "netral" | "negatif" | string;
-  score: number;
-  video_url: string;
+export interface ViralStats {
+  total_videos: number;
+  total_comments: number;
+  total_analyzed: number;
+  coverage_pct: number;
 }
 
 export interface ViralVideoData {
@@ -27,6 +52,7 @@ export interface ViralVideoData {
     keyword_id: string | null;
     q: string | null;
   };
-  comments: ViralComment[];
+  stats: ViralStats;
+  sentiment: ViralSentimentOverview;
   items: ViralVideoItem[];
 }

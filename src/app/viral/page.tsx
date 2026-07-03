@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, RefreshCw, Search } from "lucide-react";
+import { ExternalLink, Loader2, RefreshCw, Search, X } from "lucide-react";
 
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import ViralVideoGrid from "@/components/viral/ViralVideoGrid";
 import ViralCommentsList from "@/components/viral/ViralCommentsList";
+import ViralOverview from "@/components/viral/ViralOverview";
 import { useViralVideos } from "@/features/viral/hooks/useViralVideos";
 
 const LIMIT_OPTIONS = [10, 20, 50, 100];
@@ -16,7 +17,18 @@ export default function ViralVideoPage() {
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [search, setSearch] = useState("");
 
-  const { data, loading, error, setQ, limit, setLimit, refetch } = useViralVideos();
+  const {
+    data,
+    loading,
+    error,
+    setQ,
+    limit,
+    setLimit,
+    refetch,
+    selectedVideoId,
+    setSelectedVideoId,
+    selectedVideo,
+  } = useViralVideos();
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
@@ -120,12 +132,40 @@ export default function ViralVideoPage() {
               <p className="text-xs text-slate-400">{data.note}</p>
             </div>
 
-            <ViralVideoGrid data={data.items} />
+            <ViralOverview stats={data.stats} sentiment={data.sentiment} />
 
-            {data.comments?.length > 0 && (
+            <ViralVideoGrid
+              data={data.items}
+              selectedVideoId={selectedVideoId}
+              onSelectVideo={(item) => setSelectedVideoId(item.video_id)}
+            />
+
+            {selectedVideo && (
               <div>
-                <h2 className="mb-3 font-semibold text-slate-900">Komentar Teratas</h2>
-                <ViralCommentsList data={data.comments} />
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <h2 className="font-semibold text-slate-900">Komentar</h2>
+                    <a
+                      href={selectedVideo.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-0.5 inline-flex items-center gap-1 truncate text-xs text-indigo-500 hover:text-indigo-700"
+                    >
+                      <span className="truncate">{selectedVideo.title}</span>
+                      <ExternalLink size={10} className="shrink-0" />
+                    </a>
+                  </div>
+
+                  <button
+                    onClick={() => setSelectedVideoId(null)}
+                    className="flex shrink-0 items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-500 hover:bg-slate-50 transition"
+                  >
+                    <X size={12} />
+                    Tutup
+                  </button>
+                </div>
+
+                <ViralCommentsList data={selectedVideo.comments} />
               </div>
             )}
           </>
