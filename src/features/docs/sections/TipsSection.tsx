@@ -33,7 +33,7 @@ export default function TipsSection() {
         <p>
           Versi lengkap dokumentasi ini (termasuk untuk developer: tech stack &amp; cara menjalankan
           proyek) tersedia sebagai file{" "}
-          <span className="font-mono text-xs bg-slate-100 px-1 rounded">docs/USER_GUIDE.md</span> pada
+          <span className="font-mono text-xs bg-slate-100 dark:bg-slate-800 px-1 rounded">docs/USER_GUIDE.md</span> pada
           repository proyek ini.
         </p>
       </DocCard>

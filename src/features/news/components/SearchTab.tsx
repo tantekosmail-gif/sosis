@@ -24,7 +24,7 @@ export default function NewsSearchTab() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Cari berita, mis. jokowi, pemilu, ekonomi..."
-            className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 text-sm text-slate-900 placeholder:text-slate-400 transition-colors focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+            className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 text-sm text-slate-900 placeholder:text-slate-400 transition-colors focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:bg-slate-900"
           />
         </div>
         <button
@@ -38,27 +38,27 @@ export default function NewsSearchTab() {
       </form>
 
       {error && (
-        <div className="rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-600">
+        <div className="rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-600 dark:bg-red-950/40">
           {error}
         </div>
       )}
 
       {loading && (
-        <div className="flex flex-col items-center justify-center rounded-2xl border bg-white py-24 shadow-sm">
+        <div className="flex flex-col items-center justify-center rounded-2xl border bg-white py-24 shadow-sm dark:bg-slate-900">
           <Loader2 className="mb-4 h-10 w-10 animate-spin text-indigo-600" />
-          <p className="font-semibold text-slate-700">Mencari berita...</p>
+          <p className="font-semibold text-slate-700 dark:text-slate-300">Mencari berita...</p>
         </div>
       )}
 
       {!loading && !error && hasSearched && data && (
         <>
-          <p className="text-sm text-slate-500">
-            <span className="font-semibold text-slate-700">{data.total}</span> hasil untuk{" "}
-            <span className="font-semibold text-slate-700">&ldquo;{data.query}&rdquo;</span>
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            <span className="font-semibold text-slate-700 dark:text-slate-300">{data.total}</span> hasil untuk{" "}
+            <span className="font-semibold text-slate-700 dark:text-slate-300">&ldquo;{data.query}&rdquo;</span>
           </p>
 
           {data.items.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-slate-300 bg-white py-16 text-center text-sm text-slate-400">
+            <div className="rounded-2xl border border-dashed border-slate-300 bg-white py-16 text-center text-sm text-slate-400 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-500">
               Tidak ada berita ditemukan untuk pencarian ini
             </div>
           ) : (
@@ -72,10 +72,10 @@ export default function NewsSearchTab() {
       )}
 
       {!hasSearched && !loading && (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-white py-24 text-center">
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-white py-24 text-center dark:border-slate-600 dark:bg-slate-900">
           <Newspaper className="mb-4 h-10 w-10 text-slate-300" />
-          <p className="font-semibold text-slate-700">Mulai cari berita</p>
-          <p className="mt-1 text-sm text-slate-400">Masukkan kata kunci di atas untuk memulai pencarian</p>
+          <p className="font-semibold text-slate-700 dark:text-slate-300">Mulai cari berita</p>
+          <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">Masukkan kata kunci di atas untuk memulai pencarian</p>
         </div>
       )}
     </div>

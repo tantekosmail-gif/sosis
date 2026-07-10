@@ -33,10 +33,10 @@ export default function AccountSection() {
   return (
     <div className="space-y-6">
       {/* Profile */}
-      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-        <div className="border-b border-slate-100 px-6 py-5">
-          <h3 className="font-semibold text-slate-900">Profil Akun</h3>
-          <p className="mt-0.5 text-xs text-slate-400">Informasi dasar akun yang ditampilkan di dashboard</p>
+      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden dark:border-slate-700 dark:bg-slate-900">
+        <div className="border-b border-slate-100 px-6 py-5 dark:border-slate-800">
+          <h3 className="font-semibold text-slate-900 dark:text-slate-100">Profil Akun</h3>
+          <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">Informasi dasar akun yang ditampilkan di dashboard</p>
         </div>
 
         <div className="px-6 py-6 space-y-5">
@@ -46,47 +46,47 @@ export default function AccountSection() {
               {(profile.username || "A").charAt(0).toUpperCase()}
             </div>
             <div>
-              <p className="font-semibold text-slate-800">{profile.username || "Administrator"}</p>
-              <p className="text-sm text-slate-400">{profile.role || "Administrator"}</p>
+              <p className="font-semibold text-slate-800 dark:text-slate-200">{profile.username || "Administrator"}</p>
+              <p className="text-sm text-slate-400 dark:text-slate-500">{profile.role || "Administrator"}</p>
             </div>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             {/* Username */}
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">Username</label>
+              <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Username</label>
               <div className="relative">
                 <User size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                 <input
                   value={profile.username}
                   onChange={(e) => setProfile((p) => ({ ...p, username: e.target.value }))}
-                  className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 text-sm text-slate-800 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition"
+                  className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 text-sm text-slate-800 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:focus:bg-slate-900"
                 />
               </div>
             </div>
 
             {/* Email */}
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">Email</label>
+              <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Email</label>
               <div className="relative">
                 <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                 <input
                   value={profile.email}
                   onChange={(e) => setProfile((p) => ({ ...p, email: e.target.value }))}
-                  className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 text-sm text-slate-800 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition"
+                  className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 text-sm text-slate-800 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:focus:bg-slate-900"
                 />
               </div>
             </div>
 
             {/* Role */}
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">Role</label>
+              <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Role</label>
               <div className="relative">
                 <Shield size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                 <select
                   value={profile.role}
                   onChange={(e) => setProfile((p) => ({ ...p, role: e.target.value }))}
-                  className="h-10 w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 text-sm text-slate-800 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition"
+                  className="h-10 w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 text-sm text-slate-800 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:focus:bg-slate-900"
                 >
                   <option value="Administrator">Administrator</option>
                   <option value="Analyst">Analyst</option>
@@ -109,16 +109,16 @@ export default function AccountSection() {
       </div>
 
       {/* Change Password */}
-      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-        <div className="border-b border-slate-100 px-6 py-5">
-          <h3 className="font-semibold text-slate-900">Ubah Password</h3>
-          <p className="mt-0.5 text-xs text-slate-400">Gunakan password yang kuat dan unik</p>
+      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden dark:border-slate-700 dark:bg-slate-900">
+        <div className="border-b border-slate-100 px-6 py-5 dark:border-slate-800">
+          <h3 className="font-semibold text-slate-900 dark:text-slate-100">Ubah Password</h3>
+          <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">Gunakan password yang kuat dan unik</p>
         </div>
 
         <div className="px-6 py-6 space-y-4">
           {/* Old password */}
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">Password Lama</label>
+            <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Password Lama</label>
             <div className="relative">
               <KeyRound size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
@@ -126,9 +126,9 @@ export default function AccountSection() {
                 value={oldPw}
                 onChange={(e) => setOldPw(e.target.value)}
                 placeholder="••••••••"
-                className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-10 text-sm text-slate-800 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition"
+                className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-10 text-sm text-slate-800 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:focus:bg-slate-900"
               />
-              <button type="button" onClick={() => setShowOld(!showOld)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+              <button type="button" onClick={() => setShowOld(!showOld)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
                 {showOld ? <EyeOff size={15} /> : <Eye size={15} />}
               </button>
             </div>
@@ -136,7 +136,7 @@ export default function AccountSection() {
 
           {/* New password */}
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">Password Baru</label>
+            <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Password Baru</label>
             <div className="relative">
               <KeyRound size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
@@ -144,9 +144,9 @@ export default function AccountSection() {
                 value={newPw}
                 onChange={(e) => setNewPw(e.target.value)}
                 placeholder="••••••••"
-                className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-10 text-sm text-slate-800 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition"
+                className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-10 text-sm text-slate-800 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:focus:bg-slate-900"
               />
-              <button type="button" onClick={() => setShowNew(!showNew)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+              <button type="button" onClick={() => setShowNew(!showNew)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
                 {showNew ? <EyeOff size={15} /> : <Eye size={15} />}
               </button>
             </div>
@@ -168,22 +168,22 @@ export default function AccountSection() {
       </div>
 
       {/* Danger zone */}
-      <div className="rounded-2xl border border-red-200 bg-red-50/40 shadow-sm overflow-hidden">
+      <div className="rounded-2xl border border-red-200 bg-red-50/40 shadow-sm overflow-hidden dark:bg-red-950/40">
         <div className="border-b border-red-100 px-6 py-5">
           <h3 className="font-semibold text-red-700">Zona Berbahaya</h3>
           <p className="mt-0.5 text-xs text-red-400">Tindakan ini tidak dapat dibatalkan</p>
         </div>
         <div className="flex items-center justify-between px-6 py-5">
           <div>
-            <p className="text-sm font-medium text-slate-700">Keluar dari semua sesi</p>
-            <p className="text-xs text-slate-400 mt-0.5">Menghapus semua token autentikasi yang tersimpan</p>
+            <p className="text-sm font-medium text-slate-700 dark:text-slate-300">Keluar dari semua sesi</p>
+            <p className="text-xs text-slate-400 mt-0.5 dark:text-slate-500">Menghapus semua token autentikasi yang tersimpan</p>
           </div>
           <button
             onClick={() => {
               localStorage.clear();
               window.location.href = "/login";
             }}
-            className="rounded-xl border border-red-200 bg-white px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50 transition"
+            className="rounded-xl border border-red-200 bg-white px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50 transition dark:bg-slate-900 dark:hover:bg-red-950/40"
           >
             Logout Semua Sesi
           </button>

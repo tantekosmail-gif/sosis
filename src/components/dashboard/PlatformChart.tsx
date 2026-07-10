@@ -26,19 +26,19 @@ interface Props {
 function CustomTooltip({ active, payload, label }: any) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-lg">
-      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{label}</p>
-      <p className="mt-1 text-lg font-bold text-slate-800">{payload[0].value?.toLocaleString()}</p>
+    <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3 shadow-lg">
+      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">{label}</p>
+      <p className="mt-1 text-lg font-bold text-slate-800 dark:text-slate-200">{payload[0].value?.toLocaleString()}</p>
     </div>
   );
 }
 
 export default function PlatformChart({ data }: Props) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 shadow-sm">
       <div className="mb-5">
-        <h2 className="font-semibold text-slate-900">Distribusi Channel</h2>
-        <p className="mt-0.5 text-xs text-slate-400">Jumlah video per channel untuk keyword ini</p>
+        <h2 className="font-semibold text-slate-900 dark:text-slate-100">Distribusi Channel</h2>
+        <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">Jumlah video per channel untuk keyword ini</p>
       </div>
 
       <div className="h-52">

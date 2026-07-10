@@ -12,19 +12,19 @@ const SENTIMENT_LABEL: Record<string, string> = {
 };
 
 const SENTIMENT_COLOR: Record<string, { bg: string; text: string; bar: string }> = {
-  positif: { bg: "bg-emerald-50", text: "text-emerald-700", bar: "bg-emerald-500" },
-  netral: { bg: "bg-amber-50", text: "text-amber-700", bar: "bg-amber-400" },
-  negatif: { bg: "bg-red-50", text: "text-red-700", bar: "bg-red-500" },
+  positif: { bg: "bg-emerald-50 dark:bg-emerald-950/40", text: "text-emerald-700", bar: "bg-emerald-500" },
+  netral: { bg: "bg-amber-50 dark:bg-amber-950/40", text: "text-amber-700", bar: "bg-amber-400" },
+  negatif: { bg: "bg-red-50 dark:bg-red-950/40", text: "text-red-700", bar: "bg-red-500" },
 };
 
 function StatCard({ icon: Icon, label, value }: { icon: LucideIcon; label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-slate-100 bg-slate-50 p-3">
-      <div className="flex items-center gap-1.5 text-slate-400">
+    <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 p-3">
+      <div className="flex items-center gap-1.5 text-slate-400 dark:text-slate-500">
         <Icon size={13} />
         <span className="text-[10px] font-semibold uppercase tracking-wider">{label}</span>
       </div>
-      <p className="mt-1 text-lg font-bold text-slate-900">{value}</p>
+      <p className="mt-1 text-lg font-bold text-slate-900 dark:text-slate-100">{value}</p>
     </div>
   );
 }
@@ -32,11 +32,11 @@ function StatCard({ icon: Icon, label, value }: { icon: LucideIcon; label: strin
 function MiniSentimentBar({ positif, negatif, netral }: { positif: number; negatif: number; netral: number }) {
   const total = positif + negatif + netral;
   if (total === 0) {
-    return <div className="h-1.5 w-full rounded-full bg-slate-100" />;
+    return <div className="h-1.5 w-full rounded-full bg-slate-100 dark:bg-slate-800" />;
   }
 
   return (
-    <div className="flex h-1.5 w-24 overflow-hidden rounded-full bg-slate-100">
+    <div className="flex h-1.5 w-24 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
       <div className={SENTIMENT_COLOR.positif.bar} style={{ width: `${(positif / total) * 100}%` }} />
       <div className={SENTIMENT_COLOR.netral.bar} style={{ width: `${(netral / total) * 100}%` }} />
       <div className={SENTIMENT_COLOR.negatif.bar} style={{ width: `${(negatif / total) * 100}%` }} />
@@ -54,14 +54,14 @@ export default function FacebookSummaryWidget({
   const { overall, per_account } = data;
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-      <div className="flex items-center gap-3 border-b border-slate-100 px-6 py-4">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50">
+    <div className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm">
+      <div className="flex items-center gap-3 border-b border-slate-100 dark:border-slate-800 px-6 py-4">
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/40">
           <BarChart3 size={17} className="text-blue-600" />
         </div>
         <div>
-          <h2 className="font-semibold text-slate-900">Ringkasan Analisis Facebook</h2>
-          <p className="text-xs text-slate-400">Overview seluruh akun yang pernah dianalisis</p>
+          <h2 className="font-semibold text-slate-900 dark:text-slate-100">Ringkasan Analisis Facebook</h2>
+          <p className="text-xs text-slate-400 dark:text-slate-500">Overview seluruh akun yang pernah dianalisis</p>
         </div>
       </div>
 
@@ -76,10 +76,10 @@ export default function FacebookSummaryWidget({
         {overall.total_analyzed > 0 && (
           <div>
             <div className="mb-2 flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Sentimen Keseluruhan</span>
-              <span className="text-[11px] text-slate-400">{overall.total_analyzed} komentar dianalisis</span>
+              <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Sentimen Keseluruhan</span>
+              <span className="text-[11px] text-slate-400 dark:text-slate-500">{overall.total_analyzed} komentar dianalisis</span>
             </div>
-            <div className="flex h-2 w-full overflow-hidden rounded-full bg-slate-100">
+            <div className="flex h-2 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
               {(["positif", "netral", "negatif"] as const).map((key) => (
                 <div key={key} className={SENTIMENT_COLOR[key].bar} style={{ width: `${overall.sentiment[key].percentage}%` }} />
               ))}
@@ -99,13 +99,13 @@ export default function FacebookSummaryWidget({
         )}
 
         <div>
-          <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">Per Akun</p>
+          <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Per Akun</p>
           {per_account.length === 0 ? (
-            <p className="text-sm text-slate-400">Belum ada akun yang dianalisis</p>
+            <p className="text-sm text-slate-400 dark:text-slate-500">Belum ada akun yang dianalisis</p>
           ) : (
-            <div className="overflow-x-auto rounded-xl border border-slate-100">
+            <div className="overflow-x-auto rounded-xl border border-slate-100 dark:border-slate-800">
               <table className="w-full text-sm">
-                <thead className="bg-slate-50 text-[10px] uppercase tracking-wider text-slate-400">
+                <thead className="bg-slate-50 dark:bg-slate-800 text-[10px] uppercase tracking-wider text-slate-400 dark:text-slate-500">
                   <tr>
                     <th className="px-4 py-2 text-left">Akun</th>
                     <th className="px-4 py-2 text-right">Post</th>
@@ -113,16 +113,16 @@ export default function FacebookSummaryWidget({
                     <th className="px-4 py-2 text-left">Sentimen</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                   {per_account.map((account) => (
                     <tr
                       key={account.username}
                       onClick={() => onSelectAccount?.(account.username)}
                       className={onSelectAccount ? "cursor-pointer hover:bg-blue-50/60" : ""}
                     >
-                      <td className="px-4 py-2.5 font-medium text-slate-700">{account.username}</td>
-                      <td className="px-4 py-2.5 text-right text-slate-500">{account.post_count}</td>
-                      <td className="px-4 py-2.5 text-right text-slate-500">{account.comment_count}</td>
+                      <td className="px-4 py-2.5 font-medium text-slate-700 dark:text-slate-300">{account.username}</td>
+                      <td className="px-4 py-2.5 text-right text-slate-500 dark:text-slate-400">{account.post_count}</td>
+                      <td className="px-4 py-2.5 text-right text-slate-500 dark:text-slate-400">{account.comment_count}</td>
                       <td className="px-4 py-2.5">
                         <MiniSentimentBar {...account.sentiment} />
                       </td>

@@ -46,12 +46,15 @@ export default function ProfileMenu() {
         rounded-xl
         border
         border-slate-200
+        dark:border-slate-700
         bg-white
+        dark:bg-slate-900
         px-3
         py-2
         shadow-sm
         transition
         hover:bg-slate-50
+        dark:hover:bg-slate-800
       "
     >
       {/* Avatar */}
@@ -73,14 +76,14 @@ export default function ProfileMenu() {
 
       {/* User Info */}
       <div className="min-w-0 text-left">
-        <p className="truncate text-sm font-semibold text-slate-900">
+        <p className="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">
           {user.username}
         </p>
 
-        <p className="truncate text-xs text-slate-500">{user.email}</p>
+        <p className="truncate text-xs text-slate-500 dark:text-slate-400">{user.email}</p>
       </div>
 
-      <ChevronDown size={18} className="text-slate-500" />
+      <ChevronDown size={18} className="text-slate-500 dark:text-slate-400" />
     </button>
   );
 }

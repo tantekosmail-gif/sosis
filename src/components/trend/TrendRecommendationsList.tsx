@@ -1,14 +1,14 @@
 "use client";
 
-import { AlertCircle, AtSign, Hash, Loader2, Music2, RefreshCw } from "lucide-react";
+import { AlertCircle, AtSign, Hash, Loader2, Music2, RefreshCw, X } from "lucide-react";
 
 import type { TrendRecommendationItem } from "@/features/trends/types/recommendations.types";
 
 const STATUS_STYLE: Record<string, string> = {
-  pending: "bg-amber-50 text-amber-700 border-amber-200",
-  approved: "bg-emerald-50 text-emerald-700 border-emerald-200",
-  posted: "bg-emerald-50 text-emerald-700 border-emerald-200",
-  rejected: "bg-red-50 text-red-700 border-red-200",
+  pending: "bg-amber-50 dark:bg-amber-950/40 text-amber-700 border-amber-200",
+  approved: "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 border-emerald-200",
+  posted: "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 border-emerald-200",
+  rejected: "bg-red-50 dark:bg-red-950/40 text-red-700 border-red-200",
 };
 
 const PLATFORM_ICON: Record<string, React.ElementType> = {
@@ -51,8 +51,8 @@ function formatRelativeTime(dateStr?: string) {
 function PlatformPill({ platform, username }: { platform: string; username: string }) {
   const Icon = PLATFORM_ICON[platform.toLowerCase()] ?? AtSign;
   return (
-    <span className="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] font-medium text-slate-600">
-      <Icon size={11} className="text-slate-400" />
+    <span className="inline-flex items-center gap-1 rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-2 py-0.5 text-[11px] font-medium text-slate-600 dark:text-slate-400">
+      <Icon size={11} className="text-slate-400 dark:text-slate-500" />
       {username}
     </span>
   );
@@ -64,6 +64,8 @@ export function TrendRecommendationsList({
   error,
   limit,
   onLimitChange,
+  recommendationDate,
+  onRecommendationDateChange,
   onRefresh,
 }: {
   data: TrendRecommendationItem[];
@@ -71,20 +73,40 @@ export function TrendRecommendationsList({
   error: string;
   limit: number;
   onLimitChange: (limit: number) => void;
+  recommendationDate: string;
+  onRecommendationDateChange: (date: string) => void;
   onRefresh: () => void;
 }) {
   return (
-    <div className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white shadow-sm">
-      <div className="flex items-center justify-between gap-2 border-b border-slate-100 px-5 py-4">
+    <div className="flex h-full flex-col rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 px-5 py-4">
         <div>
-          <p className="text-sm font-semibold text-slate-900">Trend Recommendations</p>
-          <p className="text-xs text-slate-400">Topik yang sudah disubmit ke backend</p>
+          <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">Trend Recommendations</p>
+          <p className="text-xs text-slate-400 dark:text-slate-500">Topik yang sudah disubmit ke backend</p>
         </div>
         <div className="flex items-center gap-2">
+          <div className="relative">
+            <input
+              type="date"
+              value={recommendationDate}
+              onChange={(e) => onRecommendationDateChange(e.target.value)}
+              className="rounded-lg border border-slate-200 dark:border-slate-700 py-1.5 pl-2 pr-6 text-xs text-slate-600 dark:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+            />
+            {recommendationDate && (
+              <button
+                type="button"
+                onClick={() => onRecommendationDateChange("")}
+                title="Tampilkan semua tanggal"
+                className="absolute right-1 top-1/2 -translate-y-1/2 rounded p-0.5 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-600 dark:hover:text-slate-400"
+              >
+                <X size={12} />
+              </button>
+            )}
+          </div>
           <select
             value={limit}
             onChange={(e) => onLimitChange(Number(e.target.value))}
-            className="rounded-lg border border-slate-200 px-2 py-1.5 text-xs text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+            className="rounded-lg border border-slate-200 dark:border-slate-700 px-2 py-1.5 text-xs text-slate-600 dark:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
           >
             {[10, 20, 50].map((n) => (
               <option key={n} value={n}>
@@ -96,7 +118,7 @@ export function TrendRecommendationsList({
             type="button"
             onClick={onRefresh}
             disabled={loading}
-            className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition-colors hover:bg-slate-50 disabled:opacity-50"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50"
           >
             <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
           </button>
@@ -112,7 +134,7 @@ export function TrendRecommendationsList({
         )}
 
         {!loading && error && (
-          <div className="flex items-start gap-2 m-4 rounded-xl border border-red-200 bg-red-50 px-3.5 py-2.5 text-sm text-red-700">
+          <div className="flex items-start gap-2 m-4 rounded-xl border border-red-200 bg-red-50 dark:bg-red-950/40 px-3.5 py-2.5 text-sm text-red-700">
             <AlertCircle size={15} className="mt-0.5 shrink-0" />
             {error}
           </div>
@@ -120,14 +142,18 @@ export function TrendRecommendationsList({
 
         {!loading && !error && data.length === 0 && (
           <div className="flex h-full min-h-40 flex-col items-center justify-center gap-1 text-center text-slate-300">
-            <p className="text-xs">Belum ada rekomendasi topik trending</p>
+            <p className="text-xs">
+              {recommendationDate
+                ? `Tidak ada rekomendasi untuk ${formatDate(recommendationDate)}`
+                : "Belum ada rekomendasi topik trending"}
+            </p>
           </div>
         )}
 
         {data.length > 0 && (
-          <ul className="divide-y divide-slate-100">
+          <ul className="divide-y divide-slate-100 dark:divide-slate-800">
             {data.map((item, idx) => {
-              const statusCfg = STATUS_STYLE[item.status?.toLowerCase()] ?? "bg-slate-50 text-slate-600 border-slate-200";
+              const statusCfg = STATUS_STYLE[item.status?.toLowerCase()] ?? "bg-slate-50 dark:bg-slate-950 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700";
 
               return (
                 <li key={item.id} className="px-5 py-4">
@@ -136,7 +162,7 @@ export function TrendRecommendationsList({
                       <span className="mt-0.5 text-xs font-semibold text-slate-300">
                         {String(idx + 1).padStart(2, "0")}
                       </span>
-                      <p className="text-sm font-medium leading-snug text-slate-800">{item.topic}</p>
+                      <p className="text-sm font-medium leading-snug text-slate-800 dark:text-slate-200">{item.topic}</p>
                     </div>
                     <span className={`shrink-0 rounded-md border px-2 py-0.5 text-[11px] font-semibold capitalize ${statusCfg}`}>
                       {item.status}
@@ -144,13 +170,13 @@ export function TrendRecommendationsList({
                   </div>
 
                   <div className="mt-2 flex items-center gap-2 pl-[26px]">
-                    <div className="h-1.5 w-24 overflow-hidden rounded-full bg-slate-100">
+                    <div className="h-1.5 w-24 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                       <div
                         className={`h-full ${scoreStyle(item.score)}`}
                         style={{ width: `${Math.round(item.score * 100)}%` }}
                       />
                     </div>
-                    <span className="text-[11px] font-semibold text-slate-500">
+                    <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">
                       {(item.score * 100).toFixed(0)}%
                     </span>
                   </div>
@@ -163,7 +189,7 @@ export function TrendRecommendationsList({
                     </div>
                   )}
 
-                  <div className="mt-2 flex items-center gap-3 pl-[26px] text-[11px] text-slate-400">
+                  <div className="mt-2 flex items-center gap-3 pl-[26px] text-[11px] text-slate-400 dark:text-slate-500">
                     <span>{formatDate(item.recommendation_date)}</span>
                     <span>&middot;</span>
                     <span>{item.source}</span>

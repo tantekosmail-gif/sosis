@@ -34,8 +34,16 @@ function normalizeTrendingPost(raw: RawTrendingPost): TikTokTrendingPost {
   };
 }
 
-export async function getTikTokTrending(): Promise<TikTokTrendingData> {
-  const { data } = await api.get<{ data: RawTikTokTrendingData }>("/api/v1/tiktok/trending");
+export async function getTikTokTrending(params: {
+  dateFrom?: string;
+  dateTo?: string;
+} = {}): Promise<TikTokTrendingData> {
+  const { data } = await api.get<{ data: RawTikTokTrendingData }>("/api/v1/tiktok/trending", {
+    params: {
+      date_from: params.dateFrom || undefined,
+      date_to: params.dateTo || undefined,
+    },
+  });
   const raw = data.data;
 
   return {

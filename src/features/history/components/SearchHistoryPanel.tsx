@@ -47,23 +47,23 @@ export default function SearchHistoryPanel({ history, onRemove, onClear, onReloa
       />
 
       {/* Panel */}
-      <div className="fixed right-0 top-0 z-40 flex h-full w-full max-w-sm flex-col border-l border-slate-200 bg-white shadow-2xl">
+      <div className="fixed right-0 top-0 z-40 flex h-full w-full max-w-sm flex-col border-l border-slate-200 bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-900">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
+        <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4 dark:border-slate-800">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 dark:bg-indigo-950/40">
               <Clock size={15} className="text-indigo-600" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-slate-900">Riwayat Pencarian</p>
-              <p className="text-[11px] text-slate-400">{history.length} analisis tersimpan</p>
+              <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">Riwayat Pencarian</p>
+              <p className="text-[11px] text-slate-400 dark:text-slate-500">{history.length} analisis tersimpan</p>
             </div>
           </div>
           <div className="flex items-center gap-1">
             {history.length > 0 && (
               <button
                 onClick={onClear}
-                className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-red-500 hover:bg-red-50 transition-colors"
+                className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-red-500 hover:bg-red-50 transition-colors dark:hover:bg-red-950/40"
               >
                 <Trash2 size={12} />
                 Hapus semua
@@ -71,7 +71,7 @@ export default function SearchHistoryPanel({ history, onRemove, onClear, onReloa
             )}
             <button
               onClick={onClose}
-              className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
+              className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors dark:hover:bg-slate-800 dark:hover:text-slate-300"
             >
               <X size={16} />
             </button>
@@ -82,14 +82,14 @@ export default function SearchHistoryPanel({ history, onRemove, onClear, onReloa
         <div className="flex-1 overflow-y-auto">
           {history.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 text-center px-6">
-              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100">
+              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800">
                 <Clock size={22} className="text-slate-400" />
               </div>
-              <p className="font-semibold text-slate-600">Belum ada riwayat</p>
-              <p className="mt-1.5 text-sm text-slate-400">Riwayat analisis akan muncul di sini setelah kamu melakukan analisis pertama.</p>
+              <p className="font-semibold text-slate-600 dark:text-slate-400">Belum ada riwayat</p>
+              <p className="mt-1.5 text-sm text-slate-400 dark:text-slate-500">Riwayat analisis akan muncul di sini setelah kamu melakukan analisis pertama.</p>
             </div>
           ) : (
-            <ul className="divide-y divide-slate-100 p-3 space-y-1">
+            <ul className="divide-y divide-slate-100 p-3 space-y-1 dark:divide-slate-800">
               {history.map((item) => {
                 const ps = PLATFORM_STYLE[item.platform] ?? { dot: "bg-slate-400", label: item.platform };
                 const { pos, neu, neg } = SENTIMENT_BAR(
@@ -100,18 +100,18 @@ export default function SearchHistoryPanel({ history, onRemove, onClear, onReloa
                 return (
                   <li
                     key={item.id}
-                    className="group rounded-xl p-3.5 hover:bg-slate-50 transition-colors"
+                    className="group rounded-xl p-3.5 hover:bg-slate-50 transition-colors dark:hover:bg-slate-800"
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
                           <span className={`h-2 w-2 shrink-0 rounded-full ${ps.dot}`} />
-                          <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">{ps.label}</span>
+                          <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">{ps.label}</span>
                         </div>
-                        <p className="mt-1 truncate font-semibold text-slate-900">
+                        <p className="mt-1 truncate font-semibold text-slate-900 dark:text-slate-100">
                           {item.keyword}
                         </p>
-                        <p className="mt-0.5 text-[11px] text-slate-400">{relativeTime(item.analyzedAt)}</p>
+                        <p className="mt-0.5 text-[11px] text-slate-400 dark:text-slate-500">{relativeTime(item.analyzedAt)}</p>
 
                         {/* Mini sentiment bar */}
                         <div className="mt-2.5 flex h-1.5 w-full overflow-hidden rounded-full">
@@ -119,7 +119,7 @@ export default function SearchHistoryPanel({ history, onRemove, onClear, onReloa
                           <div className="bg-slate-300 transition-all" style={{ width: `${neu}%` }} />
                           <div className="bg-red-400 transition-all" style={{ width: `${neg}%` }} />
                         </div>
-                        <div className="mt-1.5 flex gap-3 text-[10px] text-slate-400">
+                        <div className="mt-1.5 flex gap-3 text-[10px] text-slate-400 dark:text-slate-500">
                           <span className="text-emerald-600">{item.stats.sentiment.positive} pos</span>
                           <span>{item.stats.sentiment.neutral} net</span>
                           <span className="text-red-500">{item.stats.sentiment.negative} neg</span>
@@ -130,14 +130,14 @@ export default function SearchHistoryPanel({ history, onRemove, onClear, onReloa
                         <button
                           onClick={() => { onReload(item); onClose(); }}
                           title="Load ulang"
-                          className="rounded-lg p-1.5 text-indigo-500 hover:bg-indigo-50 transition-colors"
+                          className="rounded-lg p-1.5 text-indigo-500 hover:bg-indigo-50 transition-colors dark:hover:bg-indigo-950/40"
                         >
                           <RotateCcw size={13} />
                         </button>
                         <button
                           onClick={() => onRemove(item.id)}
                           title="Hapus"
-                          className="rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-500 transition-colors"
+                          className="rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-500 transition-colors dark:hover:bg-red-950/40"
                         >
                           <X size={13} />
                         </button>

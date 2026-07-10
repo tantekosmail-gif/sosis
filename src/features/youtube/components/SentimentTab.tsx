@@ -70,15 +70,15 @@ export default function YoutubeSentimentTab() {
 
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h2 className="font-semibold text-slate-900">Analisis Sentimen</h2>
-          <p className="mt-1 text-sm text-slate-400">
+          <h2 className="font-semibold text-slate-900 dark:text-slate-100">Analisis Sentimen</h2>
+          <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">
             Cari keyword untuk menganalisis sentimen video &amp; komentar YouTube
           </p>
         </div>
 
         <button
           onClick={() => setHistoryOpen(true)}
-          className="flex h-9 shrink-0 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50"
+          className="flex h-9 shrink-0 items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3.5 text-sm font-medium text-slate-600 dark:text-slate-400 transition hover:bg-slate-50 dark:hover:bg-slate-800"
         >
           <Clock size={14} />
           Riwayat
@@ -93,22 +93,22 @@ export default function YoutubeSentimentTab() {
       <FilterBar />
 
       {loading && (
-        <div className="flex flex-col items-center justify-center rounded-2xl border bg-white py-24 shadow-sm">
+        <div className="flex flex-col items-center justify-center rounded-2xl border bg-white dark:bg-slate-900 py-24 shadow-sm">
           <Loader2 className="mb-4 h-10 w-10 animate-spin text-indigo-600" />
-          <p className="font-semibold text-slate-700">Sedang menganalisis...</p>
-          <p className="mt-1 text-sm text-slate-400">
+          <p className="font-semibold text-slate-700 dark:text-slate-300">Sedang menganalisis...</p>
+          <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">
             Mengumpulkan dan memproses data dari YouTube
           </p>
         </div>
       )}
 
       {!loading && !dashboard && (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-white py-28 text-center shadow-sm">
-          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-50">
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 py-28 text-center shadow-sm">
+          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-50 dark:bg-indigo-950/40">
             <SearchX className="h-8 w-8 text-indigo-400" />
           </div>
-          <h2 className="text-xl font-bold text-slate-800">Belum ada hasil analisis</h2>
-          <p className="mt-2 max-w-sm text-sm text-slate-400">
+          <h2 className="text-xl font-bold text-slate-800 dark:text-slate-200">Belum ada hasil analisis</h2>
+          <p className="mt-2 max-w-sm text-sm text-slate-400 dark:text-slate-500">
             Masukkan keyword di atas, lalu klik{" "}
             <span className="font-semibold text-indigo-600">Analyze</span> untuk memulai.
           </p>

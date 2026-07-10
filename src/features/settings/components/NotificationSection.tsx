@@ -26,7 +26,7 @@ function Toggle({
       }`}
     >
       <span
-        className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${
+        className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white dark:bg-slate-900 shadow-sm transition-transform ${
           checked ? "translate-x-5" : "translate-x-0"
         }`}
       />
@@ -40,10 +40,10 @@ function NotifRow({
   title: string; description: string; checked: boolean; onChange: (v: boolean) => void;
 }) {
   return (
-    <div className="flex items-start justify-between gap-4 py-4 border-b border-slate-100 last:border-0">
+    <div className="flex items-start justify-between gap-4 py-4 border-b border-slate-100 dark:border-slate-800 last:border-0">
       <div>
-        <p className="text-sm font-medium text-slate-800">{title}</p>
-        <p className="mt-0.5 text-xs text-slate-400">{description}</p>
+        <p className="text-sm font-medium text-slate-800 dark:text-slate-200">{title}</p>
+        <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">{description}</p>
       </div>
       <Toggle checked={checked} onChange={onChange} />
     </div>
@@ -53,10 +53,10 @@ function NotifRow({
 export default function NotificationSection({ settings, update, onSave, saved }: Props) {
   return (
     <div className="space-y-6">
-      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-        <div className="border-b border-slate-100 px-6 py-5">
-          <h3 className="font-semibold text-slate-900">Preferensi Notifikasi</h3>
-          <p className="mt-0.5 text-xs text-slate-400">Atur kapan kamu ingin mendapat pemberitahuan dalam aplikasi</p>
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
+        <div className="border-b border-slate-100 dark:border-slate-800 px-6 py-5">
+          <h3 className="font-semibold text-slate-900 dark:text-slate-100">Preferensi Notifikasi</h3>
+          <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">Atur kapan kamu ingin mendapat pemberitahuan dalam aplikasi</p>
         </div>
 
         <div className="px-6">

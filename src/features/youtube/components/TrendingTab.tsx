@@ -6,6 +6,7 @@ import { Loader2, RefreshCw, Search } from "lucide-react";
 import ViralVideoGrid from "@/components/youtube/ViralVideoGrid";
 import ViralCommentsList from "@/components/youtube/ViralCommentsList";
 import ViralOverview from "@/components/youtube/ViralOverview";
+import VisualsPreviewWidget from "@/components/youtube/VisualsPreviewWidget";
 import CommentsModal from "@/components/common/CommentsModal";
 import { useViralVideos } from "../hooks/useViralVideos";
 
@@ -35,38 +36,38 @@ export default function YoutubeTrendingTab() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="font-semibold text-slate-900">Video Viral</h2>
-        <p className="mt-1 text-sm text-slate-400">
+        <h2 className="font-semibold text-slate-900 dark:text-slate-100">Video Viral</h2>
+        <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">
           Video YouTube dengan view count tertinggi dari seluruh data di database
         </p>
       </div>
 
       {/* Filter bar */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
           <form onSubmit={handleSearch} className="flex-1">
-            <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-400">
+            <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
               Cari
             </label>
             <div className="relative">
-              <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+              <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
               <input
                 placeholder="Cari judul, channel, atau keyword..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 text-sm text-slate-800 placeholder:text-slate-400 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition"
+                className="h-10 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 pl-10 pr-4 text-sm text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-indigo-400 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition"
               />
             </div>
           </form>
 
           <div className="shrink-0">
-            <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-400">
+            <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
               Jumlah
             </label>
             <select
               value={limit}
               onChange={(e) => setLimit(Number(e.target.value))}
-              className="h-10 rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-sm text-slate-800 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition"
+              className="h-10 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-3.5 text-sm text-slate-800 dark:text-slate-200 focus:border-indigo-400 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition"
             >
               {LIMIT_OPTIONS.map((opt) => (
                 <option key={opt} value={opt}>{opt} video</option>
@@ -77,7 +78,7 @@ export default function YoutubeTrendingTab() {
           <button
             onClick={() => refetch()}
             disabled={loading}
-            className="flex h-10 shrink-0 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-50 transition"
+            className="flex h-10 shrink-0 items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 transition"
           >
             <RefreshCw size={15} className={loading ? "animate-spin" : ""} />
             Refresh
@@ -86,29 +87,31 @@ export default function YoutubeTrendingTab() {
       </div>
 
       {error && (
-        <div className="rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-600">
+        <div className="rounded-2xl border border-red-200 bg-red-50 dark:bg-red-950/40 px-5 py-4 text-sm text-red-600">
           {error}
         </div>
       )}
 
       {loading && (
-        <div className="flex flex-col items-center justify-center rounded-2xl border bg-white py-24 shadow-sm">
+        <div className="flex flex-col items-center justify-center rounded-2xl border bg-white dark:bg-slate-900 py-24 shadow-sm">
           <Loader2 className="mb-4 h-10 w-10 animate-spin text-indigo-600" />
-          <p className="font-semibold text-slate-700">Memuat video viral...</p>
+          <p className="font-semibold text-slate-700 dark:text-slate-300">Memuat video viral...</p>
         </div>
       )}
 
       {!loading && !error && data && (
         <>
           <div className="flex items-center justify-between">
-            <p className="text-sm text-slate-500">
-              Menampilkan <span className="font-semibold text-slate-700">{data.items?.length ?? 0}</span> dari{" "}
-              <span className="font-semibold text-slate-700">{data.total}</span> video
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              Menampilkan <span className="font-semibold text-slate-700 dark:text-slate-300">{data.items?.length ?? 0}</span> dari{" "}
+              <span className="font-semibold text-slate-700 dark:text-slate-300">{data.total}</span> video
             </p>
-            <p className="text-xs text-slate-400">{data.note}</p>
+            <p className="text-xs text-slate-400 dark:text-slate-500">{data.note}</p>
           </div>
 
           <ViralOverview stats={data.stats} sentiment={data.sentiment} />
+
+          <VisualsPreviewWidget items={data.items} />
 
           <ViralVideoGrid
             data={data.items}

@@ -18,8 +18,8 @@ interface Props {
 function CustomTooltip({ active, payload, label }: any) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-lg">
-      <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide">{label}</p>
+    <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3 shadow-lg">
+      <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide">{label}</p>
       <p className="mt-1 text-lg font-bold text-indigo-600">
         {payload[0].value?.toLocaleString()}
       </p>
@@ -29,13 +29,13 @@ function CustomTooltip({ active, payload, label }: any) {
 
 export default function ExposureChart({ data }: Props) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 shadow-sm">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h2 className="font-semibold text-slate-900">Exposure Trend</h2>
-          <p className="mt-0.5 text-xs text-slate-400">Jumlah konten dari waktu ke waktu</p>
+          <h2 className="font-semibold text-slate-900 dark:text-slate-100">Exposure Trend</h2>
+          <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">Jumlah konten dari waktu ke waktu</p>
         </div>
-        <div className="flex items-center gap-1.5 rounded-lg bg-indigo-50 px-3 py-1.5 text-xs font-semibold text-indigo-600">
+        <div className="flex items-center gap-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 px-3 py-1.5 text-xs font-semibold text-indigo-600">
           <TrendingUp size={13} />
           Timeline
         </div>

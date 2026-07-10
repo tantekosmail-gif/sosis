@@ -5,11 +5,22 @@ import { useCallback, useEffect, useState } from "react";
 import { getTwitterTrending } from "../services/trending.service";
 import type { TwitterTrendingData, TwitterTrendingPost } from "../types/trending.types";
 
+export type TwitterTrendingPeriod = "today" | "week";
+
+function getLastWeekRange() {
+  const to = new Date();
+  const from = new Date();
+  from.setDate(to.getDate() - 6);
+  const fmt = (d: Date) => d.toISOString().slice(0, 10);
+  return { dateFrom: fmt(from), dateTo: fmt(to) };
+}
+
 export function useTwitterTrending() {
   const [data, setData] = useState<TwitterTrendingData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
+  const [period, setPeriod] = useState<TwitterTrendingPeriod>("week");
 
   const fetchData = useCallback(async () => {
     try {
@@ -17,14 +28,15 @@ export function useTwitterTrending() {
       setError("");
       setSelectedPostId(null);
 
-      const result = await getTwitterTrending();
+      const range = period === "week" ? getLastWeekRange() : {};
+      const result = await getTwitterTrending(range);
       setData(result);
     } catch (err: any) {
       setError(err?.message || "Gagal memuat data trending Twitter/X");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [period]);
 
   useEffect(() => {
     fetchData();
@@ -41,5 +53,7 @@ export function useTwitterTrending() {
     selectedPostId,
     setSelectedPostId,
     selectedPost,
+    period,
+    setPeriod,
   };
 }

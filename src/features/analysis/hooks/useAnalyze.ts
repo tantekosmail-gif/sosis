@@ -10,6 +10,7 @@ import { transformDateSearch } from "../transformers/dateSearch.transformer";
 import { collect } from "@/features/search/services/collection.service";
 import { useDashboardStore } from "@/store/dashboard.store";
 import { useFilterStore } from "@/stores/filterStore";
+import { getSettings } from "@/features/settings/hooks/useSettings";
 
 const ALL_PLATFORMS = ["youtube", "tiktok", "instagram", "facebook"];
 
@@ -35,7 +36,8 @@ export function useAnalyze() {
 
     // date-search pakai auto_crawl — tidak perlu collect + polling manual
     if (!usingDateSearch && response.status === "not_found") {
-      await collect({ platform, keyword, maxPages: 2, maxCommentsPerVideo: 50, maxCommentPages: 2 });
+      const { maxPages, maxCommentsPerVideo, maxCommentPages } = getSettings();
+      await collect({ platform, keyword, maxPages, maxCommentsPerVideo, maxCommentPages });
 
       let retries = 20;
       while (retries > 0) {

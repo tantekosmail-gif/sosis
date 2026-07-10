@@ -68,14 +68,14 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
       </div>
 
       {/* Right panel — form */}
-      <div className="flex flex-1 flex-col items-center justify-center bg-slate-50 p-6 lg:p-12">
+      <div className="flex flex-1 flex-col items-center justify-center bg-slate-50 dark:bg-slate-950 p-6 lg:p-12">
         <div className="w-full max-w-md">
           {/* Mobile brand */}
           <div className="mb-8 flex items-center gap-2 lg:hidden">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600">
               <Sparkles size={16} className="text-white" />
             </div>
-            <span className="font-bold text-slate-900">MediaWatch</span>
+            <span className="font-bold text-slate-900 dark:text-slate-100">MediaWatch</span>
           </div>
 
           {children}

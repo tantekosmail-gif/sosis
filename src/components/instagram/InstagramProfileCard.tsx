@@ -12,9 +12,9 @@ const SENTIMENT_LABEL: Record<string, string> = {
 };
 
 const SENTIMENT_COLOR: Record<string, { bg: string; text: string; bar: string }> = {
-  positif: { bg: "bg-emerald-50", text: "text-emerald-700", bar: "bg-emerald-500" },
-  netral: { bg: "bg-amber-50", text: "text-amber-700", bar: "bg-amber-400" },
-  negatif: { bg: "bg-red-50", text: "text-red-700", bar: "bg-red-500" },
+  positif: { bg: "bg-emerald-50 dark:bg-emerald-950/40", text: "text-emerald-700", bar: "bg-emerald-500" },
+  netral: { bg: "bg-amber-50 dark:bg-amber-950/40", text: "text-amber-700", bar: "bg-amber-400" },
+  negatif: { bg: "bg-red-50 dark:bg-red-950/40", text: "text-red-700", bar: "bg-red-500" },
 };
 
 function formatCompact(n?: number) {
@@ -27,12 +27,12 @@ function formatCompact(n?: number) {
 
 function StatCard({ icon: Icon, label, value }: { icon: LucideIcon; label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-      <div className="flex items-center gap-2 text-slate-400">
+    <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
+      <div className="flex items-center gap-2 text-slate-400 dark:text-slate-500">
         <Icon size={15} />
         <span className="text-xs font-semibold uppercase tracking-wider">{label}</span>
       </div>
-      <p className="mt-2 text-xl font-bold text-slate-900">{value}</p>
+      <p className="mt-2 text-xl font-bold text-slate-900 dark:text-slate-100">{value}</p>
     </div>
   );
 }
@@ -56,8 +56,8 @@ export default function InstagramProfileCard({
   return (
     <div className="space-y-4">
       {hasProfile ? (
-        <div className="flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="h-16 w-16 shrink-0 overflow-hidden rounded-full bg-slate-100">
+        <div className="flex items-center gap-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-sm">
+          <div className="h-16 w-16 shrink-0 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
             {userInfo.profile_pic_url ? (
               <img
                 src={userInfo.profile_pic_url}
@@ -74,31 +74,31 @@ export default function InstagramProfileCard({
 
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5">
-              <p className="truncate font-semibold text-slate-900">{userInfo.full_name || userInfo.username}</p>
+              <p className="truncate font-semibold text-slate-900 dark:text-slate-100">{userInfo.full_name || userInfo.username}</p>
               {userInfo.is_verified && <BadgeCheck size={15} className="shrink-0 text-indigo-500" />}
-              {userInfo.is_private && <Lock size={13} className="shrink-0 text-slate-400" />}
+              {userInfo.is_private && <Lock size={13} className="shrink-0 text-slate-400 dark:text-slate-500" />}
             </div>
-            {userInfo.username && <p className="text-sm text-slate-400">@{userInfo.username}</p>}
-            {userInfo.biography && <p className="mt-1.5 line-clamp-2 break-words text-xs text-slate-500">{userInfo.biography}</p>}
+            {userInfo.username && <p className="text-sm text-slate-400 dark:text-slate-500">@{userInfo.username}</p>}
+            {userInfo.biography && <p className="mt-1.5 line-clamp-2 break-words text-xs text-slate-500 dark:text-slate-400">{userInfo.biography}</p>}
           </div>
 
           <div className="flex shrink-0 gap-5 text-center">
             <div>
-              <p className="text-sm font-bold text-slate-800">{formatCompact(userInfo.followers_count)}</p>
-              <p className="text-[11px] text-slate-400">Followers</p>
+              <p className="text-sm font-bold text-slate-800 dark:text-slate-200">{formatCompact(userInfo.followers_count)}</p>
+              <p className="text-[11px] text-slate-400 dark:text-slate-500">Followers</p>
             </div>
             <div>
-              <p className="text-sm font-bold text-slate-800">{formatCompact(userInfo.following_count)}</p>
-              <p className="text-[11px] text-slate-400">Following</p>
+              <p className="text-sm font-bold text-slate-800 dark:text-slate-200">{formatCompact(userInfo.following_count)}</p>
+              <p className="text-[11px] text-slate-400 dark:text-slate-500">Following</p>
             </div>
             <div>
-              <p className="text-sm font-bold text-slate-800">{formatCompact(userInfo.media_count)}</p>
-              <p className="text-[11px] text-slate-400">Postingan</p>
+              <p className="text-sm font-bold text-slate-800 dark:text-slate-200">{formatCompact(userInfo.media_count)}</p>
+              <p className="text-[11px] text-slate-400 dark:text-slate-500">Postingan</p>
             </div>
           </div>
         </div>
       ) : (
-        <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-5 py-4 text-sm text-slate-400">
+        <div className="rounded-2xl border border-dashed border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-5 py-4 text-sm text-slate-400 dark:text-slate-500">
           Profil tidak tersedia dari sumber data
         </div>
       )}
@@ -110,15 +110,15 @@ export default function InstagramProfileCard({
         <StatCard icon={PieChart} label="Coverage" value={`${stats.coverage_pct.toFixed(1)}%`} />
       </div>
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
         <div className="mb-3 flex items-center justify-between">
-          <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Sentimen Komentar</span>
-          <span className="text-[11px] text-slate-400">{sentiment.total_analyzed} komentar dianalisis</span>
+          <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Sentimen Komentar</span>
+          <span className="text-[11px] text-slate-400 dark:text-slate-500">{sentiment.total_analyzed} komentar dianalisis</span>
         </div>
 
         {sentiment.total_analyzed > 0 ? (
           <>
-            <div className="flex h-2 w-full overflow-hidden rounded-full bg-slate-100">
+            <div className="flex h-2 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
               {entries.map((e) => (
                 <div key={e.key} className={SENTIMENT_COLOR[e.key].bar} style={{ width: `${e.percentage}%` }} />
               ))}
@@ -139,7 +139,7 @@ export default function InstagramProfileCard({
             </div>
           </>
         ) : (
-          <p className="text-xs text-slate-400">Belum ada komentar yang dianalisis</p>
+          <p className="text-xs text-slate-400 dark:text-slate-500">Belum ada komentar yang dianalisis</p>
         )}
       </div>
     </div>

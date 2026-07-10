@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Bell, LogOut, ChevronDown, Clock, Menu } from "lucide-react";
+import { Bell, LogOut, ChevronDown, Clock, Menu, Moon, Sun } from "lucide-react";
+import { getSettings, setThemeSetting, type Theme } from "@/features/settings/hooks/useSettings";
+import { applyTheme } from "@/lib/theme";
 
 interface User {
   username?: string;
@@ -16,16 +18,25 @@ interface Props {
   onOpenSidebar?: () => void;
 }
 
+function readUser(): User {
+  try {
+    const stored = localStorage.getItem("user");
+    if (stored) return JSON.parse(stored);
+  } catch {}
+  return {};
+}
+
 export default function AppHeader({ onOpenHistory, historyCount = 0, onOpenSidebar }: Props) {
   const router = useRouter();
-  const [user, setUser] = useState<User>({});
+  const [user] = useState<User>(readUser);
+  const [theme, setTheme] = useState<Theme>(() => getSettings().theme);
 
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem("user");
-      if (stored) setUser(JSON.parse(stored));
-    } catch {}
-  }, []);
+  function toggleTheme() {
+    const next: Theme = theme === "dark" ? "light" : "dark";
+    setTheme(next);
+    applyTheme(next);
+    setThemeSetting(next);
+  }
 
   const handleLogout = () => {
     localStorage.removeItem("access_token");
@@ -37,19 +48,19 @@ export default function AppHeader({ onOpenHistory, historyCount = 0, onOpenSideb
   const initials = (user.username ?? "A").charAt(0).toUpperCase();
 
   return (
-    <header className="h-16 bg-white border-b border-slate-200 px-3 sm:px-6 flex items-center justify-between gap-3 shrink-0">
+    <header className="h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 px-3 sm:px-6 flex items-center justify-between gap-3 shrink-0">
       <div className="flex min-w-0 items-center gap-3">
         <button
           onClick={onOpenSidebar}
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-50 transition lg:hidden"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition lg:hidden"
           aria-label="Buka menu"
         >
           <Menu size={17} />
         </button>
 
         <div className="min-w-0">
-          <h2 className="truncate font-semibold text-slate-900">MediaWatch Dashboard</h2>
-          <p className="hidden truncate text-xs text-slate-400 sm:block">Social Media & News Monitoring</p>
+          <h2 className="truncate font-semibold text-slate-900 dark:text-slate-100">MediaWatch Dashboard</h2>
+          <p className="hidden truncate text-xs text-slate-400 dark:text-slate-500 sm:block">Social Media & News Monitoring</p>
         </div>
       </div>
 
@@ -58,7 +69,7 @@ export default function AppHeader({ onOpenHistory, historyCount = 0, onOpenSideb
         {onOpenHistory && (
           <button
             onClick={onOpenHistory}
-            className="relative flex h-9 items-center gap-2 rounded-xl border border-slate-200 px-2.5 sm:px-3 text-sm text-slate-500 hover:bg-slate-50 transition"
+            className="relative flex h-9 items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-700 px-2.5 sm:px-3 text-sm text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
           >
             <Clock size={15} />
             <span className="hidden sm:inline text-xs font-medium">Riwayat</span>
@@ -70,14 +81,24 @@ export default function AppHeader({ onOpenHistory, historyCount = 0, onOpenSideb
           </button>
         )}
 
+        {/* Theme toggle */}
+        <button
+          onClick={toggleTheme}
+          className="h-9 w-9 shrink-0 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
+          aria-label={theme === "dark" ? "Ganti ke mode cerah" : "Ganti ke mode gelap"}
+          title={theme === "dark" ? "Mode cerah" : "Mode gelap"}
+        >
+          {theme === "dark" ? <Sun size={17} /> : <Moon size={17} />}
+        </button>
+
         {/* Notification */}
-        <button className="relative h-9 w-9 shrink-0 flex items-center justify-center rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-50 transition">
+        <button className="relative h-9 w-9 shrink-0 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
           <Bell size={17} />
-          <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white" />
+          <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white dark:ring-slate-900" />
         </button>
 
         {/* Divider */}
-        <div className="hidden h-8 w-px bg-slate-200 sm:block" />
+        <div className="hidden h-8 w-px bg-slate-200 dark:bg-slate-700 sm:block" />
 
         {/* User */}
         <div className="flex items-center gap-2.5">
@@ -85,18 +106,18 @@ export default function AppHeader({ onOpenHistory, historyCount = 0, onOpenSideb
             {initials}
           </div>
           <div className="hidden md:block">
-            <p className="text-sm font-semibold text-slate-900 leading-none">
+            <p className="text-sm font-semibold text-slate-900 dark:text-slate-100 leading-none">
               {user.username ?? "Administrator"}
             </p>
-            <p className="text-xs text-slate-400 mt-0.5">{user.role ?? "Admin"}</p>
+            <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{user.role ?? "Admin"}</p>
           </div>
-          <ChevronDown size={14} className="hidden text-slate-400 sm:block" />
+          <ChevronDown size={14} className="hidden text-slate-400 dark:text-slate-500 sm:block" />
         </div>
 
         {/* Logout */}
         <button
           onClick={handleLogout}
-          className="flex shrink-0 items-center gap-1.5 rounded-xl border border-slate-200 px-2.5 sm:px-3 py-2 text-xs font-medium text-slate-600 hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition"
+          className="flex shrink-0 items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 px-2.5 sm:px-3 py-2 text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition"
         >
           <LogOut size={14} />
           <span className="hidden sm:inline">Logout</span>

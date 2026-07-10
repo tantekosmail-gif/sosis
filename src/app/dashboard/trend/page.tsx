@@ -25,10 +25,10 @@ export default function TrendChatPage() {
 
   if (checkingAuth) {
     return (
-      <div className="flex h-screen items-center justify-center bg-slate-50">
+      <div className="flex h-screen items-center justify-center bg-slate-50 dark:bg-slate-950">
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
-          <p className="text-sm text-slate-500">Checking authentication...</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Checking authentication...</p>
         </div>
       </div>
     );
@@ -37,8 +37,8 @@ export default function TrendChatPage() {
   return (
     <DashboardLayout>
       <div className="flex flex-col">
-        <h1 className="text-xl font-bold text-slate-800">Cari Topik AI</h1>
-        <p className="mt-1 text-sm text-slate-400">
+        <h1 className="text-xl font-bold text-slate-800 dark:text-slate-200">Cari Topik AI</h1>
+        <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">
           Chat dengan AI untuk mencari &amp; mengirim rekomendasi topik trending
         </p>
 
@@ -50,6 +50,8 @@ export default function TrendChatPage() {
             error={recommendations.error}
             limit={recommendations.limit}
             onLimitChange={recommendations.setLimit}
+            recommendationDate={recommendations.recommendationDate}
+            onRecommendationDateChange={recommendations.setRecommendationDate}
             onRefresh={recommendations.refetch}
           />
         </div>

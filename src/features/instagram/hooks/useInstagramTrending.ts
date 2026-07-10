@@ -5,11 +5,22 @@ import { useCallback, useEffect, useState } from "react";
 import { getInstagramTrending } from "../services/trending.service";
 import type { InstagramTrendingData, InstagramTrendingPost } from "../types/trending.types";
 
+export type InstagramTrendingPeriod = "today" | "week";
+
+function getLastWeekRange() {
+  const to = new Date();
+  const from = new Date();
+  from.setDate(to.getDate() - 6);
+  const fmt = (d: Date) => d.toISOString().slice(0, 10);
+  return { dateFrom: fmt(from), dateTo: fmt(to) };
+}
+
 export function useInstagramTrending() {
   const [data, setData] = useState<InstagramTrendingData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
+  const [period, setPeriod] = useState<InstagramTrendingPeriod>("week");
 
   const fetchData = useCallback(async () => {
     try {
@@ -17,14 +28,15 @@ export function useInstagramTrending() {
       setError("");
       setSelectedPostId(null);
 
-      const result = await getInstagramTrending();
+      const range = period === "week" ? getLastWeekRange() : {};
+      const result = await getInstagramTrending(range);
       setData(result);
     } catch (err: any) {
       setError(err?.message || "Gagal memuat data trending Instagram");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [period]);
 
   useEffect(() => {
     fetchData();
@@ -41,5 +53,7 @@ export function useInstagramTrending() {
     selectedPostId,
     setSelectedPostId,
     selectedPost,
+    period,
+    setPeriod,
   };
 }

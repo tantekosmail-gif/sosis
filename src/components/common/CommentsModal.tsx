@@ -30,7 +30,7 @@ export default function CommentsModal({
               href={url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex min-w-0 items-center gap-1 text-xs text-slate-500 hover:text-slate-700"
+              className="inline-flex min-w-0 items-center gap-1 text-xs text-slate-500 dark:text-slate-400 hover:text-slate-700"
             >
               <span className="min-w-0 flex-1 truncate">{caption || url}</span>
               <ExternalLink size={10} className="shrink-0" />

@@ -4,6 +4,7 @@ import { useCallback, useState } from "react";
 
 import { fetchPlatformSearchResult } from "../services/socialCompare.service";
 import type { ComparablePlatform, PlatformSearchResult } from "../types/socialCompare.types";
+import { getSettings } from "@/features/settings/hooks/useSettings";
 
 const PLATFORMS: ComparablePlatform[] = ["facebook", "instagram", "twitter", "tiktok"];
 
@@ -22,9 +23,10 @@ export function useSocialCompare() {
     setError("");
     setKeyword(trimmed);
 
+    const { searchResultLimit } = getSettings();
     const settled = await Promise.allSettled(
       PLATFORMS.map((platform) =>
-        fetchPlatformSearchResult(platform, { keyword: trimmed, dateFrom, dateTo, limit: 20 })
+        fetchPlatformSearchResult(platform, { keyword: trimmed, dateFrom, dateTo, limit: searchResultLimit })
       )
     );
 

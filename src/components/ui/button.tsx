@@ -16,13 +16,13 @@ const buttonVariants = cva(
         default:
           "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow shadow-indigo-500/25 hover:from-indigo-700 hover:to-violet-700 hover:shadow-md hover:shadow-indigo-500/30",
         secondary:
-          "bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200 hover:text-slate-900",
+          "bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200 hover:text-slate-900 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700",
         outline:
-          "border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300",
+          "border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800",
         ghost:
-          "text-slate-600 hover:bg-slate-100 hover:text-slate-900",
+          "text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700",
         destructive:
-          "bg-red-50 text-red-600 border-red-200 hover:bg-red-100 hover:border-red-300",
+          "bg-red-50 text-red-600 border-red-200 hover:bg-red-100 hover:border-red-300 dark:bg-red-950/40",
         link:
           "text-indigo-600 underline-offset-4 hover:underline p-0 h-auto",
       },

@@ -21,12 +21,12 @@ function CustomTooltip({ active, payload, label }: any) {
   } catch {}
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-lg text-xs">
-      <p className="mb-2 font-semibold text-slate-700">{dateLabel}</p>
+    <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-3 shadow-lg text-xs">
+      <p className="mb-2 font-semibold text-slate-700 dark:text-slate-300">{dateLabel}</p>
       {payload.map((p: any) => (
         <div key={p.dataKey} className="flex items-center gap-2 py-0.5">
           <span className="h-2 w-2 rounded-full" style={{ backgroundColor: p.color }} />
-          <span className="text-slate-500">{p.name}:</span>
+          <span className="text-slate-500 dark:text-slate-400">{p.name}:</span>
           <span className="font-semibold" style={{ color: p.color }}>{p.value}</span>
         </div>
       ))}
@@ -44,14 +44,14 @@ export default function SentimentTimeline({ data }: Props) {
   });
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-      <div className="flex items-center gap-3 border-b border-slate-100 px-6 py-5">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50">
+    <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
+      <div className="flex items-center gap-3 border-b border-slate-100 dark:border-slate-800 px-6 py-5">
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-950/40">
           <TrendingUp size={17} className="text-indigo-600" />
         </div>
         <div>
-          <h2 className="font-semibold text-slate-900">Tren Sentimen Waktu</h2>
-          <p className="text-xs text-slate-400">Perubahan sentimen komentar per hari</p>
+          <h2 className="font-semibold text-slate-900 dark:text-slate-100">Tren Sentimen Waktu</h2>
+          <p className="text-xs text-slate-400 dark:text-slate-500">Perubahan sentimen komentar per hari</p>
         </div>
       </div>
 

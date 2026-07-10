@@ -15,7 +15,7 @@ export default function PageTabs<T extends string>({
   onChange: (key: T) => void;
 }) {
   return (
-    <div className="inline-flex rounded-xl border border-slate-200 bg-slate-50 p-1">
+    <div className="inline-flex rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 p-1">
       {tabs.map((tab) => (
         <button
           key={tab.key}
@@ -23,8 +23,8 @@ export default function PageTabs<T extends string>({
           onClick={() => onChange(tab.key)}
           className={`rounded-lg px-4 py-1.5 text-sm font-medium transition ${
             active === tab.key
-              ? "bg-white text-slate-900 shadow-sm"
-              : "text-slate-500 hover:text-slate-700"
+              ? "bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 shadow-sm"
+              : "text-slate-500 dark:text-slate-400 hover:text-slate-700"
           }`}
         >
           {tab.label}

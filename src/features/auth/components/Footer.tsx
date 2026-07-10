@@ -1,6 +1,6 @@
 export default function Footer() {
   return (
-    <div className="mt-8 text-center text-xs text-slate-500 space-y-2">
+    <div className="mt-8 text-center text-xs text-slate-500 space-y-2 dark:text-slate-400">
       <p>© 2026 MediaWatch. All rights reserved.</p>
 
       <div className="flex justify-center gap-4">

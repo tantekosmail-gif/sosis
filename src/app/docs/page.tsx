@@ -73,13 +73,13 @@ export default function DocsPage() {
   return (
     <DashboardLayout>
       <div>
-        <h1 className="text-xl font-bold text-slate-900">Dokumentasi</h1>
-        <p className="mt-0.5 text-sm text-slate-400">Panduan lengkap penggunaan MediaWatch</p>
+        <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Dokumentasi</h1>
+        <p className="mt-0.5 text-sm text-slate-400 dark:text-slate-500">Panduan lengkap penggunaan MediaWatch</p>
       </div>
 
       <div className="mt-6 flex flex-col gap-6 lg:flex-row lg:items-start">
         <aside className="w-full lg:w-64 lg:shrink-0">
-          <nav className="flex gap-1 overflow-x-auto rounded-2xl border border-slate-200 bg-white p-2 shadow-sm lg:flex-col lg:space-y-1 lg:overflow-visible">
+          <nav className="flex gap-1 overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-2 shadow-sm lg:flex-col lg:space-y-1 lg:overflow-visible">
             {TABS.map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.key;
@@ -88,13 +88,13 @@ export default function DocsPage() {
                   key={tab.key}
                   onClick={() => setActiveTab(tab.key)}
                   className={`flex shrink-0 items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-all lg:w-full ${
-                    isActive ? "bg-indigo-600 text-white shadow shadow-indigo-500/30" : "text-slate-600 hover:bg-slate-50"
+                    isActive ? "bg-indigo-600 text-white shadow shadow-indigo-500/30" : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
                   }`}
                 >
-                  <Icon size={16} className={isActive ? "text-white" : "text-slate-400"} />
+                  <Icon size={16} className={isActive ? "text-white" : "text-slate-400 dark:text-slate-500"} />
                   <div className="min-w-0">
                     <p className="whitespace-nowrap text-sm font-medium leading-none">{tab.label}</p>
-                    <p className={`mt-1 hidden whitespace-nowrap text-[11px] leading-none lg:block ${isActive ? "text-indigo-100" : "text-slate-400"}`}>
+                    <p className={`mt-1 hidden whitespace-nowrap text-[11px] leading-none lg:block ${isActive ? "text-indigo-100" : "text-slate-400 dark:text-slate-500"}`}>
                       {tab.description}
                     </p>
                   </div>
@@ -106,8 +106,8 @@ export default function DocsPage() {
 
         <div className="min-w-0 flex-1 space-y-6">
           <div>
-            <h2 className="font-semibold text-slate-900">{active.label}</h2>
-            <p className="mt-0.5 text-xs text-slate-400">{active.description}</p>
+            <h2 className="font-semibold text-slate-900 dark:text-slate-100">{active.label}</h2>
+            <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">{active.description}</p>
           </div>
           <ActiveSection />
         </div>

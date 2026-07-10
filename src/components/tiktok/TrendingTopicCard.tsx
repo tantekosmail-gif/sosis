@@ -18,11 +18,11 @@ const SENTIMENT_BAR_COLOR: Record<string, string> = {
 };
 
 const STATUS_STYLE: Record<string, string> = {
-  pending: "border-amber-200 bg-amber-50 text-amber-700",
-  used: "border-emerald-200 bg-emerald-50 text-emerald-700",
-  done: "border-emerald-200 bg-emerald-50 text-emerald-700",
-  completed: "border-emerald-200 bg-emerald-50 text-emerald-700",
-  failed: "border-red-200 bg-red-50 text-red-700",
+  pending: "border-amber-200 bg-amber-50 dark:bg-amber-950/40 text-amber-700",
+  used: "border-emerald-200 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700",
+  done: "border-emerald-200 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700",
+  completed: "border-emerald-200 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700",
+  failed: "border-red-200 bg-red-50 dark:bg-red-950/40 text-red-700",
 };
 
 function formatCompact(n?: number) {
@@ -49,7 +49,7 @@ function SentimentBar({ sentiment }: { sentiment: TikTokSentimentBreakdown }) {
   if (total === 0) return null;
 
   return (
-    <div className="flex h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+    <div className="flex h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
       {(["positif", "netral", "negatif"] as const).map((key) => (
         <div key={key} className={SENTIMENT_BAR_COLOR[key]} style={{ width: `${sentiment[key].percentage}%` }} />
       ))}
@@ -59,9 +59,9 @@ function SentimentBar({ sentiment }: { sentiment: TikTokSentimentBreakdown }) {
 
 function MetricPill({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-slate-100 bg-slate-50 px-3 py-2">
-      <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">{label}</p>
-      <p className="mt-0.5 text-sm font-bold text-slate-800">{value}</p>
+    <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 px-3 py-2">
+      <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">{label}</p>
+      <p className="mt-0.5 text-sm font-bold text-slate-800 dark:text-slate-200">{value}</p>
     </div>
   );
 }
@@ -80,20 +80,20 @@ function PostMiniCard({
   return (
     <div
       className={`rounded-xl border p-3 transition-colors ${
-        isSelected ? "border-rose-400 bg-rose-50/40" : "border-slate-100 bg-white"
+        isSelected ? "border-rose-400 bg-rose-50/40" : "border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900"
       }`}
     >
       <a
         href={post.url}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-start gap-1 text-xs font-medium leading-snug text-slate-700 hover:text-rose-600"
+        className="flex items-start gap-1 text-xs font-medium leading-snug text-slate-700 dark:text-slate-300 hover:text-rose-600"
       >
         <span className="line-clamp-3 min-w-0 flex-1 break-words">{post.caption || "(tanpa caption)"}</span>
         <ExternalLink size={10} className="mt-0.5 shrink-0 text-slate-300" />
       </a>
 
-      <div className="mt-2 flex flex-wrap items-center gap-3 text-[11px] text-slate-400">
+      <div className="mt-2 flex flex-wrap items-center gap-3 text-[11px] text-slate-400 dark:text-slate-500">
         <span className="flex items-center gap-1">
           <ThumbsUp size={11} />
           {formatCompact(post.likes)}
@@ -134,21 +134,21 @@ export default function TrendingTopicCard({
   selectedPostId?: string | null;
   onSelectPost?: (post: TikTokTrendingPost) => void;
 }) {
-  const statusStyle = STATUS_STYLE[topic.status?.toLowerCase()] ?? "border-slate-200 bg-slate-50 text-slate-500";
+  const statusStyle = STATUS_STYLE[topic.status?.toLowerCase()] ?? "border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-slate-500";
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <div className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm">
       <div className="flex items-start justify-between gap-4 p-5">
         <div className="flex items-center gap-3">
           <span className={`flex h-8 min-w-8 items-center justify-center rounded-lg px-1.5 text-sm font-bold ${RANK_STYLE[rank] ?? "bg-slate-900/80 text-white"}`}>
             #{rank}
           </span>
           <div>
-            <p className="flex items-center gap-1 font-semibold text-slate-900">
-              <Hash size={14} className="text-slate-400" />
+            <p className="flex items-center gap-1 font-semibold text-slate-900 dark:text-slate-100">
+              <Hash size={14} className="text-slate-400 dark:text-slate-500" />
               {topic.topic}
             </p>
-            {topic.tiktok_identifier && <p className="text-xs text-slate-400">Sumber: @{topic.tiktok_identifier}</p>}
+            {topic.tiktok_identifier && <p className="text-xs text-slate-400 dark:text-slate-500">Sumber: @{topic.tiktok_identifier}</p>}
           </div>
         </div>
 
@@ -166,10 +166,10 @@ export default function TrendingTopicCard({
         <SentimentBar sentiment={topic.sentiment} />
       </div>
 
-      <div className="border-t border-slate-100 px-5 py-4">
-        <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">Video Terkait</p>
+      <div className="border-t border-slate-100 dark:border-slate-800 px-5 py-4">
+        <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Video Terkait</p>
         {topic.posts.length === 0 ? (
-          <p className="text-sm text-slate-400">Belum ada video untuk topik ini</p>
+          <p className="text-sm text-slate-400 dark:text-slate-500">Belum ada video untuk topik ini</p>
         ) : (
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {topic.posts.map((post) => (

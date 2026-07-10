@@ -1,5 +1,6 @@
 import { smartSearch } from "@/features/search/services/search.service";
 import { dateSearch } from "@/features/search/services/dateSearch.service";
+import { getSettings } from "@/features/settings/hooks/useSettings";
 
 export interface AnalyzePayload {
   platform: string;
@@ -17,6 +18,8 @@ export async function analyze(payload: AnalyzePayload) {
     throw new Error("Platform belum didukung");
   }
 
+  const { searchResultLimit } = getSettings();
+
   // Gunakan date-search jika filter tanggal aktif
   if (dateFrom && dateTo) {
     return dateSearch({
@@ -25,7 +28,7 @@ export async function analyze(payload: AnalyzePayload) {
       dateFrom,
       dateTo,
       includeSentiment: true,
-      limit: 20,
+      limit: searchResultLimit,
     });
   }
 
@@ -33,7 +36,7 @@ export async function analyze(payload: AnalyzePayload) {
   return smartSearch({
     platform,
     keyword,
-    limitVideos: 20,
-    limitComments: 20,
+    limitVideos: searchResultLimit,
+    limitComments: searchResultLimit,
   });
 }

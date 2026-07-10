@@ -36,8 +36,16 @@ function normalizeTrendingPost(raw: RawTrendingPost): TwitterTrendingPost {
   };
 }
 
-export async function getTwitterTrending(): Promise<TwitterTrendingData> {
-  const { data } = await api.get<{ data: RawTwitterTrendingData }>("/api/v1/twitter/trending");
+export async function getTwitterTrending(params: {
+  dateFrom?: string;
+  dateTo?: string;
+} = {}): Promise<TwitterTrendingData> {
+  const { data } = await api.get<{ data: RawTwitterTrendingData }>("/api/v1/twitter/trending", {
+    params: {
+      date_from: params.dateFrom || undefined,
+      date_to: params.dateTo || undefined,
+    },
+  });
   const raw = data.data;
 
   return {

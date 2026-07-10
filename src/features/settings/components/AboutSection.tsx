@@ -23,7 +23,7 @@ export default function AboutSection() {
   return (
     <div className="space-y-6">
       {/* Brand card */}
-      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden dark:border-slate-700 dark:bg-slate-900">
         <div className="bg-gradient-to-r from-indigo-600 to-violet-600 px-6 py-8 text-center">
           <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm shadow">
             <Sparkles size={28} className="text-white" />
@@ -36,27 +36,27 @@ export default function AboutSection() {
         </div>
 
         <div className="px-6 py-5 text-center">
-          <p className="text-sm text-slate-500 leading-relaxed max-w-md mx-auto">
+          <p className="text-sm text-slate-500 leading-relaxed max-w-md mx-auto dark:text-slate-400">
             Platform monitoring media sosial & berita berbasis AI untuk memantau, mencari, dan menganalisis tren serta sentimen publik secara real-time di berbagai platform.
           </p>
         </div>
       </div>
 
       {/* Tech stack */}
-      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-        <div className="border-b border-slate-100 px-6 py-5">
-          <h3 className="font-semibold text-slate-900">Tech Stack</h3>
-          <p className="mt-0.5 text-xs text-slate-400">Teknologi yang digunakan dalam aplikasi ini</p>
+      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden dark:border-slate-700 dark:bg-slate-900">
+        <div className="border-b border-slate-100 px-6 py-5 dark:border-slate-800">
+          <h3 className="font-semibold text-slate-900 dark:text-slate-100">Tech Stack</h3>
+          <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">Teknologi yang digunakan dalam aplikasi ini</p>
         </div>
-        <ul className="divide-y divide-slate-100">
+        <ul className="divide-y divide-slate-100 dark:divide-slate-800">
           {STACK.map(({ icon: Icon, label, value }) => (
             <li key={label} className="flex items-center gap-4 px-6 py-4">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-100">
-                <Icon size={16} className="text-slate-600" />
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800">
+                <Icon size={16} className="text-slate-600 dark:text-slate-400" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">{label}</p>
-                <p className="mt-0.5 text-sm text-slate-700 font-mono truncate">{value}</p>
+                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">{label}</p>
+                <p className="mt-0.5 text-sm text-slate-700 font-mono truncate dark:text-slate-300">{value}</p>
               </div>
             </li>
           ))}
@@ -64,9 +64,9 @@ export default function AboutSection() {
       </div>
 
       {/* Platforms */}
-      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-        <div className="border-b border-slate-100 px-6 py-5">
-          <h3 className="font-semibold text-slate-900">Platform yang Didukung</h3>
+      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden dark:border-slate-700 dark:bg-slate-900">
+        <div className="border-b border-slate-100 px-6 py-5 dark:border-slate-800">
+          <h3 className="font-semibold text-slate-900 dark:text-slate-100">Platform yang Didukung</h3>
         </div>
         <div className="grid grid-cols-2 gap-3 p-6 sm:grid-cols-4">
           {PLATFORMS.map((p) => (
@@ -79,11 +79,11 @@ export default function AboutSection() {
       </div>
 
       {/* Links */}
-      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-        <div className="border-b border-slate-100 px-6 py-5">
-          <h3 className="font-semibold text-slate-900">Informasi</h3>
+      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden dark:border-slate-700 dark:bg-slate-900">
+        <div className="border-b border-slate-100 px-6 py-5 dark:border-slate-800">
+          <h3 className="font-semibold text-slate-900 dark:text-slate-100">Informasi</h3>
         </div>
-        <div className="divide-y divide-slate-100">
+        <div className="divide-y divide-slate-100 dark:divide-slate-800">
           {[
             { label: "Dokumentasi", href: "/docs", icon: ExternalLink },
             { label: "Repository", href: "#", icon: GitBranch },
@@ -91,9 +91,9 @@ export default function AboutSection() {
             <a
               key={label}
               href={href}
-              className="flex items-center justify-between px-6 py-4 hover:bg-slate-50 transition-colors"
+              className="flex items-center justify-between px-6 py-4 hover:bg-slate-50 transition-colors dark:hover:bg-slate-800"
             >
-              <span className="text-sm font-medium text-slate-700">{label}</span>
+              <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{label}</span>
               <Icon size={15} className="text-slate-400" />
             </a>
           ))}

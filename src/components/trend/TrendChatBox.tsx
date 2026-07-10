@@ -70,14 +70,14 @@ export function TrendChatBox({ onSubmitted }: { onSubmitted?: () => void } = {})
   }
 
   return (
-    <div className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white shadow-sm">
-      <div className="flex items-center gap-2 border-b border-slate-100 px-5 py-4">
+    <div className="flex h-full flex-col rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm">
+      <div className="flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 px-5 py-4">
         <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white shadow shadow-indigo-500/25">
           <Sparkles size={16} />
         </div>
         <div>
-          <p className="text-sm font-semibold text-slate-900">Cari Topik AI</p>
-          <p className="text-xs text-slate-400">Cari &amp; kirim rekomendasi topik trending</p>
+          <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">Cari Topik AI</p>
+          <p className="text-xs text-slate-400 dark:text-slate-500">Cari &amp; kirim rekomendasi topik trending</p>
         </div>
       </div>
 
@@ -93,32 +93,32 @@ export function TrendChatBox({ onSubmitted }: { onSubmitted?: () => void } = {})
         {log.map((event, i) => (
           <div key={i}>
             {event.type === "status" && (
-              <div className="flex items-center gap-2 text-xs font-medium text-slate-400">
+              <div className="flex items-center gap-2 text-xs font-medium text-slate-400 dark:text-slate-500">
                 <Loader2 size={13} className="animate-spin" />
                 {event.message}
               </div>
             )}
 
             {event.type === "tool_result" && (
-              <div className="rounded-xl border border-indigo-100 bg-indigo-50/60 p-3">
+              <div className="rounded-xl border border-indigo-100 bg-indigo-50/60 dark:bg-indigo-950/40 p-3">
                 <div className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-indigo-700">
                   <Wrench size={12} />
                   {event.tool}
                 </div>
-                <pre className="max-h-56 overflow-auto whitespace-pre-wrap break-words text-[11px] leading-relaxed text-slate-600">
+                <pre className="max-h-56 overflow-auto whitespace-pre-wrap break-words text-[11px] leading-relaxed text-slate-600 dark:text-slate-400">
                   {JSON.stringify(event.result, null, 2)}
                 </pre>
               </div>
             )}
 
             {event.type === "answer" && (
-              <div className="rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-700">
-                {event.text || <span className="text-slate-400">(tidak ada jawaban)</span>}
+              <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-3.5 py-2.5 text-sm text-slate-700 dark:text-slate-300">
+                {event.text || <span className="text-slate-400 dark:text-slate-500">(tidak ada jawaban)</span>}
               </div>
             )}
 
             {event.type === "error" && (
-              <div className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 px-3.5 py-2.5 text-sm text-red-700">
+              <div className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 dark:bg-red-950/40 px-3.5 py-2.5 text-sm text-red-700">
                 <AlertCircle size={15} className="mt-0.5 shrink-0" />
                 {event.message}
               </div>
@@ -128,7 +128,7 @@ export function TrendChatBox({ onSubmitted }: { onSubmitted?: () => void } = {})
         <div ref={logEndRef} />
       </div>
 
-      <div className="flex items-center gap-2 border-t border-slate-100 p-4">
+      <div className="flex items-center gap-2 border-t border-slate-100 dark:border-slate-800 p-4">
         <Input
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}

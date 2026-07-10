@@ -33,7 +33,7 @@ function SentimentBar({ summary }: { summary: TwitterSentimentBreakdown }) {
   if (total === 0) return null;
 
   return (
-    <div className="mt-2 flex h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+    <div className="mt-2 flex h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
       {(["positif", "netral", "negatif"] as const).map((key) => (
         <div key={key} className={SENTIMENT_BAR_COLOR[key]} style={{ width: `${summary[key].percentage}%` }} />
       ))}
@@ -52,7 +52,7 @@ export default function TwitterPostGrid({
 }) {
   if (!data || data.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed border-slate-300 bg-white py-16 text-center text-sm text-slate-400">
+      <div className="rounded-2xl border border-dashed border-slate-300 bg-white dark:bg-slate-900 py-16 text-center text-sm text-slate-400 dark:text-slate-500">
         Tidak ada tweet ditemukan
       </div>
     );
@@ -67,12 +67,12 @@ export default function TwitterPostGrid({
         return (
           <div
             key={item.post_id}
-            className={`overflow-hidden rounded-2xl border bg-white shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md ${
-              isSelected ? "border-sky-400 ring-2 ring-sky-500/20" : "border-slate-200"
+            className={`overflow-hidden rounded-2xl border bg-white dark:bg-slate-900 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md ${
+              isSelected ? "border-sky-400 ring-2 ring-sky-500/20" : "border-slate-200 dark:border-slate-700"
             }`}
           >
             {item.thumbnail && (
-              <a href={item.url} target="_blank" rel="noopener noreferrer" className="relative block aspect-square w-full overflow-hidden bg-slate-100">
+              <a href={item.url} target="_blank" rel="noopener noreferrer" className="relative block aspect-square w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
                 <img
                   src={item.thumbnail}
                   alt=""
@@ -84,35 +84,35 @@ export default function TwitterPostGrid({
 
             <div className="p-4">
               <a href={item.url} target="_blank" rel="noopener noreferrer" className="flex items-start gap-1">
-                <p className="line-clamp-2 min-w-0 flex-1 break-words text-sm leading-snug text-slate-700 hover:text-sky-600 transition-colors">
+                <p className="line-clamp-2 min-w-0 flex-1 break-words text-sm leading-snug text-slate-700 dark:text-slate-300 hover:text-sky-600 transition-colors">
                   {item.caption || "(tanpa teks)"}
                 </p>
                 <ExternalLink size={11} className="mt-0.5 shrink-0 text-slate-300" />
               </a>
 
-              <div className="mt-3 flex items-center justify-between text-xs text-slate-500">
+              <div className="mt-3 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
                 <div className="flex items-center gap-3">
-                  <span className="flex items-center gap-1 font-semibold text-slate-700">
-                    <ThumbsUp size={12} className="text-slate-400" />
+                  <span className="flex items-center gap-1 font-semibold text-slate-700 dark:text-slate-300">
+                    <ThumbsUp size={12} className="text-slate-400 dark:text-slate-500" />
                     {formatCompact(item.likes)}
                   </span>
                   <span className="flex items-center gap-1">
-                    <MessageCircle size={12} className="text-slate-400" />
+                    <MessageCircle size={12} className="text-slate-400 dark:text-slate-500" />
                     {item.comment_count}
                   </span>
                   {item.retweet_count !== undefined && (
                     <span className="flex items-center gap-1">
-                      <Repeat2 size={12} className="text-slate-400" />
+                      <Repeat2 size={12} className="text-slate-400 dark:text-slate-500" />
                       {formatCompact(item.retweet_count)}
                     </span>
                   )}
                 </div>
-                {date && <span className="text-[11px] text-slate-400">{date}</span>}
+                {date && <span className="text-[11px] text-slate-400 dark:text-slate-500">{date}</span>}
               </div>
 
               <SentimentBar summary={item.sentiment_summary} />
 
-              <div className="mt-3 flex items-center justify-end border-t border-slate-100 pt-3">
+              <div className="mt-3 flex items-center justify-end border-t border-slate-100 dark:border-slate-800 pt-3">
                 <button
                   type="button"
                   onClick={() => onSelectPost?.(item)}

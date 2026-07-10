@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { AtSign, Feather, Flame, GitCompareArrows, Home, MessageCircle, Music2, Newspaper, Settings, Sparkles, SquareUser, X } from "lucide-react";
+import { AtSign, ChevronLeft, ChevronRight, Feather, Flame, GitCompareArrows, Home, MessageCircle, Music2, Newspaper, Settings, Sparkles, SquareUser, X } from "lucide-react";
 
 const menus = [
   { name: "Overview",            href: "/overview",          icon: Home            },
@@ -20,9 +20,11 @@ const menus = [
 interface Props {
   open?: boolean;
   onClose?: () => void;
+  collapsed?: boolean;
+  onToggleCollapsed?: () => void;
 }
 
-export default function AppSidebar({ open = false, onClose }: Props) {
+export default function AppSidebar({ open = false, onClose, collapsed = false, onToggleCollapsed }: Props) {
   const pathname = usePathname();
 
   return (
@@ -37,25 +39,25 @@ export default function AppSidebar({ open = false, onClose }: Props) {
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-60 shrink-0 flex-col bg-slate-900 transition-transform duration-200 lg:static lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 flex w-60 shrink-0 flex-col bg-slate-900 transition-all duration-200 lg:static lg:translate-x-0 ${
           open ? "translate-x-0" : "-translate-x-full"
-        }`}
+        } ${collapsed ? "lg:w-20" : "lg:w-60"}`}
       >
         {/* Brand */}
-        <div className="flex h-16 items-center justify-between gap-3 border-b border-slate-800 px-5">
+        <div className={`flex h-16 items-center gap-3 border-b border-slate-800 px-5 ${collapsed ? "lg:justify-center lg:px-0" : "justify-between"}`}>
           <div className="flex items-center gap-3">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+            <div className="h-8 w-8 shrink-0 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
               <Sparkles size={15} className="text-white" />
             </div>
-            <div>
-              <p className="text-white font-bold text-sm leading-none">MediaWatch</p>
-              <p className="text-slate-500 text-[10px] mt-0.5">Media Monitoring</p>
+            <div className={collapsed ? "lg:hidden" : ""}>
+              <p className="text-white font-bold text-sm leading-none whitespace-nowrap">MediaWatch</p>
+              <p className="text-slate-500 text-[10px] mt-0.5 whitespace-nowrap">Media Monitoring</p>
             </div>
           </div>
 
           <button
             onClick={onClose}
-            className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-800 hover:text-white lg:hidden"
+            className={`rounded-lg p-1.5 text-slate-400 hover:bg-slate-800 hover:text-white lg:hidden ${collapsed ? "lg:hidden" : ""}`}
             aria-label="Tutup menu"
           >
             <X size={18} />
@@ -64,7 +66,7 @@ export default function AppSidebar({ open = false, onClose }: Props) {
 
         {/* Nav */}
         <nav className="flex-1 overflow-y-auto p-3 space-y-1">
-          <p className="text-slate-600 text-[10px] font-semibold uppercase tracking-widest px-3 mb-3 mt-2">
+          <p className={`text-slate-600 text-[10px] font-semibold uppercase tracking-widest px-3 mb-3 mt-2 ${collapsed ? "lg:hidden" : ""}`}>
             Main Menu
           </p>
           {menus.map((menu) => {
@@ -76,14 +78,15 @@ export default function AppSidebar({ open = false, onClose }: Props) {
                 key={menu.name}
                 href={menu.href}
                 onClick={onClose}
-                className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all ${
+                title={collapsed ? menu.name : undefined}
+                className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all ${collapsed ? "lg:justify-center" : ""} ${
                   active
                     ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/30"
                     : "text-slate-400 hover:bg-slate-800 hover:text-white"
                 }`}
               >
-                <Icon size={18} />
-                {menu.name}
+                <Icon size={18} className="shrink-0" />
+                <span className={collapsed ? "lg:hidden" : ""}>{menu.name}</span>
               </Link>
             );
           })}
@@ -91,13 +94,28 @@ export default function AppSidebar({ open = false, onClose }: Props) {
 
         {/* Bottom */}
         <div className="border-t border-slate-800 p-3">
-          <div className="rounded-xl bg-gradient-to-r from-indigo-600/20 to-violet-600/20 border border-indigo-500/20 p-3">
-            <p className="text-white text-xs font-semibold">Pro Plan</p>
-            <p className="text-slate-400 text-[10px] mt-0.5">All platforms active</p>
-            <div className="mt-2 h-1 rounded-full bg-slate-700">
-              <div className="h-1 w-3/4 rounded-full bg-gradient-to-r from-indigo-500 to-violet-500" />
+          <div className={collapsed ? "lg:hidden" : ""}>
+            <div className="rounded-xl bg-gradient-to-r from-indigo-600/20 to-violet-600/20 border border-indigo-500/20 p-3">
+              <p className="text-white text-xs font-semibold">Pro Plan</p>
+              <p className="text-slate-400 text-[10px] mt-0.5">All platforms active</p>
+              <div className="mt-2 h-1 rounded-full bg-slate-700">
+                <div className="h-1 w-3/4 rounded-full bg-gradient-to-r from-indigo-500 to-violet-500" />
+              </div>
             </div>
           </div>
+
+          <button
+            onClick={onToggleCollapsed}
+            className="hidden w-full items-center justify-center rounded-xl p-2 text-slate-400 hover:bg-slate-800 hover:text-white lg:flex"
+            aria-label={collapsed ? "Perbesar menu" : "Perkecil menu"}
+            title={collapsed ? "Perbesar menu" : "Perkecil menu"}
+          >
+            {collapsed ? <ChevronRight size={18} /> : (
+              <span className="flex items-center gap-2 text-xs font-medium">
+                <ChevronLeft size={18} /> Perkecil menu
+              </span>
+            )}
+          </button>
         </div>
       </aside>
     </>

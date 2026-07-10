@@ -25,7 +25,7 @@ function NumberInput({
 }) {
   return (
     <div>
-      <label className="mb-1.5 block text-sm font-medium text-slate-700">{label}</label>
+      <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">{label}</label>
       <div className="flex items-center gap-2">
         <input
           type="number"
@@ -33,9 +33,9 @@ function NumberInput({
           max={max}
           value={value}
           onChange={(e) => onChange(Math.min(max, Math.max(min, Number(e.target.value))))}
-          className="h-10 w-24 rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-sm font-mono text-slate-800 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition text-center"
+          className="h-10 w-24 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-3.5 text-sm font-mono text-slate-800 dark:text-slate-200 focus:border-indigo-400 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition text-center"
         />
-        <span className="text-xs text-slate-400">{hint}</span>
+        <span className="text-xs text-slate-400 dark:text-slate-500">{hint}</span>
       </div>
     </div>
   );
@@ -45,10 +45,10 @@ export default function ScrapingSection({ settings, update, onSave, saved }: Pro
   return (
     <div className="space-y-6">
       {/* Default platform */}
-      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-        <div className="border-b border-slate-100 px-6 py-5">
-          <h3 className="font-semibold text-slate-900">Platform Default</h3>
-          <p className="mt-0.5 text-xs text-slate-400">Platform yang dipilih pertama kali saat membuka dashboard</p>
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
+        <div className="border-b border-slate-100 dark:border-slate-800 px-6 py-5">
+          <h3 className="font-semibold text-slate-900 dark:text-slate-100">Platform Default</h3>
+          <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">Platform yang dipilih pertama kali saat membuka dashboard</p>
         </div>
         <div className="px-6 py-6 flex flex-wrap gap-3">
           {PLATFORMS.map((p) => (
@@ -57,8 +57,8 @@ export default function ScrapingSection({ settings, update, onSave, saved }: Pro
               onClick={() => update("defaultPlatform", p.value)}
               className={`flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-medium transition-all ${
                 settings.defaultPlatform === p.value
-                  ? "border-indigo-500 bg-indigo-50 text-indigo-700"
-                  : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+                  ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700"
+                  : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800"
               }`}
             >
               <span className={`h-2.5 w-2.5 rounded-full ${p.color}`} />
@@ -72,10 +72,10 @@ export default function ScrapingSection({ settings, update, onSave, saved }: Pro
       </div>
 
       {/* Scraping params */}
-      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-        <div className="border-b border-slate-100 px-6 py-5">
-          <h3 className="font-semibold text-slate-900">Parameter Scraping</h3>
-          <p className="mt-0.5 text-xs text-slate-400">
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
+        <div className="border-b border-slate-100 dark:border-slate-800 px-6 py-5">
+          <h3 className="font-semibold text-slate-900 dark:text-slate-100">Parameter Scraping</h3>
+          <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">
             Nilai default yang dipakai saat mengumpulkan data baru. Semakin besar = semakin banyak data & waktu lebih lama.
           </p>
         </div>
@@ -109,12 +109,12 @@ export default function ScrapingSection({ settings, update, onSave, saved }: Pro
           </div>
 
           {/* Estimasi */}
-          <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-4">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-4 py-4">
             <div className="flex items-start gap-2">
               <Info size={14} className="mt-0.5 shrink-0 text-indigo-500" />
-              <div className="text-xs text-slate-500 leading-relaxed space-y-1">
+              <div className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed space-y-1">
                 <p>
-                  <span className="font-semibold text-slate-700">Estimasi data:</span>{" "}
+                  <span className="font-semibold text-slate-700 dark:text-slate-300">Estimasi data:</span>{" "}
                   ~{settings.maxPages * 10} video ×{" "}
                   {settings.maxCommentsPerVideo} komentar ={" "}
                   <span className="font-semibold text-indigo-600">
@@ -122,12 +122,91 @@ export default function ScrapingSection({ settings, update, onSave, saved }: Pro
                   </span>
                 </p>
                 <p>
-                  Waktu scraping: <span className="font-semibold text-slate-700">
+                  Waktu scraping: <span className="font-semibold text-slate-700 dark:text-slate-300">
                     ~{Math.ceil((settings.maxPages * settings.maxCommentsPerVideo) / 60)} menit
                   </span> (tergantung koneksi dan platform)
                 </p>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Search / trend fetch params */}
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
+        <div className="border-b border-slate-100 dark:border-slate-800 px-6 py-5">
+          <h3 className="font-semibold text-slate-900 dark:text-slate-100">Parameter Pengambilan Data</h3>
+          <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">
+            Jumlah hasil & rentang waktu default untuk pencarian, trend, dan discover
+          </p>
+        </div>
+
+        <div className="px-6 py-6 space-y-6">
+          <div className="grid gap-6 sm:grid-cols-3">
+            <NumberInput
+              label="Limit Hasil Pencarian"
+              hint="analyze, compare, feed"
+              value={settings.searchResultLimit}
+              min={1}
+              max={100}
+              onChange={(v) => update("searchResultLimit", v)}
+            />
+            <NumberInput
+              label="Limit Visuals Trend"
+              hint="postingan visual lintas platform"
+              value={settings.trendVisualsLimit}
+              min={1}
+              max={50}
+              onChange={(v) => update("trendVisualsLimit", v)}
+            />
+            <NumberInput
+              label="Max Hasil Discover"
+              hint="akun per pencarian discover"
+              value={settings.discoverMaxResults}
+              min={1}
+              max={50}
+              onChange={(v) => update("discoverMaxResults", v)}
+            />
+            <NumberInput
+              label="Jendela Waktu Trend"
+              hint="jam ke belakang"
+              value={settings.trendWindowHours}
+              min={1}
+              max={168}
+              onChange={(v) => update("trendWindowHours", v)}
+            />
+            <NumberInput
+              label="Top Keyword Trend"
+              hint="keyword dilacak di feed/visuals"
+              value={settings.trendTopN}
+              min={1}
+              max={30}
+              onChange={(v) => update("trendTopN", v)}
+            />
+            <NumberInput
+              label="Top Keyword Ranking"
+              hint="Number per Search/Filter"
+              value={settings.trendRankingTopN}
+              min={1}
+              max={50}
+              onChange={(v) => update("trendRankingTopN", v)}
+            />
+            <NumberInput
+              label="Rentang Hari Ranking"
+              hint="rolling window (hari)"
+              value={settings.trendRankingDays}
+              min={1}
+              max={30}
+              onChange={(v) => update("trendRankingDays", v)}
+            />
+            <NumberInput
+              label="Top Berita Ringkasan"
+              hint="ringkasan analisis berita"
+              value={settings.newsSummaryTopN}
+              min={1}
+              max={50}
+              onChange={(v) => update("newsSummaryTopN", v)}
+            />
           </div>
         </div>
       </div>

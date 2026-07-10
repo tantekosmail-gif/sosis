@@ -1,8 +1,32 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
+
+export interface OverviewWidgetVisibility {
+  sentiment: boolean;
+  platformVolume: boolean;
+  trendingSearches: boolean;
+  trendDiscovery: boolean;
+  trendDiscoveryTwitter: boolean;
+  trendDiscoveryTiktok: boolean;
+  trendDiscoveryInstagram: boolean;
+  youtubeVisuals: boolean;
+  trendTimeline: boolean;
+  trendWordCount: boolean;
+  trendNumberPerSearch: boolean;
+  geoDistribution: boolean;
+  trendVisuals: boolean;
+  trendFeed: boolean;
+}
+
+export type OverviewWidgetKey = keyof OverviewWidgetVisibility;
+
+export type Theme = "light" | "dark";
 
 export interface AppSettings {
+  // Appearance
+  theme: Theme;
+
   // AI
   anthropicApiKey: string;
 
@@ -11,6 +35,16 @@ export interface AppSettings {
   maxCommentsPerVideo: number;
   maxCommentPages: number;
 
+  // Search / trend fetch defaults
+  searchResultLimit: number;
+  trendVisualsLimit: number;
+  discoverMaxResults: number;
+  trendWindowHours: number;
+  trendTopN: number;
+  trendRankingTopN: number;
+  trendRankingDays: number;
+  newsSummaryTopN: number;
+
   // Notifications
   notifyOnAnalysisDone: boolean;
   notifyOnAISummaryDone: boolean;
@@ -18,33 +52,91 @@ export interface AppSettings {
 
   // Platform default
   defaultPlatform: string;
+
+  // Overview widget visibility
+  overviewWidgets: OverviewWidgetVisibility;
+
+  // Overview widget order (drives render order on the Overview page)
+  overviewWidgetOrder: OverviewWidgetKey[];
+}
+
+const DEFAULT_OVERVIEW_WIDGETS: OverviewWidgetVisibility = {
+  trendTimeline: true,
+  trendWordCount: true,
+  sentiment: true,
+  platformVolume: true,
+  trendingSearches: true,
+  trendDiscovery: true,
+  trendDiscoveryTwitter: true,
+  trendDiscoveryTiktok: true,
+  trendDiscoveryInstagram: true,
+  youtubeVisuals: true,
+  trendNumberPerSearch: true,
+  geoDistribution: true,
+  trendVisuals: true,
+  trendFeed: true,
+};
+
+const DEFAULT_OVERVIEW_WIDGET_ORDER: OverviewWidgetKey[] = [
+  "sentiment",
+  "trendWordCount",
+  "trendTimeline",
+  "trendingSearches",
+  "trendVisuals",
+  "platformVolume",
+  "youtubeVisuals",
+  "trendDiscovery",
+  "trendDiscoveryTwitter",
+  "trendDiscoveryTiktok",
+  "trendDiscoveryInstagram",
+  "trendNumberPerSearch",
+  "trendFeed",
+  "geoDistribution",
+];
+
+function reconcileOrder(stored: unknown): OverviewWidgetKey[] {
+  const known = new Set<string>(DEFAULT_OVERVIEW_WIDGET_ORDER);
+  const storedArr = Array.isArray(stored) ? (stored as string[]).filter((k) => known.has(k)) : [];
+  const missing = DEFAULT_OVERVIEW_WIDGET_ORDER.filter((k) => !storedArr.includes(k));
+  return [...storedArr, ...missing] as OverviewWidgetKey[];
 }
 
 const DEFAULTS: AppSettings = {
+  theme: "light",
   anthropicApiKey: "",
   maxPages: 5,
   maxCommentsPerVideo: 100,
   maxCommentPages: 3,
+  searchResultLimit: 20,
+  trendVisualsLimit: 12,
+  discoverMaxResults: 10,
+  trendWindowHours: 24,
+  trendTopN: 6,
+  trendRankingTopN: 15,
+  trendRankingDays: 7,
+  newsSummaryTopN: 15,
   notifyOnAnalysisDone: true,
   notifyOnAISummaryDone: true,
   notifyOnError: true,
   defaultPlatform: "youtube",
+  overviewWidgets: DEFAULT_OVERVIEW_WIDGETS,
+  overviewWidgetOrder: DEFAULT_OVERVIEW_WIDGET_ORDER,
 };
 
 const STORAGE_KEY = "app_settings";
 
-export function useSettings() {
-  const [settings, setSettings] = useState<AppSettings>(DEFAULTS);
-  const [saved, setSaved] = useState(false);
+function mergeWithDefaults(stored: Partial<AppSettings>): AppSettings {
+  return {
+    ...DEFAULTS,
+    ...stored,
+    overviewWidgets: { ...DEFAULT_OVERVIEW_WIDGETS, ...stored.overviewWidgets },
+    overviewWidgetOrder: reconcileOrder(stored.overviewWidgetOrder),
+  };
+}
 
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        setSettings({ ...DEFAULTS, ...JSON.parse(stored) });
-      }
-    } catch {}
-  }, []);
+export function useSettings() {
+  const [settings, setSettings] = useState<AppSettings>(getSettings);
+  const [saved, setSaved] = useState(false);
 
   function update<K extends keyof AppSettings>(key: K, value: AppSettings[K]) {
     setSettings((prev) => ({ ...prev, [key]: value }));
@@ -71,7 +163,15 @@ export function useSettings() {
 export function getSettings(): AppSettings {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) return { ...DEFAULTS, ...JSON.parse(stored) };
+    if (stored) return mergeWithDefaults(JSON.parse(stored));
   } catch {}
   return DEFAULTS;
+}
+
+// Persists just the theme immediately, independent of the settings form's
+// explicit Save flow — a theme toggle is expected to apply instantly.
+export function setThemeSetting(theme: Theme) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...getSettings(), theme }));
+  } catch {}
 }

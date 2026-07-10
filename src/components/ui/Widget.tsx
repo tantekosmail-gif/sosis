@@ -17,7 +17,7 @@ export default function Widget({
   onRefresh,
 }: WidgetProps) {
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white shadow-sm">
+    <div className="rounded-2xl border border-gray-200 bg-white shadow-sm dark:bg-slate-900">
       {/* Header */}
       <div className="flex items-center justify-between border-b px-5 py-4">
         <h2 className="text-lg font-semibold">{title}</h2>

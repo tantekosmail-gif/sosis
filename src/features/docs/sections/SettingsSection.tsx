@@ -17,7 +17,7 @@ export default function SettingsSection() {
           Menampilkan provider AI yang aktif (Claude API &middot; claude-haiku-4-5) dan kolom untuk
           menempelkan Anthropic API key. Key yang dimasukkan di sini hanya tersimpan di browser
           (localStorage) dan tidak dikirim ke server &mdash; untuk penggunaan production, gunakan
-          environment variable <span className="font-mono text-xs bg-slate-100 px-1 rounded">ANTHROPIC_API_KEY</span> di server.
+          environment variable <span className="font-mono text-xs bg-slate-100 dark:bg-slate-800 px-1 rounded">ANTHROPIC_API_KEY</span> di server.
         </p>
       </DocCard>
 

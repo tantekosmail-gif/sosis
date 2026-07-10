@@ -7,7 +7,7 @@ export default function SocialLogin() {
 
       <div className="flex items-center gap-4 mb-6">
         <Separator className="flex-1" />
-        <span className="text-xs text-slate-400">
+        <span className="text-xs text-slate-400 dark:text-slate-500">
           OR CONTINUE WITH
         </span>
         <Separator className="flex-1" />
@@ -25,7 +25,7 @@ export default function SocialLogin() {
 
       </div>
 
-      <p className="mt-6 text-center text-sm text-slate-400">
+      <p className="mt-6 text-center text-sm text-slate-400 dark:text-slate-500">
         Don't have an account?{" "}
         <span className="font-medium text-blue-500 cursor-pointer">
           Register

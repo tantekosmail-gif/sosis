@@ -12,19 +12,19 @@ const SENTIMENT_LABEL: Record<string, string> = {
 };
 
 const SENTIMENT_COLOR: Record<string, { bg: string; text: string; bar: string }> = {
-  positif: { bg: "bg-emerald-50", text: "text-emerald-700", bar: "bg-emerald-500" },
-  netral: { bg: "bg-amber-50", text: "text-amber-700", bar: "bg-amber-400" },
-  negatif: { bg: "bg-red-50", text: "text-red-700", bar: "bg-red-500" },
+  positif: { bg: "bg-emerald-50 dark:bg-emerald-950/40", text: "text-emerald-700", bar: "bg-emerald-500" },
+  netral: { bg: "bg-amber-50 dark:bg-amber-950/40", text: "text-amber-700", bar: "bg-amber-400" },
+  negatif: { bg: "bg-red-50 dark:bg-red-950/40", text: "text-red-700", bar: "bg-red-500" },
 };
 
 function StatCard({ icon: Icon, label, value }: { icon: LucideIcon; label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-      <div className="flex items-center gap-2 text-slate-400">
+    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+      <div className="flex items-center gap-2 text-slate-400 dark:text-slate-500">
         <Icon size={15} />
         <span className="text-xs font-semibold uppercase tracking-wider">{label}</span>
       </div>
-      <p className="mt-2 text-xl font-bold text-slate-900">{value}</p>
+      <p className="mt-2 text-xl font-bold text-slate-900 dark:text-slate-100">{value}</p>
     </div>
   );
 }
@@ -50,15 +50,15 @@ export default function ViralOverview({
         <StatCard icon={PieChart} label="Coverage" value={`${stats.coverage_pct.toFixed(1)}%`} />
       </div>
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900">
         <div className="mb-3 flex items-center justify-between">
-          <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Sentimen Komentar</span>
-          <span className="text-[11px] text-slate-400">{sentiment.total_analyzed} komentar dianalisis</span>
+          <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Sentimen Komentar</span>
+          <span className="text-[11px] text-slate-400 dark:text-slate-500">{sentiment.total_analyzed} komentar dianalisis</span>
         </div>
 
         {sentiment.total_analyzed > 0 ? (
           <>
-            <div className="flex h-2 w-full overflow-hidden rounded-full bg-slate-100">
+            <div className="flex h-2 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
               {entries.map((e) => (
                 <div key={e.key} className={SENTIMENT_COLOR[e.key].bar} style={{ width: `${e.percentage}%` }} />
               ))}
@@ -79,7 +79,7 @@ export default function ViralOverview({
             </div>
           </>
         ) : (
-          <p className="text-xs text-slate-400">Belum ada komentar yang dianalisis</p>
+          <p className="text-xs text-slate-400 dark:text-slate-500">Belum ada komentar yang dianalisis</p>
         )}
       </div>
     </div>

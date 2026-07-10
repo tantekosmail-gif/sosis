@@ -36,17 +36,17 @@ export default function LoginForm() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="space-y-5 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm"
+      className="space-y-5 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-700 dark:bg-slate-900"
     >
       {/* Email */}
       <div>
-        <label className="mb-2 block text-sm font-medium text-slate-700">Email</label>
+        <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Email</label>
         <div className="relative">
-          <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
           <Input
             {...register("email")}
             placeholder="name@company.com"
-            className="h-11 pl-10 border-slate-200 bg-slate-50 focus:bg-white"
+            className="h-11 pl-10 border-slate-200 bg-slate-50 focus:bg-white dark:border-slate-700 dark:bg-slate-950 dark:focus:bg-slate-900"
           />
         </div>
         {errors.email && (
@@ -56,19 +56,19 @@ export default function LoginForm() {
 
       {/* Password */}
       <div>
-        <label className="mb-2 block text-sm font-medium text-slate-700">Password</label>
+        <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Password</label>
         <div className="relative">
-          <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
           <Input
             type={showPw ? "text" : "password"}
             {...register("password")}
             placeholder="••••••••"
-            className="h-11 pl-10 pr-10 border-slate-200 bg-slate-50 focus:bg-white"
+            className="h-11 pl-10 pr-10 border-slate-200 bg-slate-50 focus:bg-white dark:border-slate-700 dark:bg-slate-950 dark:focus:bg-slate-900"
           />
           <button
             type="button"
             onClick={() => setShowPw(!showPw)}
-            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-slate-500"
           >
             {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
           </button>
@@ -79,7 +79,7 @@ export default function LoginForm() {
       </div>
 
       {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 dark:bg-red-950/40">
           {error}
         </div>
       )}

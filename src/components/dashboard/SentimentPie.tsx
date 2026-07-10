@@ -16,9 +16,9 @@ function CustomTooltip({ active, payload }: any) {
   if (!active || !payload?.length) return null;
   const d = payload[0];
   return (
-    <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-lg">
-      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{d.name}</p>
-      <p className="mt-1 text-lg font-bold text-slate-800">{d.value?.toLocaleString()}</p>
+    <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3 shadow-lg">
+      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">{d.name}</p>
+      <p className="mt-1 text-lg font-bold text-slate-800 dark:text-slate-200">{d.value?.toLocaleString()}</p>
     </div>
   );
 }
@@ -28,10 +28,10 @@ export default function SentimentPie({ data }: Props) {
   const total = safeData.reduce((s, d) => s + d.total, 0);
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 shadow-sm">
       <div className="mb-5">
-        <h2 className="font-semibold text-slate-900">Analisis Sentimen</h2>
-        <p className="mt-0.5 text-xs text-slate-400">Distribusi komentar berdasarkan sentimen</p>
+        <h2 className="font-semibold text-slate-900 dark:text-slate-100">Analisis Sentimen</h2>
+        <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">Distribusi komentar berdasarkan sentimen</p>
       </div>
 
       <div className="flex items-center gap-6">
@@ -57,8 +57,8 @@ export default function SentimentPie({ data }: Props) {
           </ResponsiveContainer>
           {/* Center label */}
           <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-2xl font-bold text-slate-800">{total.toLocaleString()}</span>
-            <span className="text-xs text-slate-400">total</span>
+            <span className="text-2xl font-bold text-slate-800 dark:text-slate-200">{total.toLocaleString()}</span>
+            <span className="text-xs text-slate-400 dark:text-slate-500">total</span>
           </div>
         </div>
 
@@ -72,17 +72,17 @@ export default function SentimentPie({ data }: Props) {
                 <div className="mb-1.5 flex items-center justify-between text-sm">
                   <div className="flex items-center gap-2">
                     <span className={`h-2.5 w-2.5 rounded-full ${cfg.bg}`} />
-                    <span className="font-medium text-slate-700">{cfg.label}</span>
+                    <span className="font-medium text-slate-700 dark:text-slate-300">{cfg.label}</span>
                   </div>
-                  <span className="font-semibold text-slate-800">{pct}%</span>
+                  <span className="font-semibold text-slate-800 dark:text-slate-200">{pct}%</span>
                 </div>
-                <div className="h-1.5 w-full rounded-full bg-slate-100">
+                <div className="h-1.5 w-full rounded-full bg-slate-100 dark:bg-slate-800">
                   <div
                     className="h-1.5 rounded-full transition-all"
                     style={{ width: `${pct}%`, backgroundColor: cfg.color }}
                   />
                 </div>
-                <p className="mt-0.5 text-right text-[11px] text-slate-400">
+                <p className="mt-0.5 text-right text-[11px] text-slate-400 dark:text-slate-500">
                   {item.total.toLocaleString()} komentar
                 </p>
               </div>

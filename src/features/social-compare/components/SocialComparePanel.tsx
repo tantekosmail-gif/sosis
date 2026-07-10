@@ -22,12 +22,12 @@ const PLATFORM_ORDER: ComparablePlatform[] = ["facebook", "instagram", "twitter"
 function CompareTooltip({ active, payload, label }: any) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-lg text-xs">
-      <p className="mb-1 font-semibold text-slate-700">{label}</p>
+    <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-3 shadow-lg text-xs">
+      <p className="mb-1 font-semibold text-slate-700 dark:text-slate-300">{label}</p>
       {payload.map((p: any) => (
         <div key={p.dataKey} className="flex items-center gap-2 py-0.5">
           <span className="h-2 w-2 rounded-full" style={{ background: p.fill }} />
-          <span className="text-slate-500">{p.name}:</span>
+          <span className="text-slate-500 dark:text-slate-400">{p.name}:</span>
           <span className="font-semibold" style={{ color: p.fill }}>{p.value?.toLocaleString("id-ID")}</span>
         </div>
       ))}
@@ -75,26 +75,26 @@ export default function SocialComparePanel() {
     : [];
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-      <div className="flex items-center gap-3 border-b border-slate-100 px-6 py-5">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-50">
+    <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
+      <div className="flex items-center gap-3 border-b border-slate-100 dark:border-slate-800 px-6 py-5">
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-50 dark:bg-violet-950/40">
           <GitCompareArrows size={17} className="text-violet-600" />
         </div>
         <div>
-          <h2 className="font-semibold text-slate-900">Bandingkan Platform</h2>
-          <p className="text-xs text-slate-400">Bandingkan topik/keyword yang sama antara Facebook, Instagram, Twitter/X &amp; TikTok</p>
+          <h2 className="font-semibold text-slate-900 dark:text-slate-100">Bandingkan Platform</h2>
+          <p className="text-xs text-slate-400 dark:text-slate-500">Bandingkan topik/keyword yang sama antara Facebook, Instagram, Twitter/X &amp; TikTok</p>
         </div>
       </div>
 
       <div className="p-6 space-y-5">
         <form onSubmit={runCompare} className="flex items-center gap-3">
           <div className="flex-1 relative">
-            <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
             <input
               placeholder="Keyword atau hashtag, mis. pemilu2029"
               value={keywordInput}
               onChange={(e) => setKeywordInput(e.target.value)}
-              className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50 pl-9 pr-3 text-sm text-slate-800 placeholder:text-slate-400 focus:border-violet-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-violet-500/20 transition"
+              className="h-10 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 pl-9 pr-3 text-sm text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-violet-400 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-violet-500/20 transition"
             />
           </div>
 
@@ -109,11 +109,11 @@ export default function SocialComparePanel() {
         </form>
 
         {error && (
-          <p className="text-sm text-red-500 rounded-xl bg-red-50 px-4 py-3">{error}</p>
+          <p className="text-sm text-red-500 rounded-xl bg-red-50 dark:bg-red-950/40 px-4 py-3">{error}</p>
         )}
 
         {!loading && Object.keys(platformErrors).length > 0 && (
-          <div className="flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-800">
+          <div className="flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 dark:bg-amber-950/40 px-4 py-3 text-xs text-amber-800">
             <AlertTriangle size={15} className="mt-0.5 shrink-0" />
             <ul className="space-y-0.5">
               {Object.entries(platformErrors).map(([platform, msg]) => (
@@ -128,7 +128,7 @@ export default function SocialComparePanel() {
         {loading && (
           <div className="flex flex-col items-center justify-center py-16">
             <Loader2 size={28} className="animate-spin text-indigo-400 mb-3" />
-            <p className="text-sm text-slate-500">Membandingkan data antar platform...</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">Membandingkan data antar platform...</p>
           </div>
         )}
 
@@ -138,7 +138,7 @@ export default function SocialComparePanel() {
               {activePlatforms.map((p) => (
                 <div key={p} className="flex items-center gap-2">
                   <span className="h-3 w-3 rounded-full" style={{ background: PLATFORM_META[p].color }} />
-                  <span className="text-sm font-semibold text-slate-700">{PLATFORM_META[p].label}: {keyword}</span>
+                  <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">{PLATFORM_META[p].label}: {keyword}</span>
                 </div>
               ))}
             </div>
@@ -150,8 +150,8 @@ export default function SocialComparePanel() {
                 { label: "Sentimen +", key: "sentiment.positif" as const },
                 { label: "Sentimen -", key: "sentiment.negatif" as const },
               ].map(({ label, key }) => (
-                <div key={label} className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                  <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">{label}</p>
+                <div key={label} className="rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-4">
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">{label}</p>
                   <div className="mt-2 flex flex-wrap items-end gap-3">
                     {activePlatforms.map((p) => {
                       const result = results[p]!;
@@ -165,7 +165,7 @@ export default function SocialComparePanel() {
                           <span className="text-[10px] font-semibold" style={{ color: PLATFORM_META[p].color }}>
                             {PLATFORM_META[p].label.slice(0, 2).toUpperCase()}
                           </span>
-                          <p className="text-lg font-bold text-slate-900">{value?.toLocaleString("id-ID")}</p>
+                          <p className="text-lg font-bold text-slate-900 dark:text-slate-100">{value?.toLocaleString("id-ID")}</p>
                         </div>
                       );
                     })}
@@ -176,7 +176,7 @@ export default function SocialComparePanel() {
 
             <div className="grid gap-5 lg:grid-cols-2">
               <div>
-                <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">Volume</p>
+                <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Volume</p>
                 <ResponsiveContainer width="100%" height={200}>
                   <BarChart data={statsData} barGap={4} barSize={20}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
@@ -191,7 +191,7 @@ export default function SocialComparePanel() {
               </div>
 
               <div>
-                <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">Distribusi Sentimen</p>
+                <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Distribusi Sentimen</p>
                 <ResponsiveContainer width="100%" height={200}>
                   <BarChart data={sentimentData} barGap={4} barSize={20}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
@@ -207,7 +207,7 @@ export default function SocialComparePanel() {
             </div>
 
             <div>
-              <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">Perbandingan Keseluruhan</p>
+              <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Perbandingan Keseluruhan</p>
               <ResponsiveContainer width="100%" height={220}>
                 <RadarChart data={radarData}>
                   <PolarGrid stroke="#e2e8f0" />
@@ -230,7 +230,7 @@ export default function SocialComparePanel() {
         )}
 
         {!loading && !hasMultiple && keyword && Object.keys(platformErrors).length === 0 && activePlatforms.length > 0 && (
-          <p className="text-sm text-slate-400 text-center py-6">
+          <p className="text-sm text-slate-400 dark:text-slate-500 text-center py-6">
             Hanya satu platform berhasil dimuat — coba lagi untuk mendapat perbandingan penuh.
           </p>
         )}

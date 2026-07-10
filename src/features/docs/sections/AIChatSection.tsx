@@ -12,7 +12,7 @@ export default function AIChatSection() {
         <ul className="list-disc space-y-1 pl-5">
           <li>
             <strong>Kiri: kotak chat</strong> &mdash; ketik permintaan bebas, contoh:
-            <span className="font-mono text-xs bg-slate-100 px-1 rounded"> &ldquo;cari 10 topik trending soal starbucks hari ini&rdquo;</span>.
+            <span className="font-mono text-xs bg-slate-100 dark:bg-slate-800 px-1 rounded"> &ldquo;cari 10 topik trending soal starbucks hari ini&rdquo;</span>.
             Jawaban AI muncul secara streaming (bertahap), termasuk status proses dan tool yang dijalankan.
           </li>
           <li>

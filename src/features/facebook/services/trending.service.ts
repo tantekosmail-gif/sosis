@@ -31,8 +31,16 @@ function normalizeTrendingPost(raw: RawTrendingPost): FacebookTrendingPost {
   };
 }
 
-export async function getFacebookTrending(): Promise<FacebookTrendingData> {
-  const { data } = await api.get<{ data: RawFacebookTrendingData }>("/api/v1/facebook/trending");
+export async function getFacebookTrending(params: {
+  dateFrom?: string;
+  dateTo?: string;
+} = {}): Promise<FacebookTrendingData> {
+  const { data } = await api.get<{ data: RawFacebookTrendingData }>("/api/v1/facebook/trending", {
+    params: {
+      date_from: params.dateFrom || undefined,
+      date_to: params.dateTo || undefined,
+    },
+  });
   const raw = data.data;
 
   return {

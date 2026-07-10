@@ -12,9 +12,9 @@ const SENTIMENT_LABEL: Record<string, string> = {
 };
 
 const SENTIMENT_COLOR: Record<string, { bg: string; text: string; dot: string }> = {
-  positif: { bg: "bg-emerald-50", text: "text-emerald-700", dot: "bg-emerald-500" },
-  netral: { bg: "bg-amber-50", text: "text-amber-700", dot: "bg-amber-400" },
-  negatif: { bg: "bg-red-50", text: "text-red-700", dot: "bg-red-500" },
+  positif: { bg: "bg-emerald-50 dark:bg-emerald-950/40", text: "text-emerald-700", dot: "bg-emerald-500" },
+  netral: { bg: "bg-amber-50 dark:bg-amber-950/40", text: "text-amber-700", dot: "bg-amber-400" },
+  negatif: { bg: "bg-red-50 dark:bg-red-950/40", text: "text-red-700", dot: "bg-red-500" },
 };
 
 function getSourceName(url: string) {
@@ -56,7 +56,7 @@ export default function NewsResultCard({ item, sentiment }: Props) {
       href={item.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-indigo-200 hover:shadow-md"
+      className="group flex gap-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-sm transition hover:border-indigo-200 hover:shadow-md"
     >
       {item.image_url && (
         <img
@@ -73,7 +73,7 @@ export default function NewsResultCard({ item, sentiment }: Props) {
         <div className="flex items-center gap-2 text-xs font-medium text-indigo-600">
           <span>{getSourceName(item.url)}</span>
           {date && <span className="text-slate-300">•</span>}
-          {date && <span className="text-slate-400">{date}</span>}
+          {date && <span className="text-slate-400 dark:text-slate-500">{date}</span>}
           {sentiment && sentimentColor && (
             <span className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-semibold ${sentimentColor.bg} ${sentimentColor.text}`}>
               <span className={`h-1.5 w-1.5 rounded-full ${sentimentColor.dot}`} />
@@ -82,15 +82,15 @@ export default function NewsResultCard({ item, sentiment }: Props) {
           )}
         </div>
 
-        <h3 className="mt-1 line-clamp-2 font-semibold text-slate-900 group-hover:text-indigo-600">
+        <h3 className="mt-1 line-clamp-2 font-semibold text-slate-900 dark:text-slate-100 group-hover:text-indigo-600">
           {item.title}
         </h3>
 
-        <p className="mt-1.5 line-clamp-2 text-sm text-slate-500">
+        <p className="mt-1.5 line-clamp-2 text-sm text-slate-500 dark:text-slate-400">
           {excerpt(item.content)}
         </p>
 
-        <div className="mt-2 flex items-center gap-3 text-xs text-slate-400">
+        <div className="mt-2 flex items-center gap-3 text-xs text-slate-400 dark:text-slate-500">
           {item.author && <span>{item.author}</span>}
           <span className="flex items-center gap-1 text-slate-300 group-hover:text-indigo-500">
             <ExternalLink size={12} />

@@ -10,20 +10,21 @@ export function useTrendRecommendations() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [limit, setLimit] = useState(20);
+  const [recommendationDate, setRecommendationDate] = useState("");
 
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       setError("");
 
-      const result = await getTrendRecommendations({ limit });
+      const result = await getTrendRecommendations({ limit, recommendationDate });
       setData(result);
     } catch (err: any) {
       setError(err?.message || "Gagal memuat data trend recommendations");
     } finally {
       setLoading(false);
     }
-  }, [limit]);
+  }, [limit, recommendationDate]);
 
   useEffect(() => {
     fetchData();
@@ -35,6 +36,8 @@ export function useTrendRecommendations() {
     error,
     limit,
     setLimit,
+    recommendationDate,
+    setRecommendationDate,
     refetch: fetchData,
   };
 }

@@ -36,22 +36,22 @@ export default function DashboardHeader() {
   };
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white px-6 py-5 shadow-sm">
+    <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-6 py-5 shadow-sm">
       <div className="flex items-center justify-between">
         {/* Left */}
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">
             Social Intelligence Dashboard
           </h1>
 
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             Monitoring & Analytics Platform
           </p>
         </div>
 
         {/* Right */}
         <div className="flex items-center gap-4">
-          <button className="relative flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 hover:bg-slate-50">
+          <button className="relative flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800">
             <Bell size={20} />
             <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500" />
           </button>
@@ -63,11 +63,11 @@ export default function DashboardHeader() {
             </div>
 
             <div>
-              <div className="font-semibold text-slate-900">
+              <div className="font-semibold text-slate-900 dark:text-slate-100">
                 {user.username ?? "Administrator"}
               </div>
 
-              <div className="text-xs text-slate-500">
+              <div className="text-xs text-slate-500 dark:text-slate-400">
                 {user.email ?? "admin@mail.com"}
               </div>
 
@@ -79,7 +79,7 @@ export default function DashboardHeader() {
 
           <button
             onClick={handleLogout}
-            className="flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2 text-sm transition hover:bg-red-50 hover:text-red-600"
+            className="flex items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2 text-sm transition hover:bg-red-50 hover:text-red-600"
           >
             <LogOut size={16} />
             Logout

@@ -19,7 +19,7 @@ interface Props {
 
 export default function ExposureChart({ data }: Props) {
   return (
-    <div className="rounded-xl border bg-white p-5 shadow-sm">
+    <div className="rounded-xl border bg-white p-5 shadow-sm dark:bg-slate-900">
       <h2 className="mb-4 text-lg font-semibold">Exposure Trend</h2>
 
       <div className="h-80">

@@ -10,6 +10,7 @@ import { dateSearch } from "@/features/search/services/dateSearch.service";
 import { transformDashboard } from "@/features/analysis/transformers";
 import { DashboardData } from "@/types/dashboard.type";
 import { useFilterStore } from "@/stores/filterStore";
+import { getSettings } from "@/features/settings/hooks/useSettings";
 
 interface Props {
   platform: string;
@@ -22,12 +23,12 @@ const COLOR_B = "#f43f5e";
 function CompareTooltip({ active, payload, label }: any) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-lg text-xs">
-      <p className="mb-1 font-semibold text-slate-700">{label}</p>
+    <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-lg text-xs dark:border-slate-700 dark:bg-slate-900">
+      <p className="mb-1 font-semibold text-slate-700 dark:text-slate-300">{label}</p>
       {payload.map((p: any) => (
         <div key={p.dataKey} className="flex items-center gap-2 py-0.5">
           <span className="h-2 w-2 rounded-full" style={{ background: p.fill }} />
-          <span className="text-slate-500">{p.name}:</span>
+          <span className="text-slate-500 dark:text-slate-400">{p.name}:</span>
           <span className="font-semibold" style={{ color: p.fill }}>{p.value?.toLocaleString("id-ID")}</span>
         </div>
       ))}
@@ -50,9 +51,10 @@ export default function ComparePanel({ platform, baseKeyword }: Props) {
     setLoading(true);
     setError("");
     try {
+      const { searchResultLimit } = getSettings();
       const [resA, resB] = await Promise.all([
-        dateSearch({ keyword: baseKeyword, platform, dateFrom: startDate, dateTo: endDate, limit: 20, includeSentiment: true }),
-        dateSearch({ keyword: compareKeyword, platform, dateFrom: startDate, dateTo: endDate, limit: 20, includeSentiment: true }),
+        dateSearch({ keyword: baseKeyword, platform, dateFrom: startDate, dateTo: endDate, limit: searchResultLimit, includeSentiment: true }),
+        dateSearch({ keyword: compareKeyword, platform, dateFrom: startDate, dateTo: endDate, limit: searchResultLimit, includeSentiment: true }),
       ]);
       setDataA(transformDashboard(platform, resA, baseKeyword));
       setDataB(transformDashboard(platform, resB, compareKeyword));
@@ -84,15 +86,15 @@ export default function ComparePanel({ platform, baseKeyword }: Props) {
   ] : [];
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+    <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden dark:border-slate-700 dark:bg-slate-900">
       {/* Header */}
-      <div className="flex items-center gap-3 border-b border-slate-100 px-6 py-5">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-50">
+      <div className="flex items-center gap-3 border-b border-slate-100 px-6 py-5 dark:border-slate-800">
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-50 dark:bg-violet-950/40">
           <GitCompareArrows size={17} className="text-violet-600" />
         </div>
         <div>
-          <h2 className="font-semibold text-slate-900">Perbandingan Keyword</h2>
-          <p className="text-xs text-slate-400">Bandingkan dua keyword secara berdampingan</p>
+          <h2 className="font-semibold text-slate-900 dark:text-slate-100">Perbandingan Keyword</h2>
+          <p className="text-xs text-slate-400 dark:text-slate-500">Bandingkan dua keyword secara berdampingan</p>
         </div>
       </div>
 
@@ -105,7 +107,7 @@ export default function ComparePanel({ platform, baseKeyword }: Props) {
             <input
               value={baseKeyword}
               readOnly
-              className="h-10 w-full rounded-xl border border-indigo-200 bg-indigo-50 pl-10 pr-3 text-sm font-medium text-indigo-800"
+              className="h-10 w-full rounded-xl border border-indigo-200 bg-indigo-50 pl-10 pr-3 text-sm font-medium text-indigo-800 dark:bg-indigo-950/40"
             />
           </div>
 
@@ -113,13 +115,13 @@ export default function ComparePanel({ platform, baseKeyword }: Props) {
 
           {/* Keyword B */}
           <div className="flex-1 relative">
-            <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
             <input
               placeholder="Keyword pembanding..."
               value={compareKeyword}
               onChange={(e) => setCompareKeyword(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && runCompare()}
-              className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50 pl-9 pr-3 text-sm text-slate-800 placeholder:text-slate-400 focus:border-rose-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-500/20 transition"
+              className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50 pl-9 pr-3 text-sm text-slate-800 placeholder:text-slate-400 focus:border-rose-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-500/20 transition dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200 dark:placeholder:text-slate-500 dark:focus:bg-slate-900"
             />
           </div>
 
@@ -134,14 +136,14 @@ export default function ComparePanel({ platform, baseKeyword }: Props) {
         </div>
 
         {error && (
-          <p className="text-sm text-red-500 rounded-xl bg-red-50 px-4 py-3">{error}</p>
+          <p className="text-sm text-red-500 rounded-xl bg-red-50 px-4 py-3 dark:bg-red-950/40">{error}</p>
         )}
 
         {/* Loading */}
         {loading && (
           <div className="flex flex-col items-center justify-center py-16">
             <Loader2 size={28} className="animate-spin text-indigo-400 mb-3" />
-            <p className="text-sm text-slate-500">Membandingkan data...</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">Membandingkan data...</p>
           </div>
         )}
 
@@ -152,11 +154,11 @@ export default function ComparePanel({ platform, baseKeyword }: Props) {
             <div className="flex items-center gap-6 justify-center">
               <div className="flex items-center gap-2">
                 <span className="h-3 w-3 rounded-full bg-indigo-500" />
-                <span className="text-sm font-semibold text-slate-700">A: {dataA.keyword}</span>
+                <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">A: {dataA.keyword}</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="h-3 w-3 rounded-full bg-rose-500" />
-                <span className="text-sm font-semibold text-slate-700">B: {dataB.keyword}</span>
+                <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">B: {dataB.keyword}</span>
               </div>
             </div>
 
@@ -168,16 +170,16 @@ export default function ComparePanel({ platform, baseKeyword }: Props) {
                 { label: "Sentimen +",    a: dataA.sentiment.positive,    b: dataB.sentiment.positive },
                 { label: "Sentimen -",    a: dataA.sentiment.negative,    b: dataB.sentiment.negative },
               ].map(({ label, a, b }) => (
-                <div key={label} className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                  <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">{label}</p>
+                <div key={label} className="rounded-2xl border border-slate-100 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950">
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">{label}</p>
                   <div className="mt-2 flex items-end gap-3">
                     <div>
                       <span className="text-[10px] text-indigo-500 font-semibold">A</span>
-                      <p className="text-lg font-bold text-slate-900">{a?.toLocaleString("id-ID")}</p>
+                      <p className="text-lg font-bold text-slate-900 dark:text-slate-100">{a?.toLocaleString("id-ID")}</p>
                     </div>
                     <div>
                       <span className="text-[10px] text-rose-500 font-semibold">B</span>
-                      <p className="text-lg font-bold text-slate-900">{b?.toLocaleString("id-ID")}</p>
+                      <p className="text-lg font-bold text-slate-900 dark:text-slate-100">{b?.toLocaleString("id-ID")}</p>
                     </div>
                   </div>
                 </div>
@@ -188,7 +190,7 @@ export default function ComparePanel({ platform, baseKeyword }: Props) {
             <div className="grid gap-5 lg:grid-cols-2">
               {/* Sentiment bar */}
               <div>
-                <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">Distribusi Sentimen</p>
+                <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Distribusi Sentimen</p>
                 <ResponsiveContainer width="100%" height={200}>
                   <BarChart data={sentimentData} barGap={4} barSize={20}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
@@ -203,7 +205,7 @@ export default function ComparePanel({ platform, baseKeyword }: Props) {
 
               {/* Radar */}
               <div>
-                <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">Perbandingan Keseluruhan</p>
+                <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Perbandingan Keseluruhan</p>
                 <ResponsiveContainer width="100%" height={200}>
                   <RadarChart data={radarData}>
                     <PolarGrid stroke="#e2e8f0" />
