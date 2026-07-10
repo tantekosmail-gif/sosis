@@ -12,8 +12,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "SentimentAI",
-  description: "AI Powered Social Intelligence Platform",
+  title: "MediaWatch",
+  description: "AI-Powered Social Media & News Monitoring Platform",
 };
 
 export default function RootLayout({

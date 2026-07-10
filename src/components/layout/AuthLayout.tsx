@@ -3,7 +3,7 @@ import { Sparkles, BarChart2, Globe, Shield } from "lucide-react";
 
 const FEATURES = [
   { icon: BarChart2, text: "Real-time sentiment analysis across platforms" },
-  { icon: Globe, text: "Multi-platform: YouTube, TikTok, Instagram, Facebook" },
+  { icon: Globe, text: "Multi-platform: YouTube, TikTok, Instagram, Facebook, Twitter/X, News" },
   { icon: Sparkles, text: "AI-powered executive summaries & insights" },
   { icon: Shield, text: "Secure JWT authentication & data privacy" },
 ];
@@ -25,22 +25,22 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
               <Sparkles size={20} className="text-white" />
             </div>
             <div>
-              <p className="text-white font-bold text-lg leading-none">SentimentAI</p>
-              <p className="text-slate-400 text-xs mt-0.5">Social Intelligence Platform</p>
+              <p className="text-white font-bold text-lg leading-none">MediaWatch</p>
+              <p className="text-slate-400 text-xs mt-0.5">Social Media & News Monitoring Platform</p>
             </div>
           </div>
 
           {/* Headline */}
           <div className="mt-16">
             <h1 className="text-4xl font-bold text-white leading-tight">
-              Monitor public sentiment
+              Monitor every platform,
               <br />
               <span className="bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
                 powered by AI.
               </span>
             </h1>
             <p className="mt-4 text-slate-400 text-lg leading-relaxed max-w-sm">
-              Track, analyze, and understand what people are saying about your brand across all major platforms.
+              Track, analyze, and understand what people are saying about your brand across social media and the news.
             </p>
           </div>
 
@@ -75,7 +75,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600">
               <Sparkles size={16} className="text-white" />
             </div>
-            <span className="font-bold text-slate-900">SentimentAI</span>
+            <span className="font-bold text-slate-900">MediaWatch</span>
           </div>
 
           {children}

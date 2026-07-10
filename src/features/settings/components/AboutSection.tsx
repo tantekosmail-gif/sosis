@@ -15,6 +15,8 @@ const PLATFORMS = [
   { name: "TikTok",    color: "bg-slate-100 text-slate-700",   status: "Aktif" },
   { name: "Instagram", color: "bg-pink-100 text-pink-700",     status: "Aktif" },
   { name: "Facebook",  color: "bg-blue-100 text-blue-700",     status: "Aktif" },
+  { name: "Twitter/X", color: "bg-sky-100 text-sky-700",       status: "Aktif" },
+  { name: "Berita",    color: "bg-amber-100 text-amber-700",   status: "Aktif" },
 ];
 
 export default function AboutSection() {
@@ -26,8 +28,8 @@ export default function AboutSection() {
           <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm shadow">
             <Sparkles size={28} className="text-white" />
           </div>
-          <h2 className="text-xl font-bold text-white">SentimentAI</h2>
-          <p className="mt-1 text-indigo-200 text-sm">AI Powered Social Intelligence Platform</p>
+          <h2 className="text-xl font-bold text-white">MediaWatch</h2>
+          <p className="mt-1 text-indigo-200 text-sm">AI-Powered Social Media & News Monitoring Platform</p>
           <div className="mt-3 inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-xs font-semibold text-white">
             v0.1.0 · Development
           </div>
@@ -35,7 +37,7 @@ export default function AboutSection() {
 
         <div className="px-6 py-5 text-center">
           <p className="text-sm text-slate-500 leading-relaxed max-w-md mx-auto">
-            Platform analitik media sosial berbasis AI untuk memantau dan menganalisis sentimen publik secara real-time di berbagai platform.
+            Platform monitoring media sosial & berita berbasis AI untuk memantau, mencari, dan menganalisis tren serta sentimen publik secara real-time di berbagai platform.
           </p>
         </div>
       </div>

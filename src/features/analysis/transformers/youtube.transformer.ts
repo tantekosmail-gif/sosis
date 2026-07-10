@@ -49,13 +49,20 @@ export function transformYoutube(response: any, keyword = ""): DashboardData {
     }
   });
 
-  // PLATFORM
-  const platformDistribution = [
-    {
-      platform: "Youtube",
-      total: total_videos,
-    },
-  ];
+  // CHANNEL DISTRIBUTION — jumlah video per channel (top 8)
+  // Field ini bernama "platformDistribution"/"platform" di shared type (dipakai juga oleh
+  // transformer platform lain), tapi untuk YouTube kita isi dengan breakdown channel karena
+  // "distribusi platform" satu-entry (selalu "Youtube") tidak informatif di halaman yang
+  // memang sudah spesifik YouTube.
+  const channelMap = new Map<string, number>();
+  videos.forEach((video: any) => {
+    const channel = video.channel || "Tidak diketahui";
+    channelMap.set(channel, (channelMap.get(channel) ?? 0) + 1);
+  });
+  const platformDistribution = Array.from(channelMap.entries())
+    .map(([platform, total]) => ({ platform, total }))
+    .sort((a, b) => b.total - a.total)
+    .slice(0, 8);
 
   // TOP POSTS
   const topPosts = videos

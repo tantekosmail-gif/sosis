@@ -24,7 +24,7 @@ export default function TrendingCommentsList({ data }: { data: TrendingComment[]
         const sentimentCfg = SENTIMENT_STYLE[sentiment] ?? SENTIMENT_STYLE.netral;
 
         return (
-          <li key={`${comment.author}-${idx}`} className="px-5 py-4">
+          <li key={comment.id ?? `${comment.author}-${idx}`} className="px-5 py-4">
             <div className="flex items-center justify-between gap-2">
               <span className="text-xs font-semibold text-slate-700">{comment.author}</span>
               <span className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[11px] font-semibold ${sentimentCfg.pill}`}>
@@ -33,7 +33,7 @@ export default function TrendingCommentsList({ data }: { data: TrendingComment[]
               </span>
             </div>
 
-            <p className="mt-1.5 text-sm leading-snug text-slate-600">{comment.content}</p>
+            <p className="mt-1.5 break-words text-sm leading-snug text-slate-600">{comment.content}</p>
           </li>
         );
       })}

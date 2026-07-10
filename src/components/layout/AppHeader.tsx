@@ -38,8 +38,8 @@ export default function AppHeader({ onOpenHistory, historyCount = 0 }: Props) {
   return (
     <header className="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between shrink-0">
       <div>
-        <h2 className="font-semibold text-slate-900">Social Intelligence Dashboard</h2>
-        <p className="text-xs text-slate-400">Monitoring & Analytics Platform</p>
+        <h2 className="font-semibold text-slate-900">MediaWatch Dashboard</h2>
+        <p className="text-xs text-slate-400">Social Media & News Monitoring</p>
       </div>
 
       <div className="flex items-center gap-3">

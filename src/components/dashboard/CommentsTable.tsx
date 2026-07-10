@@ -136,7 +136,7 @@ export default function CommentsTable({ comments }: Props) {
                       {s.label}
                     </span>
                   </div>
-                  <p className="mt-1 text-sm leading-relaxed text-slate-600 line-clamp-2">{comment.content}</p>
+                  <p className="mt-1 break-words text-sm leading-relaxed text-slate-600 line-clamp-2">{comment.content}</p>
                   {comment.likes !== undefined && comment.likes > 0 && (
                     <div className="mt-1.5 flex items-center gap-1 text-xs text-slate-400">
                       <ThumbsUp size={11} />

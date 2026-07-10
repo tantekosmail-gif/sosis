@@ -1,7 +1,7 @@
 export default function Footer() {
   return (
     <div className="mt-8 text-center text-xs text-slate-500 space-y-2">
-      <p>© 2026 SentimentAI. All rights reserved.</p>
+      <p>© 2026 MediaWatch. All rights reserved.</p>
 
       <div className="flex justify-center gap-4">
         <button className="hover:text-white">

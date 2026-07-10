@@ -37,8 +37,8 @@ export default function PlatformChart({ data }: Props) {
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
       <div className="mb-5">
-        <h2 className="font-semibold text-slate-900">Distribusi Platform</h2>
-        <p className="mt-0.5 text-xs text-slate-400">Jumlah konten per platform</p>
+        <h2 className="font-semibold text-slate-900">Distribusi Channel</h2>
+        <p className="mt-0.5 text-xs text-slate-400">Jumlah video per channel untuk keyword ini</p>
       </div>
 
       <div className="h-52">
@@ -47,6 +47,8 @@ export default function PlatformChart({ data }: Props) {
             <XAxis
               dataKey={data[0]?.platform !== undefined ? "platform" : "sentiment"}
               tick={{ fontSize: 11, fill: "#94a3b8" }}
+              tickFormatter={(value: string) => (value.length > 12 ? `${value.slice(0, 12)}…` : value)}
+              interval={0}
               axisLine={false}
               tickLine={false}
             />

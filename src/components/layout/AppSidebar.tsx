@@ -2,12 +2,18 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Flame, LayoutDashboard, Settings, Sparkles, TrendingUp } from "lucide-react";
+import { AtSign, Feather, Flame, GitCompareArrows, Home, MessageCircle, Music2, Newspaper, Settings, Sparkles, SquareUser } from "lucide-react";
 
 const menus = [
-  { name: "Dashboard",           href: "/dashboard",         icon: LayoutDashboard },
-  { name: "Viral Video",         href: "/viral",             icon: Flame           },
-  { name: "Instagram Trending",  href: "/instagram/trending", icon: TrendingUp     },
+  { name: "Overview",            href: "/overview",          icon: Home            },
+  { name: "YouTube",             href: "/youtube",           icon: Flame           },
+  { name: "Instagram",           href: "/instagram",         icon: AtSign          },
+  { name: "Facebook",            href: "/facebook",          icon: SquareUser      },
+  { name: "Twitter/X",           href: "/twitter",           icon: Feather         },
+  { name: "TikTok",              href: "/tiktok",            icon: Music2          },
+  { name: "Berita",              href: "/news",              icon: Newspaper       },
+  { name: "Bandingkan Platform", href: "/compare/social",    icon: GitCompareArrows },
+  { name: "Cari Topik AI",       href: "/dashboard/trend",   icon: MessageCircle   },
   { name: "Settings",            href: "/settings",          icon: Settings        },
 ];
 
@@ -22,8 +28,8 @@ export default function AppSidebar() {
           <Sparkles size={15} className="text-white" />
         </div>
         <div>
-          <p className="text-white font-bold text-sm leading-none">SentimentAI</p>
-          <p className="text-slate-500 text-[10px] mt-0.5">Social Intelligence</p>
+          <p className="text-white font-bold text-sm leading-none">MediaWatch</p>
+          <p className="text-slate-500 text-[10px] mt-0.5">Media Monitoring</p>
         </div>
       </div>
 

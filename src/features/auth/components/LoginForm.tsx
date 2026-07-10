@@ -27,7 +27,7 @@ export default function LoginForm() {
     setError("");
     try {
       await login(data.email, data.password);
-      router.replace("/dashboard");
+      router.replace("/overview");
     } catch (err) {
       setError((err as Error).message);
     }

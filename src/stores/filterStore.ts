@@ -1,12 +1,5 @@
 import { create } from "zustand";
 
-function getDefaultDates() {
-  const now = new Date();
-  const end = now.toISOString().substring(0, 10);
-  const start = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().substring(0, 10);
-  return { start, end };
-}
-
 interface FilterState {
   topic: string;
   platform: string;
@@ -27,19 +20,16 @@ interface FilterState {
   setKeyword: (v: string) => void;
 }
 
-const { start: defaultStart, end: defaultEnd } = getDefaultDates();
-
 export const useFilterStore = create<FilterState>((set) => ({
   topic: "Tim Urai Kemacetan",
 
-  // platform: "global",
   platform: "youtube",
 
   interval: "1d",
 
-  startDate: defaultStart,
+  startDate: "",
 
-  endDate: defaultEnd,
+  endDate: "",
 
   keyword: "",
 

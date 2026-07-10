@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { getInstagramTrending } from "../services/trending.service";
-import type { InstagramTrendingData, TrendingPost } from "../types/trending.types";
+import type { InstagramTrendingData, InstagramTrendingPost } from "../types/trending.types";
 
 export function useInstagramTrending() {
   const [data, setData] = useState<InstagramTrendingData | null>(null);
@@ -30,8 +30,8 @@ export function useInstagramTrending() {
     fetchData();
   }, [fetchData]);
 
-  const selectedPost: TrendingPost | null =
-    data?.accounts.flatMap((account) => account.posts).find((post) => post.post_id === selectedPostId) ?? null;
+  const selectedPost: InstagramTrendingPost | null =
+    data?.topics?.flatMap((topic) => topic.posts).find((post) => post.post_id === selectedPostId) ?? null;
 
   return {
     data,

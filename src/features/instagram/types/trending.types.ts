@@ -10,41 +10,39 @@ export interface TrendingSentimentBreakdown {
 }
 
 export interface TrendingComment {
+  id?: string;
+  comment_id?: string;
   content: string;
   author: string;
   sentiment: "positif" | "netral" | "negatif" | string;
   score: number;
 }
 
-export interface TrendingPost {
+export interface InstagramTrendingPost {
   post_id: string;
   url: string;
   caption: string;
   likes: number;
   comment_count: number;
-  thumbnail: string;
+  thumbnail?: string;
   published_at: string;
   comments: TrendingComment[];
 }
 
-export interface TrendingAccount {
-  rank: number;
-  username: string;
-  display_name: string;
-  followers: number;
-  trending_score: number;
-  engagement_rate: number;
-  virality_score: number;
-  source: string;
-  discovered_via: string;
-  last_scraped: string | null;
+export interface InstagramTrendingTopic {
+  topic: string;
+  score: number;
+  status: string;
+  instagram_identifier: string;
   sentiment: TrendingSentimentBreakdown;
-  posts: TrendingPost[];
+  posts: InstagramTrendingPost[];
 }
 
 export interface InstagramTrendingData {
   platform: string;
-  total_accounts: number;
+  date: string;
+  total_topics: number;
   updated_daily: string;
-  accounts: TrendingAccount[];
+  message?: string;
+  topics: InstagramTrendingTopic[];
 }
