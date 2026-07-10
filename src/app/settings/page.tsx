@@ -46,10 +46,10 @@ export default function SettingsPage() {
         <p className="mt-0.5 text-sm text-slate-400">Kelola akun, konfigurasi AI, dan preferensi aplikasi</p>
       </div>
 
-      <div className="flex gap-6 items-start">
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
         {/* Sidebar nav */}
-        <aside className="w-56 shrink-0">
-          <nav className="space-y-1 rounded-2xl border border-slate-200 bg-white p-2 shadow-sm">
+        <aside className="w-full lg:w-56 lg:shrink-0">
+          <nav className="flex gap-1 overflow-x-auto rounded-2xl border border-slate-200 bg-white p-2 shadow-sm lg:flex-col lg:space-y-1 lg:overflow-visible">
             {TABS.map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.key;
@@ -57,7 +57,7 @@ export default function SettingsPage() {
                 <button
                   key={tab.key}
                   onClick={() => setActiveTab(tab.key)}
-                  className={`w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-all ${
+                  className={`flex shrink-0 items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-all lg:w-full ${
                     isActive
                       ? "bg-indigo-600 text-white shadow shadow-indigo-500/30"
                       : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
@@ -65,8 +65,8 @@ export default function SettingsPage() {
                 >
                   <Icon size={16} className={isActive ? "text-white" : "text-slate-400"} />
                   <div>
-                    <p className="text-sm font-medium leading-none">{tab.label}</p>
-                    <p className={`mt-0.5 text-[11px] leading-none ${isActive ? "text-indigo-200" : "text-slate-400"}`}>
+                    <p className="whitespace-nowrap text-sm font-medium leading-none">{tab.label}</p>
+                    <p className={`mt-0.5 hidden whitespace-nowrap text-[11px] leading-none lg:block ${isActive ? "text-indigo-200" : "text-slate-400"}`}>
                       {tab.description}
                     </p>
                   </div>
@@ -77,7 +77,7 @@ export default function SettingsPage() {
         </aside>
 
         {/* Content */}
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 flex-1">
           {/* Section header */}
           <div className="mb-5 flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50">

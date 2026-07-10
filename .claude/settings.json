@@ -112,7 +112,10 @@
       "Bash(node /private/tmp/claude-501/-Users-yusufyacobonaola-Documents-dev-admin-dashboard/7c896a58-3a6f-4985-9299-ef363d44d688/scratchpad/verify-overflow2.mjs)",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/youtube)",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3000/youtube)",
-      "Bash(node /private/tmp/claude-501/-Users-yusufyacobonaola-Documents-dev-admin-dashboard/7c896a58-3a6f-4985-9299-ef363d44d688/scratchpad/verify-channel-chart.mjs)"
+      "Bash(node /private/tmp/claude-501/-Users-yusufyacobonaola-Documents-dev-admin-dashboard/7c896a58-3a6f-4985-9299-ef363d44d688/scratchpad/verify-channel-chart.mjs)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3000/overview)",
+      "Bash(node /private/tmp/claude-501/-Users-yusufyacobonaola-Documents-dev-admin-dashboard/7c896a58-3a6f-4985-9299-ef363d44d688/scratchpad/audit-mobile.mjs)",
+      "Bash(node /private/tmp/claude-501/-Users-yusufyacobonaola-Documents-dev-admin-dashboard/7c896a58-3a6f-4985-9299-ef363d44d688/scratchpad/verify-mobile-shell.mjs)"
     ],
     "additionalDirectories": [
       "/private/tmp/claude-501/-Users-yusufyacobonaola-Documents-dev-admin-dashboard/3e0a509c-9d3a-4fa3-ae16-a23b1c716b45/scratchpad",

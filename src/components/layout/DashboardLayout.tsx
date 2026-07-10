@@ -1,4 +1,6 @@
-import { ReactNode } from "react";
+"use client";
+
+import { ReactNode, useState } from "react";
 import AppSidebar from "./AppSidebar";
 import AppHeader from "./AppHeader";
 
@@ -9,15 +11,21 @@ interface Props {
 }
 
 export default function DashboardLayout({ children, onOpenHistory, historyCount }: Props) {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   return (
     <div className="flex h-screen bg-slate-50 overflow-hidden">
-      <AppSidebar />
+      <AppSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       <div className="flex-1 flex flex-col overflow-hidden">
-        <AppHeader onOpenHistory={onOpenHistory} historyCount={historyCount} />
+        <AppHeader
+          onOpenHistory={onOpenHistory}
+          historyCount={historyCount}
+          onOpenSidebar={() => setSidebarOpen(true)}
+        />
 
         <main className="flex-1 overflow-y-auto">
-          <div className="p-6 space-y-6 max-w-screen-2xl mx-auto">
+          <div className="p-4 sm:p-6 space-y-6 max-w-screen-2xl mx-auto">
             {children}
           </div>
         </main>
