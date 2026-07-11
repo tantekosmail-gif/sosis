@@ -10,6 +10,7 @@ import {
   Tooltip,
 } from "recharts";
 import { TrendingUp } from "lucide-react";
+import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 interface Props {
   data: { date: string; total: number }[];
@@ -28,16 +29,17 @@ function CustomTooltip({ active, payload, label }: any) {
 }
 
 export default function ExposureChart({ data }: Props) {
+  const { t } = useTranslation();
   return (
     <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 shadow-sm">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h2 className="font-semibold text-slate-900 dark:text-slate-100">Exposure Trend</h2>
-          <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">Jumlah konten dari waktu ke waktu</p>
+          <h2 className="font-semibold text-slate-900 dark:text-slate-100">{t.exposureChart.title}</h2>
+          <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">{t.exposureChart.subtitle}</p>
         </div>
         <div className="flex items-center gap-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 px-3 py-1.5 text-xs font-semibold text-indigo-600">
           <TrendingUp size={13} />
-          Timeline
+          {t.exposureChart.badge}
         </div>
       </div>
 

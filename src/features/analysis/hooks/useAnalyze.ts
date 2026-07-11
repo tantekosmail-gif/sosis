@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "sonner";
 
 import { analyze } from "../services/analysis.service";
 import { transformDashboard } from "../transformers";
@@ -11,6 +12,7 @@ import { collect } from "@/features/search/services/collection.service";
 import { useDashboardStore } from "@/store/dashboard.store";
 import { useFilterStore } from "@/stores/filterStore";
 import { getSettings } from "@/features/settings/hooks/useSettings";
+import { pushNotification } from "@/features/notifications/hooks/useNotifications";
 
 const ALL_PLATFORMS = ["youtube", "tiktok", "instagram", "facebook"];
 
@@ -82,10 +84,26 @@ export function useAnalyze() {
       }
 
       setDashboard(dashboard);
+
+      if (getSettings().notifyOnAnalysisDone) {
+        const title = `Analisis "${keyword}" selesai`;
+        const message = `Platform: ${platform === "global" ? "Semua platform" : platform}`;
+        toast.success(title, { description: message });
+        pushNotification({ type: "success", title, message });
+      }
+
       return dashboard;
     } catch (err: any) {
       console.error(err);
-      setError(err?.message || "Terjadi kesalahan");
+      const message = err?.message || "Terjadi kesalahan";
+      setError(message);
+
+      if (getSettings().notifyOnError) {
+        const title = `Analisis "${keyword}" gagal`;
+        toast.error(title, { description: message });
+        pushNotification({ type: "error", title, message });
+      }
+
       throw err;
     } finally {
       setLoading(false);

@@ -2,6 +2,7 @@
 
 import { SmilePlus, Frown, MessageCircle, Eye } from "lucide-react";
 import DashboardCard from "./DashboardCard";
+import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 interface Props {
   summary: {
@@ -27,6 +28,7 @@ function formatReach(n: number): string {
 }
 
 export default function DashboardCardGrid({ summary, sentiment }: Props) {
+  const { t } = useTranslation();
   const total = (sentiment.positive ?? 0) + (sentiment.neutral ?? 0) + (sentiment.negative ?? 0);
   const posPct = pct(sentiment.positive ?? 0, total);
   const negPct = pct(sentiment.negative ?? 0, total);
@@ -35,33 +37,33 @@ export default function DashboardCardGrid({ summary, sentiment }: Props) {
   return (
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       <DashboardCard
-        title="Sentimen Positif"
+        title={t.exposureCards.positiveSentiment}
         value={`${posPct}%`}
-        subtitle={`${(sentiment.positive ?? 0).toLocaleString("id-ID")} dari ${total.toLocaleString("id-ID")} komentar`}
+        subtitle={`${(sentiment.positive ?? 0).toLocaleString("id-ID")} ${t.exposureCards.ofPrefix} ${total.toLocaleString("id-ID")} ${t.exposureCards.commentsUnit}`}
         icon={SmilePlus}
         color="emerald"
         progress={posPct}
       />
       <DashboardCard
-        title="Sentimen Negatif"
+        title={t.exposureCards.negativeSentiment}
         value={`${negPct}%`}
-        subtitle={`${(sentiment.negative ?? 0).toLocaleString("id-ID")} dari ${total.toLocaleString("id-ID")} komentar`}
+        subtitle={`${(sentiment.negative ?? 0).toLocaleString("id-ID")} ${t.exposureCards.ofPrefix} ${total.toLocaleString("id-ID")} ${t.exposureCards.commentsUnit}`}
         icon={Frown}
         color="red"
         progress={negPct}
         alert={negAlert}
       />
       <DashboardCard
-        title="Total Komentar"
+        title={t.exposureCards.totalComments}
         value={(summary.totalComments ?? 0).toLocaleString("id-ID")}
-        subtitle="komentar terkumpul"
+        subtitle={t.exposureCards.commentsCollected}
         icon={MessageCircle}
         color="indigo"
       />
       <DashboardCard
-        title="Total Reach"
+        title={t.exposureCards.totalReach}
         value={formatReach(summary.reach ?? 0)}
-        subtitle="estimasi jangkauan views"
+        subtitle={t.exposureCards.reachEstimate}
         icon={Eye}
         color="violet"
       />

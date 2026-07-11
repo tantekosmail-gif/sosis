@@ -6,13 +6,15 @@ import TrendingTopicCard from "@/components/instagram/TrendingTopicCard";
 import TrendingCommentsList from "@/components/instagram/TrendingCommentsList";
 import CommentsModal from "@/components/common/CommentsModal";
 import { useInstagramTrending } from "../hooks/useInstagramTrending";
-
-const PERIOD_OPTIONS = [
-  { key: "today", label: "Hari Ini" },
-  { key: "week", label: "1 Minggu" },
-] as const;
+import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 export default function InstagramTrendingTab() {
+  const { t } = useTranslation();
+  const tp = t.trendingTopicTab.instagram;
+  const PERIOD_OPTIONS = [
+    { key: "today", label: t.trendingTopicTab.periodToday },
+    { key: "week", label: t.trendingTopicTab.periodWeek },
+  ] as const;
   const {
     data,
     loading,
@@ -29,9 +31,9 @@ export default function InstagramTrendingTab() {
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="font-semibold text-slate-900 dark:text-slate-100">Topik Trending</h2>
+          <h2 className="font-semibold text-slate-900 dark:text-slate-100">{t.trendingTopicTab.title}</h2>
           <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">
-            Topik dengan skor trending tertinggi di Instagram, diperbarui otomatis setiap hari
+            {tp.subtitle}
           </p>
         </div>
 
@@ -57,7 +59,7 @@ export default function InstagramTrendingTab() {
             className="flex h-10 shrink-0 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-50 transition dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400 dark:hover:bg-slate-800"
           >
             <RefreshCw size={15} className={loading ? "animate-spin" : ""} />
-            Refresh
+            {t.accountSentimentTab.refreshButton}
           </button>
         </div>
       </div>
@@ -71,7 +73,7 @@ export default function InstagramTrendingTab() {
       {loading && (
         <div className="flex flex-col items-center justify-center rounded-2xl border bg-white py-24 shadow-sm dark:bg-slate-900">
           <Loader2 className="mb-4 h-10 w-10 animate-spin text-indigo-600" />
-          <p className="font-semibold text-slate-700 dark:text-slate-300">Memuat topik trending...</p>
+          <p className="font-semibold text-slate-700 dark:text-slate-300">{t.trendingTopicTab.loadingTitle}</p>
         </div>
       )}
 
@@ -79,14 +81,14 @@ export default function InstagramTrendingTab() {
         <>
           <div className="flex items-center justify-between">
             <p className="text-sm text-slate-500 dark:text-slate-400">
-              <span className="font-semibold text-slate-700 dark:text-slate-300">{data.total_topics}</span> topik trending
+              <span className="font-semibold text-slate-700 dark:text-slate-300">{data.total_topics}</span> {t.trendingTopicTab.totalTopicsSuffix}
             </p>
-            <p className="text-xs text-slate-400 dark:text-slate-500">Diperbarui setiap {data.updated_daily}</p>
+            <p className="text-xs text-slate-400 dark:text-slate-500">{t.trendingTopicTab.updatedPrefix} {data.updated_daily}</p>
           </div>
 
           {(data.topics ?? []).length === 0 ? (
             <div className="rounded-2xl border border-dashed border-slate-300 bg-white py-16 text-center text-sm text-slate-400 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-500">
-              {data.message || "Belum ada topik trending ditemukan"}
+              {data.message || t.trendingTopicTab.emptyDefault}
             </div>
           ) : (
             <div className="space-y-4">

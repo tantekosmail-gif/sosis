@@ -1,7 +1,9 @@
 "use client";
 
+import { useState, type DragEvent } from "react";
 import { CheckCircle2, ChevronDown, ChevronUp, GripVertical } from "lucide-react";
 import { AppSettings, OverviewWidgetKey } from "../hooks/useSettings";
+import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 interface Props {
   settings: AppSettings;
@@ -36,13 +38,24 @@ function Toggle({
 
 function WidgetRow({
   title, description, checked, onChange, onMoveUp, onMoveDown, disableUp, disableDown,
+  isDragging, onDragStart, onDragOver, onDrop, onDragEnd,
 }: {
   title: string; description: string; checked: boolean; onChange: (v: boolean) => void;
   onMoveUp: () => void; onMoveDown: () => void; disableUp: boolean; disableDown: boolean;
+  isDragging: boolean; onDragStart: () => void; onDragOver: (e: DragEvent) => void; onDrop: () => void; onDragEnd: () => void;
 }) {
   return (
-    <div className="flex items-center gap-3 py-4 border-b border-slate-100 dark:border-slate-800 last:border-0">
-      <GripVertical size={16} className="shrink-0 text-slate-300" />
+    <div
+      draggable
+      onDragStart={onDragStart}
+      onDragOver={onDragOver}
+      onDrop={onDrop}
+      onDragEnd={onDragEnd}
+      className={`flex items-center gap-3 py-4 border-b border-slate-100 dark:border-slate-800 last:border-0 transition-opacity ${
+        isDragging ? "opacity-40" : ""
+      }`}
+    >
+      <GripVertical size={16} className="shrink-0 cursor-grab text-slate-300 active:cursor-grabbing" />
 
       <div className="flex shrink-0 flex-col">
         <button
@@ -93,10 +106,18 @@ const WIDGET_META: Record<OverviewWidgetKey, { title: string; description: strin
 };
 
 export default function OverviewWidgetsSection({ settings, update, onSave, saved }: Props) {
+  const { t } = useTranslation();
   const order = settings.overviewWidgetOrder;
+  const [draggedKey, setDraggedKey] = useState<OverviewWidgetKey | null>(null);
 
   function setWidget(key: OverviewWidgetKey, value: boolean) {
-    update("overviewWidgets", { ...settings.overviewWidgets, [key]: value });
+    const nextWidgets = { ...settings.overviewWidgets, [key]: value };
+    update("overviewWidgets", nextWidgets);
+
+    // Widget aktif dikelompokkan ke atas, nonaktif ke bawah — urutan relatif dalam tiap kelompok tetap dipertahankan.
+    const active = order.filter((k) => nextWidgets[k]);
+    const inactive = order.filter((k) => !nextWidgets[k]);
+    update("overviewWidgetOrder", [...active, ...inactive]);
   }
 
   function moveWidget(key: OverviewWidgetKey, direction: -1 | 1) {
@@ -109,12 +130,24 @@ export default function OverviewWidgetsSection({ settings, update, onSave, saved
     update("overviewWidgetOrder", next);
   }
 
+  function reorderWidget(sourceKey: OverviewWidgetKey, targetKey: OverviewWidgetKey) {
+    if (sourceKey === targetKey) return;
+    const sourceIndex = order.indexOf(sourceKey);
+    const targetIndex = order.indexOf(targetKey);
+    if (sourceIndex === -1 || targetIndex === -1) return;
+
+    const next = [...order];
+    next.splice(sourceIndex, 1);
+    next.splice(targetIndex, 0, sourceKey);
+    update("overviewWidgetOrder", next);
+  }
+
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
         <div className="border-b border-slate-100 dark:border-slate-800 px-6 py-5">
-          <h3 className="font-semibold text-slate-900 dark:text-slate-100">Widget Overview</h3>
-          <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">Atur widget mana saja yang tampil, dan urutannya, di halaman Overview</p>
+          <h3 className="font-semibold text-slate-900 dark:text-slate-100">{t.settings.widgetsPage.title}</h3>
+          <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">{t.settings.widgetsPage.desc}</p>
         </div>
 
         <div className="px-6">
@@ -133,6 +166,14 @@ export default function OverviewWidgetsSection({ settings, update, onSave, saved
                 onMoveDown={() => moveWidget(key, 1)}
                 disableUp={index === 0}
                 disableDown={index === order.length - 1}
+                isDragging={draggedKey === key}
+                onDragStart={() => setDraggedKey(key)}
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={() => {
+                  if (draggedKey) reorderWidget(draggedKey, key);
+                  setDraggedKey(null);
+                }}
+                onDragEnd={() => setDraggedKey(null)}
               />
             );
           })}
@@ -144,7 +185,7 @@ export default function OverviewWidgetsSection({ settings, update, onSave, saved
           onClick={onSave}
           className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-5 py-2.5 text-sm font-semibold text-white shadow shadow-indigo-500/20 hover:from-indigo-700 hover:to-violet-700 transition"
         >
-          {saved ? <><CheckCircle2 size={15} /> Tersimpan!</> : "Simpan Pengaturan"}
+          {saved ? <><CheckCircle2 size={15} /> {t.common.saved}</> : t.settings.widgetsPage.saveButton}
         </button>
       </div>
     </div>

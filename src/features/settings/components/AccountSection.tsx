@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { User, Mail, Shield, KeyRound, Eye, EyeOff, Save } from "lucide-react";
+import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 interface UserProfile {
   username: string;
@@ -10,6 +11,7 @@ interface UserProfile {
 }
 
 export default function AccountSection() {
+  const { t } = useTranslation();
   const [profile, setProfile] = useState<UserProfile>({ username: "", email: "", role: "" });
   const [showOld, setShowOld] = useState(false);
   const [showNew, setShowNew] = useState(false);
@@ -35,8 +37,8 @@ export default function AccountSection() {
       {/* Profile */}
       <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden dark:border-slate-700 dark:bg-slate-900">
         <div className="border-b border-slate-100 px-6 py-5 dark:border-slate-800">
-          <h3 className="font-semibold text-slate-900 dark:text-slate-100">Profil Akun</h3>
-          <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">Informasi dasar akun yang ditampilkan di dashboard</p>
+          <h3 className="font-semibold text-slate-900 dark:text-slate-100">{t.settings.account.profileTitle}</h3>
+          <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">{t.settings.account.profileDesc}</p>
         </div>
 
         <div className="px-6 py-6 space-y-5">
@@ -54,7 +56,7 @@ export default function AccountSection() {
           <div className="grid gap-4 sm:grid-cols-2">
             {/* Username */}
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Username</label>
+              <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">{t.settings.account.username}</label>
               <div className="relative">
                 <User size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                 <input
@@ -67,7 +69,7 @@ export default function AccountSection() {
 
             {/* Email */}
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Email</label>
+              <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">{t.settings.account.email}</label>
               <div className="relative">
                 <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                 <input
@@ -80,7 +82,7 @@ export default function AccountSection() {
 
             {/* Role */}
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Role</label>
+              <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">{t.settings.account.role}</label>
               <div className="relative">
                 <Shield size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                 <select
@@ -102,7 +104,7 @@ export default function AccountSection() {
               className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-5 py-2.5 text-sm font-semibold text-white shadow shadow-indigo-500/20 hover:from-indigo-700 hover:to-violet-700 transition"
             >
               <Save size={15} />
-              {saved ? "Tersimpan!" : "Simpan Profil"}
+              {saved ? t.common.saved : t.settings.account.saveProfile}
             </button>
           </div>
         </div>
@@ -111,14 +113,14 @@ export default function AccountSection() {
       {/* Change Password */}
       <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden dark:border-slate-700 dark:bg-slate-900">
         <div className="border-b border-slate-100 px-6 py-5 dark:border-slate-800">
-          <h3 className="font-semibold text-slate-900 dark:text-slate-100">Ubah Password</h3>
-          <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">Gunakan password yang kuat dan unik</p>
+          <h3 className="font-semibold text-slate-900 dark:text-slate-100">{t.settings.account.passwordTitle}</h3>
+          <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">{t.settings.account.passwordDesc}</p>
         </div>
 
         <div className="px-6 py-6 space-y-4">
           {/* Old password */}
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Password Lama</label>
+            <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">{t.settings.account.oldPassword}</label>
             <div className="relative">
               <KeyRound size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
@@ -136,7 +138,7 @@ export default function AccountSection() {
 
           {/* New password */}
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Password Baru</label>
+            <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">{t.settings.account.newPassword}</label>
             <div className="relative">
               <KeyRound size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
@@ -161,7 +163,7 @@ export default function AccountSection() {
               className="flex items-center gap-2 rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition disabled:cursor-not-allowed disabled:opacity-40"
             >
               <KeyRound size={15} />
-              Ubah Password
+              {t.settings.account.changePassword}
             </button>
           </div>
         </div>
@@ -170,12 +172,12 @@ export default function AccountSection() {
       {/* Danger zone */}
       <div className="rounded-2xl border border-red-200 bg-red-50/40 shadow-sm overflow-hidden dark:bg-red-950/40">
         <div className="border-b border-red-100 px-6 py-5">
-          <h3 className="font-semibold text-red-700">Zona Berbahaya</h3>
-          <p className="mt-0.5 text-xs text-red-400">Tindakan ini tidak dapat dibatalkan</p>
+          <h3 className="font-semibold text-red-700">{t.settings.account.dangerZoneTitle}</h3>
+          <p className="mt-0.5 text-xs text-red-400">{t.settings.account.dangerZoneDesc}</p>
         </div>
         <div className="flex items-center justify-between px-6 py-5">
           <div>
-            <p className="text-sm font-medium text-slate-700 dark:text-slate-300">Keluar dari semua sesi</p>
+            <p className="text-sm font-medium text-slate-700 dark:text-slate-300">{t.settings.account.logoutAllTitle}</p>
             <p className="text-xs text-slate-400 mt-0.5 dark:text-slate-500">Menghapus semua token autentikasi yang tersimpan</p>
           </div>
           <button
@@ -185,7 +187,7 @@ export default function AccountSection() {
             }}
             className="rounded-xl border border-red-200 bg-white px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50 transition dark:bg-slate-900 dark:hover:bg-red-950/40"
           >
-            Logout Semua Sesi
+            {t.settings.account.logoutAllButton}
           </button>
         </div>
       </div>

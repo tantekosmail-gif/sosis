@@ -1,6 +1,7 @@
 "use client";
 
 import { Sparkles, GitBranch, ExternalLink, Server, Cpu, Database, Globe } from "lucide-react";
+import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 const STACK = [
   { icon: Globe,    label: "Frontend",    value: "Next.js 16 · React 19 · TypeScript" },
@@ -20,6 +21,7 @@ const PLATFORMS = [
 ];
 
 export default function AboutSection() {
+  const { t } = useTranslation();
   return (
     <div className="space-y-6">
       {/* Brand card */}
@@ -45,8 +47,8 @@ export default function AboutSection() {
       {/* Tech stack */}
       <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden dark:border-slate-700 dark:bg-slate-900">
         <div className="border-b border-slate-100 px-6 py-5 dark:border-slate-800">
-          <h3 className="font-semibold text-slate-900 dark:text-slate-100">Tech Stack</h3>
-          <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">Teknologi yang digunakan dalam aplikasi ini</p>
+          <h3 className="font-semibold text-slate-900 dark:text-slate-100">{t.settings.about.techStackTitle}</h3>
+          <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">{t.settings.about.techStackDesc}</p>
         </div>
         <ul className="divide-y divide-slate-100 dark:divide-slate-800">
           {STACK.map(({ icon: Icon, label, value }) => (
@@ -66,7 +68,7 @@ export default function AboutSection() {
       {/* Platforms */}
       <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden dark:border-slate-700 dark:bg-slate-900">
         <div className="border-b border-slate-100 px-6 py-5 dark:border-slate-800">
-          <h3 className="font-semibold text-slate-900 dark:text-slate-100">Platform yang Didukung</h3>
+          <h3 className="font-semibold text-slate-900 dark:text-slate-100">{t.settings.about.platformsTitle}</h3>
         </div>
         <div className="grid grid-cols-2 gap-3 p-6 sm:grid-cols-4">
           {PLATFORMS.map((p) => (
@@ -81,12 +83,12 @@ export default function AboutSection() {
       {/* Links */}
       <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden dark:border-slate-700 dark:bg-slate-900">
         <div className="border-b border-slate-100 px-6 py-5 dark:border-slate-800">
-          <h3 className="font-semibold text-slate-900 dark:text-slate-100">Informasi</h3>
+          <h3 className="font-semibold text-slate-900 dark:text-slate-100">{t.settings.about.infoTitle}</h3>
         </div>
         <div className="divide-y divide-slate-100 dark:divide-slate-800">
           {[
-            { label: "Dokumentasi", href: "/docs", icon: ExternalLink },
-            { label: "Repository", href: "#", icon: GitBranch },
+            { label: t.settings.about.docs, href: "/docs", icon: ExternalLink },
+            { label: t.settings.about.repository, href: "#", icon: GitBranch },
           ].map(({ label, href, icon: Icon }) => (
             <a
               key={label}

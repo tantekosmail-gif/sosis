@@ -8,9 +8,11 @@ import { Mail, Lock, LogIn, Eye, EyeOff } from "lucide-react";
 import { loginSchema, LoginSchema } from "../types/login.schema";
 import { login } from "../services/auth.service";
 import { Input } from "@/components/ui/input";
+import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 export default function LoginForm() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [error, setError] = useState("");
   const [showPw, setShowPw] = useState(false);
 
@@ -40,7 +42,7 @@ export default function LoginForm() {
     >
       {/* Email */}
       <div>
-        <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Email</label>
+        <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">{t.auth.emailLabel}</label>
         <div className="relative">
           <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
           <Input
@@ -56,7 +58,7 @@ export default function LoginForm() {
 
       {/* Password */}
       <div>
-        <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Password</label>
+        <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">{t.auth.passwordLabel}</label>
         <div className="relative">
           <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
           <Input
@@ -90,7 +92,7 @@ export default function LoginForm() {
         className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-sm font-semibold text-white shadow shadow-indigo-500/30 transition hover:from-indigo-700 hover:to-violet-700 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
       >
         <LogIn size={16} />
-        {isSubmitting ? "Signing in..." : "Sign In"}
+        {isSubmitting ? t.auth.signingIn : t.auth.signIn}
       </button>
     </form>
   );

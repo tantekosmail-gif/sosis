@@ -1,0 +1,351 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "active": "Active",
+    "saved": "Saved!",
+    "checkingAuth": "Checking authentication..."
+  },
+  "sidebar": {
+    "mainMenu": "Main Menu",
+    "overview": "Overview",
+    "youtube": "YouTube",
+    "instagram": "Instagram",
+    "facebook": "Facebook",
+    "twitter": "Twitter/X",
+    "tiktok": "TikTok",
+    "news": "News",
+    "comparePlatforms": "Compare Platforms",
+    "aiTopicSearch": "AI Topic Search",
+    "topics": "Topics",
+    "settings": "Settings",
+    "brandTagline": "Media Monitoring"
+  },
+  "header": {
+    "dashboardTitle": "MediaWatch Dashboard",
+    "dashboardSubtitle": "Social Media & News Monitoring",
+    "history": "History",
+    "notifications": "Notifications",
+    "noNotifications": "No notifications yet",
+    "clearAll": "Clear all",
+    "logout": "Logout",
+    "language": "Language",
+    "lightMode": "Light mode",
+    "darkMode": "Dark mode"
+  },
+  "overview": {
+    "title": "Overview",
+    "subtitle": "Summary of activity & sentiment across all monitored platforms",
+    "resultsTitle": "Search results for"
+  },
+  "platforms": {
+    "youtube": { "subtitle": "Viral videos & keyword sentiment analysis for YouTube" },
+    "instagram": { "subtitle": "Trending accounts & comment sentiment analysis for Instagram" },
+    "facebook": { "subtitle": "Trending topics & comment sentiment analysis for Facebook" },
+    "twitter": { "subtitle": "Trending topics & reply sentiment analysis for Twitter/X" },
+    "tiktok": { "subtitle": "Trending topics & comment sentiment analysis for TikTok" }
+  },
+  "news": {
+    "title": "News",
+    "subtitle": "Trending topics & search for the latest news across sources",
+    "searchTab": "Search"
+  },
+  "compare": {
+    "title": "Compare Platforms",
+    "subtitle": "Compare the same topic/keyword across Facebook, Instagram, Twitter/X & TikTok"
+  },
+  "accountSentimentTab": {
+    "title": "Sentiment Analysis",
+    "analyzeButton": "Analyze",
+    "refreshButton": "Refresh",
+    "loadingDesc": "Scraping may take a few seconds",
+    "scrapeErrorDesc": "The data below (if any) is from a previous scrape, not the latest.",
+    "instagram": {
+      "desc": "Analyze comment sentiment from an Instagram account's posts",
+      "usernameLabel": "Instagram Username",
+      "countLabel": "Post Count",
+      "countUnit": "posts",
+      "refreshTitle": "Fetch the latest data from Instagram",
+      "loadingTitle": "Fetching & analyzing Instagram data...",
+      "emptyState": "Enter an Instagram username to see the sentiment analysis",
+      "scrapeErrorTitle": "Failed to fetch the latest data from Instagram"
+    },
+    "facebook": {
+      "desc": "Analyze comment sentiment from a Facebook page/profile's posts",
+      "usernameLabel": "Facebook Username / Page ID",
+      "countLabel": "Post Count",
+      "countUnit": "posts",
+      "refreshTitle": "Fetch the latest data from Facebook",
+      "loadingTitle": "Fetching & analyzing Facebook data...",
+      "emptyState": "Enter a Facebook username/page to see the sentiment analysis",
+      "scrapeErrorTitle": "Failed to fetch the latest data from Facebook"
+    },
+    "twitter": {
+      "desc": "Analyze reply sentiment from a Twitter/X account's tweets",
+      "usernameLabel": "Twitter/X Username",
+      "countLabel": "Tweet Count",
+      "countUnit": "tweets",
+      "refreshTitle": "Fetch the latest data from Twitter/X",
+      "loadingTitle": "Fetching & analyzing Twitter/X data...",
+      "emptyState": "Enter a Twitter/X username to see the sentiment analysis",
+      "scrapeErrorTitle": "Failed to fetch the latest data from Twitter/X",
+      "repliesModalTitle": "Replies"
+    },
+    "tiktok": {
+      "desc": "Analyze comment sentiment from a TikTok account's videos",
+      "usernameLabel": "TikTok Username",
+      "countLabel": "Video Count",
+      "countUnit": "videos",
+      "refreshTitle": "Fetch the latest data from TikTok",
+      "loadingTitle": "Fetching & analyzing TikTok data...",
+      "emptyState": "Enter a TikTok username to see the sentiment analysis",
+      "scrapeErrorTitle": "Failed to fetch the latest data from TikTok"
+    }
+  },
+  "commentsTable": {
+    "title": "Comments",
+    "searchPlaceholder": "Search comments or author...",
+    "all": "All",
+    "empty": "No comments found"
+  },
+  "sentimentTimeline": {
+    "title": "Sentiment Trend Over Time",
+    "subtitle": "Daily change in comment sentiment"
+  },
+  "wordCloud": {
+    "loading": "Loading word cloud...",
+    "title": "Word Cloud",
+    "subtitle": "The 50 most frequent words in the comments"
+  },
+  "topPostsTable": {
+    "title": "Top Videos",
+    "subtitle": "Top 10 content by views",
+    "noData": "No data",
+    "noImage": "No img"
+  },
+  "platformChart": {
+    "title": "Channel Distribution",
+    "subtitle": "Number of videos per channel for this keyword"
+  },
+  "sentimentPie": {
+    "title": "Sentiment Analysis",
+    "subtitle": "Comment distribution by sentiment",
+    "positive": "Positive",
+    "neutral": "Neutral",
+    "negative": "Negative",
+    "commentsUnit": "comments"
+  },
+  "exposureChart": {
+    "title": "Exposure Trend",
+    "subtitle": "Content volume over time",
+    "badge": "Timeline"
+  },
+  "exposureCards": {
+    "positiveSentiment": "Positive Sentiment",
+    "negativeSentiment": "Negative Sentiment",
+    "totalComments": "Total Comments",
+    "totalReach": "Total Reach",
+    "ofPrefix": "of",
+    "commentsUnit": "comments",
+    "commentsCollected": "comments collected",
+    "reachEstimate": "estimated view reach"
+  },
+  "trendingTopicTab": {
+    "title": "Trending Topics",
+    "periodToday": "Today",
+    "periodWeek": "1 Week",
+    "loadingTitle": "Loading trending topics...",
+    "totalTopicsSuffix": "trending topics",
+    "updatedPrefix": "Updated every",
+    "schedulePrefix": "Schedule:",
+    "emptyDefault": "No trending topics found yet",
+    "instagram": { "subtitle": "Topics with the highest trending score on Instagram, updated automatically every day" },
+    "facebook": { "subtitle": "Topics with the highest trending score on Facebook, updated automatically every day" },
+    "twitter": { "subtitle": "Topics with the highest trending score on Twitter/X, updated automatically every day" },
+    "tiktok": { "subtitle": "Topics with the highest trending score on TikTok, updated automatically every day" }
+  },
+  "youtubeTrendingTab": {
+    "title": "Viral Videos",
+    "subtitle": "YouTube videos with the highest view counts across all data in the database",
+    "searchLabel": "Search",
+    "searchPlaceholder": "Search by title, channel, or keyword...",
+    "countLabel": "Count",
+    "countUnit": "videos",
+    "loadingTitle": "Loading viral videos...",
+    "showingPrefix": "Showing",
+    "showingMiddle": "of",
+    "showingSuffix": "videos"
+  },
+  "youtubeSentimentTab": {
+    "desc": "Search a keyword to analyze YouTube video & comment sentiment",
+    "loadingTitle": "Analyzing...",
+    "loadingDesc": "Collecting and processing data from YouTube",
+    "emptyTitle": "No analysis results yet",
+    "emptyDescPrefix": "Enter a keyword above, then click",
+    "emptyDescSuffix": "to get started."
+  },
+  "notFound": {
+    "title": "Page not found",
+    "desc": "The URL you're looking for isn't available or has been moved.",
+    "backToOverview": "Back to Overview",
+    "toLogin": "Go to Login"
+  },
+  "docs": {
+    "title": "Documentation",
+    "subtitle": "A complete guide to using MediaWatch",
+    "tabs": {
+      "intro": { "label": "Introduction", "description": "What MediaWatch is" },
+      "start": { "label": "Getting Started", "description": "Login & navigation" },
+      "overview": { "label": "Dashboard Overview", "description": "Cross-platform summary" },
+      "platforms": { "label": "Social Media Monitoring", "description": "YouTube, Instagram, etc." },
+      "news": { "label": "News", "description": "Trending & news search" },
+      "compare": { "label": "Compare Platforms", "description": "One topic, many platforms" },
+      "ai": { "label": "AI Topic Search", "description": "Trending chat assistant" },
+      "settings": { "label": "Settings", "description": "Account, AI, & analysis" },
+      "tips": { "label": "Tips & Notes", "description": "Important things to know" }
+    }
+  },
+  "trendChat": {
+    "title": "AI Topic Search",
+    "subtitle": "Chat with AI to find & send trending topic recommendations"
+  },
+  "auth": {
+    "welcomeBack": "Welcome back",
+    "signInDesc": "Sign in to your MediaWatch account to continue.",
+    "emailLabel": "Email",
+    "passwordLabel": "Password",
+    "signIn": "Sign In",
+    "signingIn": "Signing in...",
+    "heroTitle1": "Monitor every platform,",
+    "heroTitle2": "powered by AI.",
+    "heroDesc": "Track, analyze, and understand what people are saying about your brand across social media and the news.",
+    "quote": "Precision social intelligence for data-driven teams. Know what the public thinks before it becomes a crisis."
+  },
+  "search": {
+    "keywordPlaceholderEmpty": "Type a keyword and press Enter...",
+    "keywordPlaceholderMore": "Add another keyword...",
+    "similarTopics": "Similar topics",
+    "searchButton": "Search",
+    "searching": "Searching...",
+    "errorKeywordRequired": "Enter at least one keyword",
+    "errorSearchFailed": "Search failed. Please try again."
+  },
+  "topics": {
+    "pageTitle": "Topics",
+    "addButton": "Add Topic",
+    "pageSubtitle": "Manage your list of topics and their keywords for monitoring",
+    "listTitle": "Topic List",
+    "topicsSaved": "topics saved",
+    "emptyTitle": "No topics yet",
+    "emptyDesc": "Add a new topic using the form above.",
+    "nameLabel": "Topic Name",
+    "namePlaceholder": "e.g. Jakarta Traffic Research",
+    "keywordLabel": "Keyword",
+    "keywordPlaceholderEmpty": "Type a keyword and press Enter...",
+    "keywordPlaceholderMore": "Add another keyword...",
+    "errorNameRequired": "Topic name is required",
+    "errorKeywordRequired": "Add at least one keyword",
+    "saving": "Saving...",
+    "addSubmit": "Save Topic",
+    "viewButton": "View",
+    "deleteAria": "Delete topic",
+    "recurringLabel": "Recurring Search",
+    "recurringOn": "Active",
+    "recurringOff": "Inactive",
+    "durationDaysUnit": "days",
+    "loadError": "Failed to load topic list",
+    "createSuccess": "Topic saved successfully",
+    "createError": "Failed to save topic",
+    "deleteSuccess": "Topic deleted successfully",
+    "deleteError": "Failed to delete topic",
+    "scheduleSuccess": "Search schedule updated",
+    "scheduleError": "Failed to update schedule",
+    "postsUnit": "posts",
+    "commentsUnit": "comments",
+    "detail": {
+      "backLink": "Topic List",
+      "loadError": "Failed to load topic detail",
+      "keywordsTitle": "Keywords",
+      "resultsTitle": "Post Results",
+      "noResults": "No posts for this topic yet",
+      "viewSource": "Open source"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your account, AI configuration, and app preferences",
+    "tabs": {
+      "account": { "label": "Account", "description": "Profile & security" },
+      "ai": { "label": "AI Model", "description": "Provider & configuration" },
+      "scraping": { "label": "Analysis", "description": "Scraping & default platform" },
+      "notification": { "label": "Notifications", "description": "Notification preferences" },
+      "widgets": { "label": "Overview Widgets", "description": "Show/hide widgets" },
+      "about": { "label": "About", "description": "App information" }
+    },
+    "account": {
+      "profileTitle": "Account Profile",
+      "profileDesc": "Basic account info shown on the dashboard",
+      "username": "Username",
+      "email": "Email",
+      "role": "Role",
+      "saveProfile": "Save Profile",
+      "passwordTitle": "Change Password",
+      "passwordDesc": "Use a strong, unique password",
+      "oldPassword": "Old Password",
+      "newPassword": "New Password",
+      "changePassword": "Change Password",
+      "dangerZoneTitle": "Danger Zone",
+      "dangerZoneDesc": "This action cannot be undone",
+      "logoutAllTitle": "Sign out of all sessions",
+      "logoutAllButton": "Logout All Sessions"
+    },
+    "ai": {
+      "providerTitle": "AI Provider",
+      "providerDesc": "Model used to generate the AI summary",
+      "configTitle": "Claude API Configuration",
+      "configDesc": "API key for Anthropic Claude access",
+      "apiKeyLabel": "Anthropic API Key",
+      "saveButton": "Save AI Settings"
+    },
+    "scraping": {
+      "defaultPlatformTitle": "Default Platform",
+      "defaultPlatformDesc": "Platform selected first when opening the dashboard",
+      "scrapingParamsTitle": "Scraping Parameters",
+      "dataParamsTitle": "Data Fetch Parameters",
+      "maxPages": "Max Pages",
+      "maxCommentsPerVideo": "Max Comments per Video",
+      "maxCommentPages": "Max Comment Pages",
+      "searchResultLimit": "Search Result Limit",
+      "trendVisualsLimit": "Trend Visuals Limit",
+      "discoverMaxResults": "Max Discover Results",
+      "trendWindowHours": "Trend Time Window",
+      "trendTopN": "Top Trend Keywords",
+      "trendRankingTopN": "Top Ranking Keywords",
+      "trendRankingDays": "Ranking Day Range",
+      "newsSummaryTopN": "Top News Summary",
+      "saveButton": "Save Settings"
+    },
+    "notification": {
+      "title": "Notification Preferences",
+      "desc": "Set when you want to receive in-app notifications",
+      "analysisDone": "Analysis Complete",
+      "aiSummaryDone": "AI Summary Complete",
+      "errorNotif": "Error Notifications",
+      "saveButton": "Save Settings"
+    },
+    "widgetsPage": {
+      "title": "Overview Widgets",
+      "desc": "Choose which widgets appear, and their order, on the Overview page",
+      "saveButton": "Save Settings"
+    },
+    "about": {
+      "techStackTitle": "Tech Stack",
+      "techStackDesc": "Technologies used in this application",
+      "platformsTitle": "Supported Platforms",
+      "infoTitle": "Information",
+      "docs": "Documentation",
+      "repository": "Repository"
+    }
+  }
+}

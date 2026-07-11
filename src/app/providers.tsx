@@ -2,6 +2,8 @@
 
 import { QueryClient } from "@tanstack/react-query";
 import { QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "sonner";
+import { LanguageProvider } from "@/lib/i18n/LanguageProvider";
 
 const client = new QueryClient();
 
@@ -12,7 +14,10 @@ export default function Providers({
 }) {
   return (
     <QueryClientProvider client={client}>
-      {children}
+      <LanguageProvider>
+        {children}
+        <Toaster richColors position="top-right" />
+      </LanguageProvider>
     </QueryClientProvider>
   );
 }

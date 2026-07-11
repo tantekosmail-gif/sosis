@@ -1,5 +1,9 @@
+"use client";
+
 import { ReactNode } from "react";
 import { Sparkles, BarChart2, Globe, Shield } from "lucide-react";
+import { AppLogo } from "@/components/brand/AppLogo";
+import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 const FEATURES = [
   { icon: BarChart2, text: "Real-time sentiment analysis across platforms" },
@@ -9,6 +13,7 @@ const FEATURES = [
 ];
 
 export default function AuthLayout({ children }: { children: ReactNode }) {
+  const { t } = useTranslation();
   return (
     <div className="flex min-h-screen">
       {/* Left panel */}
@@ -20,27 +25,19 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
 
         <div className="relative z-10">
           {/* Brand */}
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 shadow-lg shadow-indigo-500/30">
-              <Sparkles size={20} className="text-white" />
-            </div>
-            <div>
-              <p className="text-white font-bold text-lg leading-none">MediaWatch</p>
-              <p className="text-slate-400 text-xs mt-0.5">Social Media & News Monitoring Platform</p>
-            </div>
-          </div>
+          <AppLogo size="lg" theme="dark" showTagline />
 
           {/* Headline */}
           <div className="mt-16">
             <h1 className="text-4xl font-bold text-white leading-tight">
-              Monitor every platform,
+              {t.auth.heroTitle1}
               <br />
               <span className="bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
-                powered by AI.
+                {t.auth.heroTitle2}
               </span>
             </h1>
             <p className="mt-4 text-slate-400 text-lg leading-relaxed max-w-sm">
-              Track, analyze, and understand what people are saying about your brand across social media and the news.
+              {t.auth.heroDesc}
             </p>
           </div>
 
@@ -61,7 +58,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
         <div className="relative z-10">
           <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-sm">
             <p className="text-slate-300 text-sm leading-relaxed italic">
-              "Precision social intelligence for data-driven teams. Know what the public thinks before it becomes a crisis."
+              "{t.auth.quote}"
             </p>
           </div>
         </div>
@@ -71,12 +68,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
       <div className="flex flex-1 flex-col items-center justify-center bg-slate-50 dark:bg-slate-950 p-6 lg:p-12">
         <div className="w-full max-w-md">
           {/* Mobile brand */}
-          <div className="mb-8 flex items-center gap-2 lg:hidden">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600">
-              <Sparkles size={16} className="text-white" />
-            </div>
-            <span className="font-bold text-slate-900 dark:text-slate-100">MediaWatch</span>
-          </div>
+          <AppLogo size="sm" theme="light" className="mb-8 lg:hidden" />
 
           {children}
         </div>

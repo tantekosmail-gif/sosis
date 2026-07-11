@@ -8,9 +8,11 @@ import DashboardLayout from "@/components/layout/DashboardLayout";
 import { TrendChatBox } from "@/components/trend/TrendChatBox";
 import { TrendRecommendationsList } from "@/components/trend/TrendRecommendationsList";
 import { useTrendRecommendations } from "@/features/trends/hooks/useTrendRecommendations";
+import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 export default function TrendChatPage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [checkingAuth, setCheckingAuth] = useState(true);
   const recommendations = useTrendRecommendations();
 
@@ -28,7 +30,7 @@ export default function TrendChatPage() {
       <div className="flex h-screen items-center justify-center bg-slate-50 dark:bg-slate-950">
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
-          <p className="text-sm text-slate-500 dark:text-slate-400">Checking authentication...</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">{t.common.checkingAuth}</p>
         </div>
       </div>
     );
@@ -37,9 +39,9 @@ export default function TrendChatPage() {
   return (
     <DashboardLayout>
       <div className="flex flex-col">
-        <h1 className="text-xl font-bold text-slate-800 dark:text-slate-200">Cari Topik AI</h1>
+        <h1 className="text-xl font-bold text-slate-800 dark:text-slate-200">{t.trendChat.title}</h1>
         <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">
-          Chat dengan AI untuk mencari &amp; mengirim rekomendasi topik trending
+          {t.trendChat.subtitle}
         </p>
 
         <div className="mt-6 grid h-[calc(100vh-13rem)] grid-cols-1 gap-6 lg:grid-cols-2">

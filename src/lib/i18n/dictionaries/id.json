@@ -1,0 +1,351 @@
+{
+  "common": {
+    "loading": "Memuat...",
+    "save": "Simpan",
+    "cancel": "Batal",
+    "active": "Aktif",
+    "saved": "Tersimpan!",
+    "checkingAuth": "Memeriksa autentikasi..."
+  },
+  "sidebar": {
+    "mainMenu": "Menu Utama",
+    "overview": "Overview",
+    "youtube": "YouTube",
+    "instagram": "Instagram",
+    "facebook": "Facebook",
+    "twitter": "Twitter/X",
+    "tiktok": "TikTok",
+    "news": "Berita",
+    "comparePlatforms": "Bandingkan Platform",
+    "aiTopicSearch": "Cari Topik AI",
+    "topics": "Topik",
+    "settings": "Settings",
+    "brandTagline": "Pemantauan Media"
+  },
+  "header": {
+    "dashboardTitle": "MediaWatch Dashboard",
+    "dashboardSubtitle": "Pemantauan Media Sosial & Berita",
+    "history": "Riwayat",
+    "notifications": "Notifikasi",
+    "noNotifications": "Belum ada notifikasi",
+    "clearAll": "Hapus semua",
+    "logout": "Logout",
+    "language": "Bahasa",
+    "lightMode": "Mode cerah",
+    "darkMode": "Mode gelap"
+  },
+  "overview": {
+    "title": "Overview",
+    "subtitle": "Ringkasan aktivitas & sentimen dari seluruh platform yang dipantau",
+    "resultsTitle": "Hasil pencarian untuk"
+  },
+  "platforms": {
+    "youtube": { "subtitle": "Video viral & analisis sentimen keyword YouTube" },
+    "instagram": { "subtitle": "Trending akun & analisis sentimen komentar Instagram" },
+    "facebook": { "subtitle": "Trending topik & analisis sentimen komentar Facebook" },
+    "twitter": { "subtitle": "Trending topik & analisis sentimen balasan Twitter/X" },
+    "tiktok": { "subtitle": "Trending topik & analisis sentimen komentar TikTok" }
+  },
+  "news": {
+    "title": "Berita",
+    "subtitle": "Trending & pencarian berita terkini dari berbagai sumber media",
+    "searchTab": "Cari"
+  },
+  "compare": {
+    "title": "Bandingkan Platform",
+    "subtitle": "Bandingkan topik/keyword yang sama antara Facebook, Instagram, Twitter/X & TikTok"
+  },
+  "accountSentimentTab": {
+    "title": "Analisis Sentimen",
+    "analyzeButton": "Analisis",
+    "refreshButton": "Refresh",
+    "loadingDesc": "Proses scraping bisa butuh beberapa detik",
+    "scrapeErrorDesc": "Data di bawah ini (jika ada) berasal dari hasil scraping sebelumnya, bukan data terbaru.",
+    "instagram": {
+      "desc": "Analisis sentimen komentar dari postingan sebuah akun Instagram",
+      "usernameLabel": "Username Instagram",
+      "countLabel": "Jumlah Post",
+      "countUnit": "post",
+      "refreshTitle": "Ambil ulang data terbaru dari Instagram",
+      "loadingTitle": "Mengambil & menganalisis data Instagram...",
+      "emptyState": "Masukkan username Instagram untuk melihat analisis sentimennya",
+      "scrapeErrorTitle": "Gagal mengambil data terbaru dari Instagram"
+    },
+    "facebook": {
+      "desc": "Analisis sentimen komentar dari postingan sebuah page/profile Facebook",
+      "usernameLabel": "Username / Page ID Facebook",
+      "countLabel": "Jumlah Post",
+      "countUnit": "post",
+      "refreshTitle": "Ambil ulang data terbaru dari Facebook",
+      "loadingTitle": "Mengambil & menganalisis data Facebook...",
+      "emptyState": "Masukkan username/page Facebook untuk melihat analisis sentimennya",
+      "scrapeErrorTitle": "Gagal mengambil data terbaru dari Facebook"
+    },
+    "twitter": {
+      "desc": "Analisis sentimen balasan dari tweet sebuah akun Twitter/X",
+      "usernameLabel": "Username Twitter/X",
+      "countLabel": "Jumlah Tweet",
+      "countUnit": "tweet",
+      "refreshTitle": "Ambil ulang data terbaru dari Twitter/X",
+      "loadingTitle": "Mengambil & menganalisis data Twitter/X...",
+      "emptyState": "Masukkan username Twitter/X untuk melihat analisis sentimennya",
+      "scrapeErrorTitle": "Gagal mengambil data terbaru dari Twitter/X",
+      "repliesModalTitle": "Balasan"
+    },
+    "tiktok": {
+      "desc": "Analisis sentimen komentar dari video sebuah akun TikTok",
+      "usernameLabel": "Username TikTok",
+      "countLabel": "Jumlah Video",
+      "countUnit": "video",
+      "refreshTitle": "Ambil ulang data terbaru dari TikTok",
+      "loadingTitle": "Mengambil & menganalisis data TikTok...",
+      "emptyState": "Masukkan username TikTok untuk melihat analisis sentimennya",
+      "scrapeErrorTitle": "Gagal mengambil data terbaru dari TikTok"
+    }
+  },
+  "commentsTable": {
+    "title": "Komentar",
+    "searchPlaceholder": "Cari komentar atau penulis...",
+    "all": "Semua",
+    "empty": "Tidak ada komentar ditemukan"
+  },
+  "sentimentTimeline": {
+    "title": "Tren Sentimen Waktu",
+    "subtitle": "Perubahan sentimen komentar per hari"
+  },
+  "wordCloud": {
+    "loading": "Memuat word cloud...",
+    "title": "Word Cloud",
+    "subtitle": "50 kata yang paling sering muncul dalam komentar"
+  },
+  "topPostsTable": {
+    "title": "Top Videos",
+    "subtitle": "10 konten terpopuler berdasarkan views",
+    "noData": "Tidak ada data",
+    "noImage": "No img"
+  },
+  "platformChart": {
+    "title": "Distribusi Channel",
+    "subtitle": "Jumlah video per channel untuk keyword ini"
+  },
+  "sentimentPie": {
+    "title": "Analisis Sentimen",
+    "subtitle": "Distribusi komentar berdasarkan sentimen",
+    "positive": "Positif",
+    "neutral": "Netral",
+    "negative": "Negatif",
+    "commentsUnit": "komentar"
+  },
+  "exposureChart": {
+    "title": "Exposure Trend",
+    "subtitle": "Jumlah konten dari waktu ke waktu",
+    "badge": "Timeline"
+  },
+  "exposureCards": {
+    "positiveSentiment": "Sentimen Positif",
+    "negativeSentiment": "Sentimen Negatif",
+    "totalComments": "Total Komentar",
+    "totalReach": "Total Reach",
+    "ofPrefix": "dari",
+    "commentsUnit": "komentar",
+    "commentsCollected": "komentar terkumpul",
+    "reachEstimate": "estimasi jangkauan views"
+  },
+  "trendingTopicTab": {
+    "title": "Topik Trending",
+    "periodToday": "Hari Ini",
+    "periodWeek": "1 Minggu",
+    "loadingTitle": "Memuat topik trending...",
+    "totalTopicsSuffix": "topik trending",
+    "updatedPrefix": "Diperbarui setiap",
+    "schedulePrefix": "Jadwal:",
+    "emptyDefault": "Belum ada topik trending ditemukan",
+    "instagram": { "subtitle": "Topik dengan skor trending tertinggi di Instagram, diperbarui otomatis setiap hari" },
+    "facebook": { "subtitle": "Topik dengan skor trending tertinggi di Facebook, diperbarui otomatis setiap hari" },
+    "twitter": { "subtitle": "Topik dengan skor trending tertinggi di Twitter/X, diperbarui otomatis setiap hari" },
+    "tiktok": { "subtitle": "Topik dengan skor trending tertinggi di TikTok, diperbarui otomatis setiap hari" }
+  },
+  "youtubeTrendingTab": {
+    "title": "Video Viral",
+    "subtitle": "Video YouTube dengan view count tertinggi dari seluruh data di database",
+    "searchLabel": "Cari",
+    "searchPlaceholder": "Cari judul, channel, atau keyword...",
+    "countLabel": "Jumlah",
+    "countUnit": "video",
+    "loadingTitle": "Memuat video viral...",
+    "showingPrefix": "Menampilkan",
+    "showingMiddle": "dari",
+    "showingSuffix": "video"
+  },
+  "youtubeSentimentTab": {
+    "desc": "Cari keyword untuk menganalisis sentimen video & komentar YouTube",
+    "loadingTitle": "Sedang menganalisis...",
+    "loadingDesc": "Mengumpulkan dan memproses data dari YouTube",
+    "emptyTitle": "Belum ada hasil analisis",
+    "emptyDescPrefix": "Masukkan keyword di atas, lalu klik",
+    "emptyDescSuffix": "untuk memulai."
+  },
+  "notFound": {
+    "title": "Halaman tidak ditemukan",
+    "desc": "URL yang kamu tuju tidak tersedia atau sudah dipindahkan.",
+    "backToOverview": "Kembali ke Overview",
+    "toLogin": "Ke Login"
+  },
+  "docs": {
+    "title": "Dokumentasi",
+    "subtitle": "Panduan lengkap penggunaan MediaWatch",
+    "tabs": {
+      "intro": { "label": "Pengenalan", "description": "Apa itu MediaWatch" },
+      "start": { "label": "Mulai Menggunakan", "description": "Login & navigasi" },
+      "overview": { "label": "Dashboard Overview", "description": "Ringkasan lintas platform" },
+      "platforms": { "label": "Monitoring Media Sosial", "description": "YouTube, Instagram, dll." },
+      "news": { "label": "Berita", "description": "Trending & pencarian berita" },
+      "compare": { "label": "Bandingkan Platform", "description": "Satu topik, banyak platform" },
+      "ai": { "label": "Cari Topik AI", "description": "Asisten chat trending" },
+      "settings": { "label": "Pengaturan", "description": "Akun, AI, & analisis" },
+      "tips": { "label": "Tips & Catatan", "description": "Hal penting yang perlu diketahui" }
+    }
+  },
+  "trendChat": {
+    "title": "Cari Topik AI",
+    "subtitle": "Chat dengan AI untuk mencari & mengirim rekomendasi topik trending"
+  },
+  "auth": {
+    "welcomeBack": "Selamat datang kembali",
+    "signInDesc": "Masuk ke akun MediaWatch kamu untuk melanjutkan.",
+    "emailLabel": "Email",
+    "passwordLabel": "Password",
+    "signIn": "Masuk",
+    "signingIn": "Memproses...",
+    "heroTitle1": "Pantau setiap platform,",
+    "heroTitle2": "didukung AI.",
+    "heroDesc": "Lacak, analisis, dan pahami apa yang orang bicarakan tentang brand kamu di media sosial dan berita.",
+    "quote": "Intelijen sosial yang presisi untuk tim berbasis data. Ketahui pendapat publik sebelum menjadi krisis."
+  },
+  "search": {
+    "keywordPlaceholderEmpty": "Ketik keyword lalu tekan Enter...",
+    "keywordPlaceholderMore": "Tambah keyword lagi...",
+    "similarTopics": "Topik serupa",
+    "searchButton": "Search",
+    "searching": "Mencari...",
+    "errorKeywordRequired": "Masukkan minimal satu keyword",
+    "errorSearchFailed": "Pencarian gagal. Silakan coba lagi."
+  },
+  "topics": {
+    "pageTitle": "Topik",
+    "addButton": "Tambah Topik",
+    "pageSubtitle": "Kelola daftar topik beserta kumpulan keyword untuk kebutuhan monitoring",
+    "listTitle": "Daftar Topik",
+    "topicsSaved": "topik tersimpan",
+    "emptyTitle": "Belum ada topik",
+    "emptyDesc": "Tambahkan topik baru lewat form di atas.",
+    "nameLabel": "Nama Topik",
+    "namePlaceholder": "mis. Riset Kemacetan Jakarta",
+    "keywordLabel": "Keyword",
+    "keywordPlaceholderEmpty": "Ketik keyword lalu tekan Enter...",
+    "keywordPlaceholderMore": "Tambah keyword lagi...",
+    "errorNameRequired": "Nama topik wajib diisi",
+    "errorKeywordRequired": "Tambahkan minimal satu keyword",
+    "saving": "Menyimpan...",
+    "addSubmit": "Simpan Topik",
+    "viewButton": "Lihat",
+    "deleteAria": "Hapus topik",
+    "recurringLabel": "Pencarian Berkala",
+    "recurringOn": "Aktif",
+    "recurringOff": "Nonaktif",
+    "durationDaysUnit": "hari",
+    "loadError": "Gagal memuat daftar topik",
+    "createSuccess": "Topik berhasil disimpan",
+    "createError": "Gagal menyimpan topik",
+    "deleteSuccess": "Topik berhasil dihapus",
+    "deleteError": "Gagal menghapus topik",
+    "scheduleSuccess": "Jadwal pencarian diperbarui",
+    "scheduleError": "Gagal memperbarui jadwal",
+    "postsUnit": "post",
+    "commentsUnit": "komentar",
+    "detail": {
+      "backLink": "Daftar Topik",
+      "loadError": "Gagal memuat detail topik",
+      "keywordsTitle": "Keyword",
+      "resultsTitle": "Hasil Postingan",
+      "noResults": "Belum ada postingan untuk topik ini",
+      "viewSource": "Buka sumber"
+    }
+  },
+  "settings": {
+    "title": "Pengaturan",
+    "subtitle": "Kelola akun, konfigurasi AI, dan preferensi aplikasi",
+    "tabs": {
+      "account": { "label": "Akun", "description": "Profil & keamanan" },
+      "ai": { "label": "Model AI", "description": "Provider & konfigurasi" },
+      "scraping": { "label": "Analisis", "description": "Scraping & platform default" },
+      "notification": { "label": "Notifikasi", "description": "Preferensi pemberitahuan" },
+      "widgets": { "label": "Widget Overview", "description": "Tampil/sembunyikan widget" },
+      "about": { "label": "Tentang", "description": "Informasi aplikasi" }
+    },
+    "account": {
+      "profileTitle": "Profil Akun",
+      "profileDesc": "Informasi dasar akun yang ditampilkan di dashboard",
+      "username": "Username",
+      "email": "Email",
+      "role": "Role",
+      "saveProfile": "Simpan Profil",
+      "passwordTitle": "Ubah Password",
+      "passwordDesc": "Gunakan password yang kuat dan unik",
+      "oldPassword": "Password Lama",
+      "newPassword": "Password Baru",
+      "changePassword": "Ubah Password",
+      "dangerZoneTitle": "Zona Berbahaya",
+      "dangerZoneDesc": "Tindakan ini tidak dapat dibatalkan",
+      "logoutAllTitle": "Keluar dari semua sesi",
+      "logoutAllButton": "Logout Semua Sesi"
+    },
+    "ai": {
+      "providerTitle": "Provider AI",
+      "providerDesc": "Model yang digunakan untuk Generate AI Summary",
+      "configTitle": "Konfigurasi Claude API",
+      "configDesc": "API key untuk akses Anthropic Claude",
+      "apiKeyLabel": "Anthropic API Key",
+      "saveButton": "Simpan Pengaturan AI"
+    },
+    "scraping": {
+      "defaultPlatformTitle": "Platform Default",
+      "defaultPlatformDesc": "Platform yang dipilih pertama kali saat membuka dashboard",
+      "scrapingParamsTitle": "Parameter Scraping",
+      "dataParamsTitle": "Parameter Pengambilan Data",
+      "maxPages": "Max Pages",
+      "maxCommentsPerVideo": "Max Komentar per Video",
+      "maxCommentPages": "Max Halaman Komentar",
+      "searchResultLimit": "Limit Hasil Pencarian",
+      "trendVisualsLimit": "Limit Visuals Trend",
+      "discoverMaxResults": "Max Hasil Discover",
+      "trendWindowHours": "Jendela Waktu Trend",
+      "trendTopN": "Top Keyword Trend",
+      "trendRankingTopN": "Top Keyword Ranking",
+      "trendRankingDays": "Rentang Hari Ranking",
+      "newsSummaryTopN": "Top Berita Ringkasan",
+      "saveButton": "Simpan Pengaturan"
+    },
+    "notification": {
+      "title": "Preferensi Notifikasi",
+      "desc": "Atur kapan kamu ingin mendapat pemberitahuan dalam aplikasi",
+      "analysisDone": "Analisis Selesai",
+      "aiSummaryDone": "AI Summary Selesai",
+      "errorNotif": "Notifikasi Error",
+      "saveButton": "Simpan Pengaturan"
+    },
+    "widgetsPage": {
+      "title": "Widget Overview",
+      "desc": "Atur widget mana saja yang tampil, dan urutannya, di halaman Overview",
+      "saveButton": "Simpan Pengaturan"
+    },
+    "about": {
+      "techStackTitle": "Tech Stack",
+      "techStackDesc": "Teknologi yang digunakan dalam aplikasi ini",
+      "platformsTitle": "Platform yang Didukung",
+      "infoTitle": "Informasi",
+      "docs": "Dokumentasi",
+      "repository": "Repository"
+    }
+  }
+}

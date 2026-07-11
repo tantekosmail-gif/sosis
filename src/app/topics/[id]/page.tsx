@@ -1,0 +1,298 @@
+"use client";
+
+import { use, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { format } from "date-fns";
+import { id as idLocale } from "date-fns/locale";
+import { ArrowLeft, Eye, Globe, ImageOff, Loader2, Newspaper, Tag, ThumbsUp } from "lucide-react";
+import { FaFacebook, FaInstagram, FaTiktok, FaXTwitter, FaYoutube } from "react-icons/fa6";
+
+import DashboardLayout from "@/components/layout/DashboardLayout";
+import { getTopicDetail } from "@/features/topic/services/topic.service";
+import { useTranslation } from "@/lib/i18n/LanguageProvider";
+
+interface TopicPost {
+  id: string;
+  platform: string;
+  title: string;
+  author: string | null;
+  url: string;
+  view_count?: number;
+  likes?: number;
+  published_at?: string | null;
+  thumbnail_url?: string;
+}
+
+interface KeywordGroup {
+  keyword: string;
+  keywordId: string;
+  totalPosts: number;
+  posts: TopicPost[];
+}
+
+interface TopicDetail {
+  id: string;
+  name: string;
+  description?: string | null;
+  totalPosts: number;
+  keywordGroups: KeywordGroup[];
+}
+
+const PLATFORM_META: Record<string, { label: string; icon: React.ComponentType<{ size?: number; className?: string }>; color: string }> = {
+  youtube: { label: "YouTube", icon: FaYoutube, color: "text-red-500" },
+  instagram: { label: "Instagram", icon: FaInstagram, color: "text-pink-500" },
+  facebook: { label: "Facebook", icon: FaFacebook, color: "text-blue-600" },
+  twitter: { label: "Twitter/X", icon: FaXTwitter, color: "text-sky-500" },
+  tiktok: { label: "TikTok", icon: FaTiktok, color: "text-slate-900 dark:text-white" },
+  news: { label: "Berita", icon: Newspaper, color: "text-amber-500" },
+};
+
+function platformMeta(platform: string) {
+  return PLATFORM_META[platform] ?? { label: platform, icon: Globe, color: "text-slate-400" };
+}
+
+function groupByPlatform(posts: TopicPost[]): [string, TopicPost[]][] {
+  const map = new Map<string, TopicPost[]>();
+  for (const post of posts) {
+    const list = map.get(post.platform) ?? [];
+    list.push(post);
+    map.set(post.platform, list);
+  }
+  return Array.from(map.entries());
+}
+
+// Konten "title" dari backend berupa markdown mentah (gambar, heading, link) —
+// disederhanakan jadi teks polos supaya enak dibaca dalam kartu.
+function stripMarkdown(text: string): string {
+  return text
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
+    .replace(/^#+\s*/gm, "")
+    .replace(/[*_`]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+// GET /search/topics/{id} mengembalikan postingan dikelompokkan per keyword
+// (keyword_details[].posts), berbeda dari response POST /search/topics yang
+// pakai array "results" flat + status/sentimen per keyword.
+function normalizeTopicDetail(raw: any): TopicDetail {
+  const body = raw?.data ?? raw;
+  const groups = body.keyword_details ?? [];
+  return {
+    id: body.id ?? body.topic_id,
+    name: body.name ?? body.topic,
+    description: body.description ?? null,
+    totalPosts: body.total_posts ?? 0,
+    keywordGroups: Array.isArray(groups)
+      ? groups.map((g: any) => ({
+          keyword: g.keyword,
+          keywordId: g.keyword_id,
+          totalPosts: g.total_posts ?? g.posts?.length ?? 0,
+          posts: g.posts ?? [],
+        }))
+      : [],
+  };
+}
+
+function PostCard({ post }: { post: TopicPost }) {
+  let dateStr = "";
+  if (post.published_at) {
+    try {
+      dateStr = format(new Date(post.published_at), "d MMM yyyy", { locale: idLocale });
+    } catch {}
+  }
+
+  return (
+    <a
+      href={post.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group flex flex-col overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm transition hover:border-indigo-300 hover:shadow-md"
+    >
+      <div className="aspect-video w-full shrink-0 overflow-hidden bg-slate-100 dark:bg-slate-800">
+        {post.thumbnail_url ? (
+          <img
+            src={post.thumbnail_url}
+            alt=""
+            className="h-full w-full object-cover transition duration-200 group-hover:scale-105"
+            onError={(e) => {
+              (e.target as HTMLImageElement).style.display = "none";
+            }}
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center text-slate-300 dark:text-slate-600">
+            <ImageOff size={22} />
+          </div>
+        )}
+      </div>
+
+      <div className="flex flex-1 flex-col gap-2 p-3.5">
+        <p className="line-clamp-3 text-sm font-medium leading-snug text-slate-800 dark:text-slate-200 transition-colors group-hover:text-indigo-600">
+          {stripMarkdown(post.title)}
+        </p>
+
+        <div className="mt-auto space-y-1.5 pt-1">
+          <div className="flex items-center justify-between gap-2 text-[11px] text-slate-400 dark:text-slate-500">
+            <span className="truncate">{post.author ?? "—"}</span>
+            {dateStr && <span className="shrink-0">{dateStr}</span>}
+          </div>
+          {(!!post.view_count || !!post.likes) && (
+            <div className="flex items-center gap-3 text-[11px] text-slate-400 dark:text-slate-500">
+              {!!post.view_count && (
+                <span className="flex items-center gap-1">
+                  <Eye size={11} /> {post.view_count.toLocaleString("id-ID")}
+                </span>
+              )}
+              {!!post.likes && (
+                <span className="flex items-center gap-1">
+                  <ThumbsUp size={11} /> {post.likes.toLocaleString("id-ID")}
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </a>
+  );
+}
+
+export default function TopicDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
+  const router = useRouter();
+  const { t } = useTranslation();
+  const [authChecked, setAuthChecked] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [topic, setTopic] = useState<TopicDetail | null>(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("access_token");
+    if (!token) {
+      router.replace("/login");
+      return;
+    }
+    setAuthChecked(true);
+  }, [router]);
+
+  useEffect(() => {
+    if (!authChecked) return;
+    let cancelled = false;
+
+    (async () => {
+      setLoading(true);
+      setError("");
+      try {
+        const raw = await getTopicDetail(id, { limit_per_keyword: 20, include_sentiment: true });
+        if (!cancelled) setTopic(normalizeTopicDetail(raw));
+      } catch (err) {
+        console.error("getTopicDetail failed:", err);
+        if (!cancelled) setError(t.topics.detail.loadError);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [authChecked, id, t]);
+
+  if (!authChecked) return null;
+
+  return (
+    <DashboardLayout>
+      <div>
+        <Link
+          href="/topics"
+          className="mb-2 inline-flex items-center gap-1.5 text-xs font-medium text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+        >
+          <ArrowLeft size={12} /> {t.topics.detail.backLink}
+        </Link>
+        <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">{topic?.name ?? "..."}</h1>
+        {topic?.description && (
+          <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">{topic.description}</p>
+        )}
+      </div>
+
+      {loading ? (
+        <div className="flex items-center justify-center py-24">
+          <Loader2 size={24} className="animate-spin text-indigo-500" />
+        </div>
+      ) : error ? (
+        <div className="rounded-2xl border border-red-200 bg-red-50 dark:bg-red-950/40 px-5 py-4 text-sm text-red-600">
+          {error}
+        </div>
+      ) : topic ? (
+        <>
+          {/* Keywords overview */}
+          <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm p-5">
+            <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+              {t.topics.detail.keywordsTitle}
+            </h2>
+            <div className="flex flex-wrap gap-2">
+              {topic.keywordGroups.map((g) => (
+                <span
+                  key={g.keywordId}
+                  className="flex items-center gap-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 px-2.5 py-1 text-xs font-medium text-indigo-700 dark:text-indigo-300"
+                >
+                  <Tag size={11} />
+                  {g.keyword}
+                  <span className="opacity-70">· {g.totalPosts}</span>
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Results per keyword, separated per platform */}
+          {topic.keywordGroups.length === 0 ? (
+            <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm py-14 text-center text-sm text-slate-400 dark:text-slate-500">
+              {t.topics.detail.noResults}
+            </div>
+          ) : (
+            topic.keywordGroups.map((g) => (
+              <div
+                key={g.keywordId}
+                className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm overflow-hidden"
+              >
+                <div className="border-b border-slate-100 dark:border-slate-800 px-5 py-4">
+                  <h2 className="font-semibold text-slate-900 dark:text-slate-100">
+                    {t.topics.detail.resultsTitle} <span className="text-indigo-600">&quot;{g.keyword}&quot;</span>
+                  </h2>
+                </div>
+
+                {g.posts.length === 0 ? (
+                  <div className="py-14 text-center text-sm text-slate-400 dark:text-slate-500">
+                    {t.topics.detail.noResults}
+                  </div>
+                ) : (
+                  <div className="divide-y divide-slate-100 dark:divide-slate-800">
+                    {groupByPlatform(g.posts).map(([platform, posts]) => {
+                      const meta = platformMeta(platform);
+                      const Icon = meta.icon;
+                      return (
+                        <div key={platform} className="px-5 py-5">
+                          <div className="mb-3 flex items-center gap-2">
+                            <Icon size={16} className={meta.color} />
+                            <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">{meta.label}</h3>
+                            <span className="text-xs text-slate-400 dark:text-slate-500">({posts.length})</span>
+                          </div>
+                          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                            {posts.map((post) => (
+                              <PostCard key={post.id} post={post} />
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            ))
+          )}
+        </>
+      ) : null}
+    </DashboardLayout>
+  );
+}

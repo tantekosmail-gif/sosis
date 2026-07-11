@@ -1,7 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "sonner";
 import { generateSummary } from "../services/summary.service";
+import { getSettings } from "@/features/settings/hooks/useSettings";
+import { pushNotification } from "@/features/notifications/hooks/useNotifications";
 
 export function useAISummary() {
   const [loading, setLoading] = useState(false);
@@ -14,6 +17,12 @@ export function useAISummary() {
       const result = await generateSummary(payload);
 
       console.log("AI RESULT:", result);
+
+      if (getSettings().notifyOnAISummaryDone) {
+        const title = "Ringkasan AI selesai dibuat";
+        toast.success(title, { description: payload?.keyword ? `Keyword: ${payload.keyword}` : undefined });
+        pushNotification({ type: "success", title, message: payload?.keyword ? `Keyword: ${payload.keyword}` : undefined });
+      }
 
       setData({
         summary:
@@ -36,8 +45,15 @@ export function useAISummary() {
             )
           : [],
       });
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+
+      if (getSettings().notifyOnError) {
+        const title = "Gagal membuat ringkasan AI";
+        const message = err?.message || "Terjadi kesalahan";
+        toast.error(title, { description: message });
+        pushNotification({ type: "error", title, message });
+      }
     } finally {
       setLoading(false);
     }

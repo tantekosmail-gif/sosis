@@ -22,10 +22,12 @@ export interface OverviewWidgetVisibility {
 export type OverviewWidgetKey = keyof OverviewWidgetVisibility;
 
 export type Theme = "light" | "dark";
+export type Language = "id" | "en";
 
 export interface AppSettings {
   // Appearance
   theme: Theme;
+  language: Language;
 
   // AI
   anthropicApiKey: string;
@@ -103,6 +105,7 @@ function reconcileOrder(stored: unknown): OverviewWidgetKey[] {
 
 const DEFAULTS: AppSettings = {
   theme: "light",
+  language: "id",
   anthropicApiKey: "",
   maxPages: 5,
   maxCommentsPerVideo: 100,
@@ -173,5 +176,28 @@ export function getSettings(): AppSettings {
 export function setThemeSetting(theme: Theme) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...getSettings(), theme }));
+  } catch {}
+}
+
+// Persists just the language immediately — a language switch is expected to
+// apply instantly, same as the theme toggle.
+export function setLanguageSetting(language: Language) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...getSettings(), language }));
+  } catch {}
+}
+
+// Persists a single widget's visibility immediately — closing a widget from
+// the Overview page is expected to stick without visiting Settings > Save.
+export function setOverviewWidgetVisibility(key: OverviewWidgetKey, visible: boolean) {
+  try {
+    const current = getSettings();
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        ...current,
+        overviewWidgets: { ...current.overviewWidgets, [key]: visible },
+      })
+    );
   } catch {}
 }

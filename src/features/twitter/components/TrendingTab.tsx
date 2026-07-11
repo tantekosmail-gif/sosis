@@ -6,13 +6,15 @@ import TrendingTopicCard from "@/components/twitter/TrendingTopicCard";
 import TwitterCommentsList from "@/components/twitter/TwitterCommentsList";
 import CommentsModal from "@/components/common/CommentsModal";
 import { useTwitterTrending } from "../hooks/useTwitterTrending";
-
-const PERIOD_OPTIONS = [
-  { key: "today", label: "Hari Ini" },
-  { key: "week", label: "1 Minggu" },
-] as const;
+import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 export default function TwitterTrendingTab() {
+  const { t } = useTranslation();
+  const tp = t.trendingTopicTab.twitter;
+  const PERIOD_OPTIONS = [
+    { key: "today", label: t.trendingTopicTab.periodToday },
+    { key: "week", label: t.trendingTopicTab.periodWeek },
+  ] as const;
   const {
     data,
     loading,
@@ -29,9 +31,9 @@ export default function TwitterTrendingTab() {
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="font-semibold text-slate-900 dark:text-slate-100">Topik Trending</h2>
+          <h2 className="font-semibold text-slate-900 dark:text-slate-100">{t.trendingTopicTab.title}</h2>
           <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">
-            Topik dengan skor trending tertinggi di Twitter/X, diperbarui otomatis setiap hari
+            {tp.subtitle}
           </p>
         </div>
 
@@ -57,7 +59,7 @@ export default function TwitterTrendingTab() {
             className="flex h-10 shrink-0 items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 transition"
           >
             <RefreshCw size={15} className={loading ? "animate-spin" : ""} />
-            Refresh
+            {t.accountSentimentTab.refreshButton}
           </button>
         </div>
       </div>
@@ -71,7 +73,7 @@ export default function TwitterTrendingTab() {
       {loading && (
         <div className="flex flex-col items-center justify-center rounded-2xl border bg-white dark:bg-slate-900 py-24 shadow-sm">
           <Loader2 className="mb-4 h-10 w-10 animate-spin text-sky-600" />
-          <p className="font-semibold text-slate-700 dark:text-slate-300">Memuat topik trending...</p>
+          <p className="font-semibold text-slate-700 dark:text-slate-300">{t.trendingTopicTab.loadingTitle}</p>
         </div>
       )}
 
@@ -79,14 +81,14 @@ export default function TwitterTrendingTab() {
         <>
           <div className="flex items-center justify-between">
             <p className="text-sm text-slate-500 dark:text-slate-400">
-              <span className="font-semibold text-slate-700 dark:text-slate-300">{data.total_topics}</span> topik trending
+              <span className="font-semibold text-slate-700 dark:text-slate-300">{data.total_topics}</span> {t.trendingTopicTab.totalTopicsSuffix}
             </p>
-            <p className="text-xs text-slate-400 dark:text-slate-500">Jadwal: {data.schedule}</p>
+            <p className="text-xs text-slate-400 dark:text-slate-500">{t.trendingTopicTab.schedulePrefix} {data.schedule}</p>
           </div>
 
           {(data.topics ?? []).length === 0 ? (
             <div className="rounded-2xl border border-dashed border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 py-16 text-center text-sm text-slate-400 dark:text-slate-500">
-              Belum ada topik trending ditemukan
+              {t.trendingTopicTab.emptyDefault}
             </div>
           ) : (
             <div className="space-y-4">
@@ -105,7 +107,7 @@ export default function TwitterTrendingTab() {
           <CommentsModal
             open={!!selectedPost}
             onClose={() => setSelectedPostId(null)}
-            title="Balasan"
+            title={t.accountSentimentTab.twitter.repliesModalTitle}
             url={selectedPost?.url}
             caption={selectedPost?.caption}
           >

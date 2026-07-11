@@ -1,12 +1,7 @@
 "use client";
 
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
-
-const CONFIG = [
-  { key: "positive", label: "Positif", color: "#10b981", bg: "bg-emerald-500" },
-  { key: "neutral",  label: "Netral",  color: "#f59e0b", bg: "bg-amber-400" },
-  { key: "negative", label: "Negatif", color: "#ef4444", bg: "bg-red-500" },
-];
+import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 interface Props {
   data: { sentiment: string; total: number }[];
@@ -24,14 +19,20 @@ function CustomTooltip({ active, payload }: any) {
 }
 
 export default function SentimentPie({ data }: Props) {
+  const { t } = useTranslation();
+  const CONFIG = [
+    { key: "positive", label: t.sentimentPie.positive, color: "#10b981", bg: "bg-emerald-500" },
+    { key: "neutral",  label: t.sentimentPie.neutral,  color: "#f59e0b", bg: "bg-amber-400" },
+    { key: "negative", label: t.sentimentPie.negative, color: "#ef4444", bg: "bg-red-500" },
+  ];
   const safeData = data || [];
   const total = safeData.reduce((s, d) => s + d.total, 0);
 
   return (
     <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 shadow-sm">
       <div className="mb-5">
-        <h2 className="font-semibold text-slate-900 dark:text-slate-100">Analisis Sentimen</h2>
-        <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">Distribusi komentar berdasarkan sentimen</p>
+        <h2 className="font-semibold text-slate-900 dark:text-slate-100">{t.sentimentPie.title}</h2>
+        <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">{t.sentimentPie.subtitle}</p>
       </div>
 
       <div className="flex items-center gap-6">
@@ -83,7 +84,7 @@ export default function SentimentPie({ data }: Props) {
                   />
                 </div>
                 <p className="mt-0.5 text-right text-[11px] text-slate-400 dark:text-slate-500">
-                  {item.total.toLocaleString()} komentar
+                  {item.total.toLocaleString()} {t.sentimentPie.commentsUnit}
                 </p>
               </div>
             );

@@ -2,6 +2,7 @@
 
 import { CheckCircle2 } from "lucide-react";
 import { AppSettings } from "../hooks/useSettings";
+import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 interface Props {
   settings: AppSettings;
@@ -51,29 +52,30 @@ function NotifRow({
 }
 
 export default function NotificationSection({ settings, update, onSave, saved }: Props) {
+  const { t } = useTranslation();
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
         <div className="border-b border-slate-100 dark:border-slate-800 px-6 py-5">
-          <h3 className="font-semibold text-slate-900 dark:text-slate-100">Preferensi Notifikasi</h3>
-          <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">Atur kapan kamu ingin mendapat pemberitahuan dalam aplikasi</p>
+          <h3 className="font-semibold text-slate-900 dark:text-slate-100">{t.settings.notification.title}</h3>
+          <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">{t.settings.notification.desc}</p>
         </div>
 
         <div className="px-6">
           <NotifRow
-            title="Analisis Selesai"
+            title={t.settings.notification.analysisDone}
             description="Tampilkan notifikasi ketika proses scraping dan analisis data selesai"
             checked={settings.notifyOnAnalysisDone}
             onChange={(v) => update("notifyOnAnalysisDone", v)}
           />
           <NotifRow
-            title="AI Summary Selesai"
+            title={t.settings.notification.aiSummaryDone}
             description="Tampilkan notifikasi ketika AI berhasil menghasilkan ringkasan eksekutif"
             checked={settings.notifyOnAISummaryDone}
             onChange={(v) => update("notifyOnAISummaryDone", v)}
           />
           <NotifRow
-            title="Notifikasi Error"
+            title={t.settings.notification.errorNotif}
             description="Tampilkan peringatan ketika terjadi kegagalan koneksi atau error scraping"
             checked={settings.notifyOnError}
             onChange={(v) => update("notifyOnError", v)}
@@ -86,7 +88,7 @@ export default function NotificationSection({ settings, update, onSave, saved }:
           onClick={onSave}
           className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-5 py-2.5 text-sm font-semibold text-white shadow shadow-indigo-500/20 hover:from-indigo-700 hover:to-violet-700 transition"
         >
-          {saved ? <><CheckCircle2 size={15} /> Tersimpan!</> : "Simpan Pengaturan"}
+          {saved ? <><CheckCircle2 size={15} /> {t.common.saved}</> : t.settings.notification.saveButton}
         </button>
       </div>
     </div>

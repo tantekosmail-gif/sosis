@@ -2,20 +2,24 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { AtSign, ChevronLeft, ChevronRight, Feather, Flame, GitCompareArrows, Home, MessageCircle, Music2, Newspaper, Settings, Sparkles, SquareUser, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, GitCompareArrows, Home, MessageCircle, Newspaper, Settings, Tags, X } from "lucide-react";
+import { FaFacebook, FaInstagram, FaTiktok, FaXTwitter, FaYoutube } from "react-icons/fa6";
+import { LogoMark } from "@/components/brand/AppLogo";
+import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 const menus = [
-  { name: "Overview",            href: "/overview",          icon: Home            },
-  { name: "YouTube",             href: "/youtube",           icon: Flame           },
-  { name: "Instagram",           href: "/instagram",         icon: AtSign          },
-  { name: "Facebook",            href: "/facebook",          icon: SquareUser      },
-  { name: "Twitter/X",           href: "/twitter",           icon: Feather         },
-  { name: "TikTok",              href: "/tiktok",            icon: Music2          },
-  { name: "Berita",              href: "/news",              icon: Newspaper       },
-  { name: "Bandingkan Platform", href: "/compare/social",    icon: GitCompareArrows },
-  { name: "Cari Topik AI",       href: "/dashboard/trend",   icon: MessageCircle   },
-  { name: "Settings",            href: "/settings",          icon: Settings        },
-];
+  { key: "overview",          href: "/overview",          icon: Home            },
+  { key: "youtube",           href: "/youtube",           icon: FaYoutube       },
+  { key: "instagram",         href: "/instagram",         icon: FaInstagram     },
+  { key: "facebook",          href: "/facebook",          icon: FaFacebook      },
+  { key: "twitter",           href: "/twitter",           icon: FaXTwitter      },
+  { key: "tiktok",            href: "/tiktok",            icon: FaTiktok        },
+  { key: "news",              href: "/news",              icon: Newspaper       },
+  { key: "comparePlatforms",  href: "/compare/social",    icon: GitCompareArrows },
+  { key: "aiTopicSearch",     href: "/dashboard/trend",   icon: MessageCircle   },
+  { key: "topics",            href: "/topics",            icon: Tags            },
+  { key: "settings",          href: "/settings",          icon: Settings        },
+] as const;
 
 interface Props {
   open?: boolean;
@@ -26,6 +30,7 @@ interface Props {
 
 export default function AppSidebar({ open = false, onClose, collapsed = false, onToggleCollapsed }: Props) {
   const pathname = usePathname();
+  const { t } = useTranslation();
 
   return (
     <>
@@ -47,11 +52,11 @@ export default function AppSidebar({ open = false, onClose, collapsed = false, o
         <div className={`flex h-16 items-center gap-3 border-b border-slate-800 px-5 ${collapsed ? "lg:justify-center lg:px-0" : "justify-between"}`}>
           <div className="flex items-center gap-3">
             <div className="h-8 w-8 shrink-0 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
-              <Sparkles size={15} className="text-white" />
+              <LogoMark size={15} className="text-white" />
             </div>
             <div className={collapsed ? "lg:hidden" : ""}>
               <p className="text-white font-bold text-sm leading-none whitespace-nowrap">MediaWatch</p>
-              <p className="text-slate-500 text-[10px] mt-0.5 whitespace-nowrap">Media Monitoring</p>
+              <p className="text-slate-500 text-[10px] mt-0.5 whitespace-nowrap">{t.sidebar.brandTagline}</p>
             </div>
           </div>
 
@@ -67,18 +72,19 @@ export default function AppSidebar({ open = false, onClose, collapsed = false, o
         {/* Nav */}
         <nav className="flex-1 overflow-y-auto p-3 space-y-1">
           <p className={`text-slate-600 text-[10px] font-semibold uppercase tracking-widest px-3 mb-3 mt-2 ${collapsed ? "lg:hidden" : ""}`}>
-            Main Menu
+            {t.sidebar.mainMenu}
           </p>
           {menus.map((menu) => {
             const Icon = menu.icon;
-            const active = pathname === menu.href;
+            const name = t.sidebar[menu.key];
+            const active = pathname === menu.href || pathname.startsWith(`${menu.href}/`);
 
             return (
               <Link
-                key={menu.name}
+                key={menu.key}
                 href={menu.href}
                 onClick={onClose}
-                title={collapsed ? menu.name : undefined}
+                title={collapsed ? name : undefined}
                 className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all ${collapsed ? "lg:justify-center" : ""} ${
                   active
                     ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/30"
@@ -86,7 +92,7 @@ export default function AppSidebar({ open = false, onClose, collapsed = false, o
                 }`}
               >
                 <Icon size={18} className="shrink-0" />
-                <span className={collapsed ? "lg:hidden" : ""}>{menu.name}</span>
+                <span className={collapsed ? "lg:hidden" : ""}>{name}</span>
               </Link>
             );
           })}

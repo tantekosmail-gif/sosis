@@ -9,6 +9,7 @@ import {
   ResponsiveContainer,
   Cell,
 } from "recharts";
+import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 const PLATFORM_COLORS: Record<string, string> = {
   youtube: "#ef4444",
@@ -34,11 +35,12 @@ function CustomTooltip({ active, payload, label }: any) {
 }
 
 export default function PlatformChart({ data }: Props) {
+  const { t } = useTranslation();
   return (
     <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 shadow-sm">
       <div className="mb-5">
-        <h2 className="font-semibold text-slate-900 dark:text-slate-100">Distribusi Channel</h2>
-        <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">Jumlah video per channel untuk keyword ini</p>
+        <h2 className="font-semibold text-slate-900 dark:text-slate-100">{t.platformChart.title}</h2>
+        <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">{t.platformChart.subtitle}</p>
       </div>
 
       <div className="h-52">

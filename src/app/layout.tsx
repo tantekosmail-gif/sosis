@@ -21,8 +21,9 @@ const THEME_INIT_SCRIPT = `
 (function() {
   try {
     var raw = localStorage.getItem("app_settings");
-    var theme = raw ? JSON.parse(raw).theme : "light";
-    if (theme === "dark") document.documentElement.classList.add("dark");
+    var settings = raw ? JSON.parse(raw) : {};
+    if (settings.theme === "dark") document.documentElement.classList.add("dark");
+    document.documentElement.lang = settings.language === "en" ? "en" : "id";
   } catch (e) {}
 })();
 `;
@@ -33,7 +34,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn("font-sans", geist.variable)} suppressHydrationWarning>
+    <html lang="id" className={cn("font-sans", geist.variable)} suppressHydrationWarning>
       <body
         className={`${inter.className} min-h-screen bg-slate-50 dark:bg-slate-950 antialiased`}
       >

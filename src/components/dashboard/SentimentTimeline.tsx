@@ -8,6 +8,7 @@ import { TrendingUp } from "lucide-react";
 import { DashboardTimeline } from "@/types/dashboard.type";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
+import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 interface Props {
   data: DashboardTimeline[];
@@ -35,6 +36,7 @@ function CustomTooltip({ active, payload, label }: any) {
 }
 
 export default function SentimentTimeline({ data }: Props) {
+  const { t } = useTranslation();
   if (!data || data.length === 0) return null;
 
   const formatted = data.map((d) => {
@@ -50,8 +52,8 @@ export default function SentimentTimeline({ data }: Props) {
           <TrendingUp size={17} className="text-indigo-600" />
         </div>
         <div>
-          <h2 className="font-semibold text-slate-900 dark:text-slate-100">Tren Sentimen Waktu</h2>
-          <p className="text-xs text-slate-400 dark:text-slate-500">Perubahan sentimen komentar per hari</p>
+          <h2 className="font-semibold text-slate-900 dark:text-slate-100">{t.sentimentTimeline.title}</h2>
+          <p className="text-xs text-slate-400 dark:text-slate-500">{t.sentimentTimeline.subtitle}</p>
         </div>
       </div>
 
@@ -74,7 +76,7 @@ export default function SentimentTimeline({ data }: Props) {
             <Legend
               wrapperStyle={{ fontSize: 12, paddingTop: 16 }}
               formatter={(v) =>
-                v === "positive" ? "Positif" : v === "negative" ? "Negatif" : v === "neutral" ? "Netral" : v
+                v === "positive" ? t.sentimentPie.positive : v === "negative" ? t.sentimentPie.negative : v === "neutral" ? t.sentimentPie.neutral : v
               }
             />
             <Line

@@ -1,6 +1,7 @@
 "use client";
 
 import { ExternalLink, Eye, MessageCircle, Calendar } from "lucide-react";
+import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 interface Post {
   id: string;
@@ -19,12 +20,6 @@ const SENTIMENT_STYLE: Record<string, { pill: string; dot: string }> = {
   positive: { pill: "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 border-emerald-200", dot: "bg-emerald-500" },
   negative: { pill: "bg-red-50 dark:bg-red-950/40 text-red-700 border-red-200",            dot: "bg-red-500" },
   neutral:  { pill: "bg-amber-50 dark:bg-amber-950/40 text-amber-700 border-amber-200",      dot: "bg-amber-400" },
-};
-
-const SENTIMENT_LABEL: Record<string, string> = {
-  positive: "Positif",
-  negative: "Negatif",
-  neutral:  "Netral",
 };
 
 const RANK_STYLE: Record<number, string> = {
@@ -51,14 +46,21 @@ function formatCompact(n: number) {
 }
 
 export default function TopPostsTable({ data }: { data: Post[] }) {
+  const { t } = useTranslation();
+  const SENTIMENT_LABEL: Record<string, string> = {
+    positive: t.sentimentPie.positive,
+    negative: t.sentimentPie.negative,
+    neutral: t.sentimentPie.neutral,
+  };
+
   if (!data || data.length === 0) {
     return (
       <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm">
         <div className="px-6 py-5 border-b border-slate-100 dark:border-slate-800">
-          <h2 className="font-semibold text-slate-900 dark:text-slate-100">Top Videos</h2>
-          <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">10 konten terpopuler berdasarkan views</p>
+          <h2 className="font-semibold text-slate-900 dark:text-slate-100">{t.topPostsTable.title}</h2>
+          <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">{t.topPostsTable.subtitle}</p>
         </div>
-        <div className="py-16 text-center text-slate-400 dark:text-slate-500 text-sm">Tidak ada data</div>
+        <div className="py-16 text-center text-slate-400 dark:text-slate-500 text-sm">{t.topPostsTable.noData}</div>
       </div>
     );
   }
@@ -67,8 +69,8 @@ export default function TopPostsTable({ data }: { data: Post[] }) {
     <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
       {/* Header */}
       <div className="px-6 py-5 border-b border-slate-100 dark:border-slate-800">
-        <h2 className="font-semibold text-slate-900 dark:text-slate-100">Top Videos</h2>
-        <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">10 konten terpopuler berdasarkan views</p>
+        <h2 className="font-semibold text-slate-900 dark:text-slate-100">{t.topPostsTable.title}</h2>
+        <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">{t.topPostsTable.subtitle}</p>
       </div>
 
       {/* List */}
@@ -95,7 +97,7 @@ export default function TopPostsTable({ data }: { data: Post[] }) {
                     onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
                   />
                 ) : (
-                  <div className="h-full w-full flex items-center justify-center text-slate-300 text-xs">No img</div>
+                  <div className="h-full w-full flex items-center justify-center text-slate-300 text-xs">{t.topPostsTable.noImage}</div>
                 )}
               </div>
 

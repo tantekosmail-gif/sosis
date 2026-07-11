@@ -5,6 +5,7 @@ import { MessageSquare, Search, ThumbsUp, ChevronLeft, ChevronRight } from "luci
 import { DashboardComment } from "@/types/dashboard.type";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
+import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 interface Props {
   comments: DashboardComment[];
@@ -12,15 +13,15 @@ interface Props {
 
 type SentimentFilter = "all" | "positive" | "neutral" | "negative";
 
-const SENTIMENT_STYLE: Record<string, { bg: string; text: string; dot: string; label: string }> = {
-  positive: { bg: "bg-emerald-50 dark:bg-emerald-950/40",  text: "text-emerald-700",  dot: "bg-emerald-400",  label: "Positif"  },
-  neutral:  { bg: "bg-slate-100 dark:bg-slate-800",   text: "text-slate-600 dark:text-slate-400",    dot: "bg-slate-400",    label: "Netral"   },
-  negative: { bg: "bg-red-50 dark:bg-red-950/40",      text: "text-red-700",      dot: "bg-red-400",      label: "Negatif"  },
-};
-
 const PAGE_SIZE = 10;
 
 export default function CommentsTable({ comments }: Props) {
+  const { t } = useTranslation();
+  const SENTIMENT_STYLE: Record<string, { bg: string; text: string; dot: string; label: string }> = {
+    positive: { bg: "bg-emerald-50 dark:bg-emerald-950/40",  text: "text-emerald-700",  dot: "bg-emerald-400",  label: t.sentimentPie.positive },
+    neutral:  { bg: "bg-slate-100 dark:bg-slate-800",   text: "text-slate-600 dark:text-slate-400",    dot: "bg-slate-400",    label: t.sentimentPie.neutral },
+    negative: { bg: "bg-red-50 dark:bg-red-950/40",      text: "text-red-700",      dot: "bg-red-400",      label: t.sentimentPie.negative },
+  };
   const [filter, setFilter] = useState<SentimentFilter>("all");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -61,8 +62,8 @@ export default function CommentsTable({ comments }: Props) {
             <MessageSquare size={17} className="text-emerald-600" />
           </div>
           <div>
-            <h2 className="font-semibold text-slate-900 dark:text-slate-100">Komentar</h2>
-            <p className="text-xs text-slate-400 dark:text-slate-500">{comments.length.toLocaleString("id-ID")} komentar terkumpul</p>
+            <h2 className="font-semibold text-slate-900 dark:text-slate-100">{t.commentsTable.title}</h2>
+            <p className="text-xs text-slate-400 dark:text-slate-500">{comments.length.toLocaleString("id-ID")} {t.exposureCards.commentsCollected}</p>
           </div>
         </div>
 
@@ -70,7 +71,7 @@ export default function CommentsTable({ comments }: Props) {
         <div className="relative">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
           <input
-            placeholder="Cari komentar atau penulis..."
+            placeholder={t.commentsTable.searchPlaceholder}
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
             className="h-9 w-full min-w-52 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 pl-8 pr-3 text-sm text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-indigo-400 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition"
@@ -96,7 +97,7 @@ export default function CommentsTable({ comments }: Props) {
               }`}
             >
               {s && <span className={`h-1.5 w-1.5 rounded-full ${s.dot}`} />}
-              {f === "all" ? "Semua" : s!.label}
+              {f === "all" ? t.commentsTable.all : s!.label}
               <span className={`ml-0.5 rounded-md px-1.5 py-0.5 text-[10px] font-semibold ${active ? "bg-white/20" : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400"}`}>
                 {counts[f]}
               </span>
@@ -109,7 +110,7 @@ export default function CommentsTable({ comments }: Props) {
       {paginated.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-14 text-center">
           <MessageSquare size={28} className="mb-3 text-slate-300" />
-          <p className="text-sm text-slate-500 dark:text-slate-400">Tidak ada komentar ditemukan</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">{t.commentsTable.empty}</p>
         </div>
       ) : (
         <ul className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -154,7 +155,7 @@ export default function CommentsTable({ comments }: Props) {
       {totalPages > 1 && (
         <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-800 px-6 py-3">
           <p className="text-xs text-slate-400 dark:text-slate-500">
-            {((currentPage - 1) * PAGE_SIZE) + 1}–{Math.min(currentPage * PAGE_SIZE, filtered.length)} dari {filtered.length}
+            {((currentPage - 1) * PAGE_SIZE) + 1}–{Math.min(currentPage * PAGE_SIZE, filtered.length)} {t.exposureCards.ofPrefix} {filtered.length}
           </p>
           <div className="flex items-center gap-1">
             <button
