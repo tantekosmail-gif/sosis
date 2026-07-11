@@ -11,9 +11,9 @@ export function useNewsSearch() {
   const [error, setError] = useState("");
   const [hasSearched, setHasSearched] = useState(false);
 
-  const search = useCallback(async (query: string, limit = 10) => {
+  const search = useCallback(async (query: string, limit = 10): Promise<NewsSearchData | null> => {
     const trimmed = query.trim();
-    if (!trimmed) return;
+    if (!trimmed) return null;
 
     try {
       setLoading(true);
@@ -22,8 +22,10 @@ export function useNewsSearch() {
 
       const result = await searchNews(trimmed, limit);
       setData(result);
+      return result;
     } catch (err: any) {
       setError(err?.message || "Gagal memuat hasil pencarian berita");
+      return null;
     } finally {
       setLoading(false);
     }

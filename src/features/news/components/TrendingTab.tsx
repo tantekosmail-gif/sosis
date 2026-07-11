@@ -1,11 +1,22 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import { Loader2, TrendingUp } from "lucide-react";
 
 import NewsResultCard from "@/components/news/NewsResultCard";
 import NewsSummaryWidget from "@/components/news/NewsSummaryWidget";
+import NegativeHighlightCard from "@/components/news/NegativeHighlightCard";
+import WordCloud from "@/components/dashboard/WordCloud";
 import { useNewsSummary } from "../hooks/useNewsSummary";
 import { useNewsTrending } from "../hooks/useNewsTrending";
+import { buildWordCloud } from "@/lib/wordCloud";
+
+const SORT_OPTIONS = [
+  { key: "terbaru", label: "Terbaru" },
+  { key: "negatif", label: "Paling Negatif" },
+] as const;
+
+type SortKey = (typeof SORT_OPTIONS)[number]["key"];
 
 function formatDate(value: string) {
   const date = new Date(value);
@@ -16,6 +27,25 @@ function formatDate(value: string) {
 export default function NewsTrendingTab() {
   const { data: summary, loading: summaryLoading, error: summaryError } = useNewsSummary();
   const { data: trending, loading: trendingLoading, error: trendingError } = useNewsTrending();
+  const [sortBy, setSortBy] = useState<SortKey>("terbaru");
+
+  const sortedItems = useMemo(() => {
+    if (!trending) return [];
+    const items = [...trending.items];
+    if (sortBy === "negatif") {
+      return items.sort((a, b) => {
+        const aScore = a.sentiment?.label === "negatif" ? a.sentiment.score : -1;
+        const bScore = b.sentiment?.label === "negatif" ? b.sentiment.score : -1;
+        return bScore - aScore;
+      });
+    }
+    return items.sort((a, b) => (b.published_at ?? b.collected_at).localeCompare(a.published_at ?? a.collected_at));
+  }, [trending, sortBy]);
+
+  const contentWordCloud = useMemo(() => {
+    if (!trending) return [];
+    return buildWordCloud(trending.items.map((item) => `${item.title} ${item.content}`));
+  }, [trending]);
 
   return (
     <div className="space-y-6">
@@ -68,7 +98,29 @@ export default function NewsTrendingTab() {
             </div>
           ) : (
             <div className="space-y-4">
-              {trending.items.map((item) => (
+              <NegativeHighlightCard items={trending.items} />
+
+              {contentWordCloud.length > 0 && <WordCloud data={contentWordCloud} />}
+
+              <div className="flex items-center justify-end gap-2">
+                <span className="text-xs font-medium text-slate-400 dark:text-slate-500">Urutkan:</span>
+                <div className="inline-flex rounded-xl border border-slate-200 bg-slate-50 p-1 dark:border-slate-700 dark:bg-slate-800">
+                  {SORT_OPTIONS.map((opt) => (
+                    <button
+                      key={opt.key}
+                      type="button"
+                      onClick={() => setSortBy(opt.key)}
+                      className={`rounded-lg px-3 py-1.5 text-xs font-medium transition ${
+                        sortBy === opt.key ? "bg-white text-slate-900 shadow-sm dark:bg-slate-900 dark:text-slate-100" : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300"
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {sortedItems.map((item) => (
                 <NewsResultCard key={item.post_id} item={item} sentiment={item.sentiment} />
               ))}
             </div>

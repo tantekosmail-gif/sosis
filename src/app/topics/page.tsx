@@ -77,6 +77,7 @@ export default function TopicsPage() {
   const [createOpen, setCreateOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Topic | null>(null);
   const { topics, loading, error, addTopic, removeTopic, updateSchedule } = useTopics();
 
   useEffect(() => {
@@ -104,7 +105,13 @@ export default function TopicsPage() {
     }
   }
 
-  async function handleDelete(topic: Topic) {
+  function handleDelete(topic: Topic) {
+    setDeleteTarget(topic);
+  }
+
+  async function confirmDelete() {
+    if (!deleteTarget) return;
+    const topic = deleteTarget;
     setBusyId(topic.id);
     try {
       await removeTopic(topic.id);
@@ -114,6 +121,7 @@ export default function TopicsPage() {
       toast.error(apiErrorMessage(err, t.topics.deleteError));
     } finally {
       setBusyId(null);
+      setDeleteTarget(null);
     }
   }
 
@@ -157,6 +165,36 @@ export default function TopicsPage() {
             <DialogTitle>{t.topics.addButton}</DialogTitle>
           </DialogHeader>
           <TopicForm onSubmit={handleSubmit} loading={submitting} bare />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t.topics.deleteConfirmTitle}</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            {t.topics.deleteConfirmDesc.replace("{name}", deleteTarget?.name ?? "")}
+          </p>
+          <div className="flex justify-end gap-2 pt-2">
+            <button
+              type="button"
+              onClick={() => setDeleteTarget(null)}
+              disabled={busyId === deleteTarget?.id}
+              className="h-9 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 text-sm font-medium text-slate-600 dark:text-slate-300 transition hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50"
+            >
+              {t.topics.deleteConfirmNo}
+            </button>
+            <button
+              type="button"
+              onClick={confirmDelete}
+              disabled={busyId === deleteTarget?.id}
+              className="flex h-9 items-center gap-1.5 rounded-lg bg-red-600 px-4 text-sm font-medium text-white transition hover:bg-red-700 disabled:opacity-50"
+            >
+              {busyId === deleteTarget?.id && <Loader2 size={14} className="animate-spin" />}
+              {t.topics.deleteConfirmYes}
+            </button>
+          </div>
         </DialogContent>
       </Dialog>
 

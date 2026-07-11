@@ -13,9 +13,9 @@ export function useFacebookPosts() {
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
 
   const search = useCallback(
-    async (targetUsername: string, forceRefresh = false) => {
+    async (targetUsername: string, forceRefresh = false): Promise<FacebookPostsData | null> => {
       const trimmed = targetUsername.trim().replace(/^@/, "");
-      if (!trimmed) return;
+      if (!trimmed) return null;
 
       try {
         setLoading(true);
@@ -29,8 +29,10 @@ export function useFacebookPosts() {
           forceRefresh,
         });
         setData(result);
+        return result;
       } catch (err: any) {
         setError(err?.message || "Gagal memuat data Facebook");
+        return null;
       } finally {
         setLoading(false);
       }

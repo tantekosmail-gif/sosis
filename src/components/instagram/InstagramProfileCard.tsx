@@ -1,9 +1,10 @@
 "use client";
 
 import type { LucideIcon } from "lucide-react";
-import { BadgeCheck, Grid3x3, Lock, MessageSquare, PieChart, TrendingUp, UserRound } from "lucide-react";
+import { BadgeCheck, Grid3x3, Info, Lock, MessageSquare, Percent, PieChart, TrendingUp, UserRound } from "lucide-react";
 
-import type { InstagramPostsStats, InstagramUserInfo, PostSentimentOverview } from "@/features/instagram/types/posts.types";
+import type { InstagramPostItem, InstagramPostsStats, InstagramUserInfo, PostSentimentOverview } from "@/features/instagram/types/posts.types";
+import { formatRelativeTime } from "@/lib/formatRelativeTime";
 
 const SENTIMENT_LABEL: Record<string, string> = {
   positif: "Positif",
@@ -25,12 +26,17 @@ function formatCompact(n?: number) {
   return n.toString();
 }
 
-function StatCard({ icon: Icon, label, value }: { icon: LucideIcon; label: string; value: string }) {
+function StatCard({ icon: Icon, label, value, tooltip }: { icon: LucideIcon; label: string; value: string; tooltip?: string }) {
   return (
     <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
-      <div className="flex items-center gap-2 text-slate-400 dark:text-slate-500">
+      <div className="flex items-center gap-1.5 text-slate-400 dark:text-slate-500">
         <Icon size={15} />
         <span className="text-xs font-semibold uppercase tracking-wider">{label}</span>
+        {tooltip && (
+          <span title={tooltip} className="shrink-0 cursor-help">
+            <Info size={12} />
+          </span>
+        )}
       </div>
       <p className="mt-2 text-xl font-bold text-slate-900 dark:text-slate-100">{value}</p>
     </div>
@@ -41,10 +47,12 @@ export default function InstagramProfileCard({
   userInfo,
   stats,
   sentiment,
+  items,
 }: {
   userInfo: InstagramUserInfo;
   stats: InstagramPostsStats;
   sentiment: PostSentimentOverview;
+  items: InstagramPostItem[];
 }) {
   const hasProfile = Boolean(userInfo && (userInfo.username || userInfo.full_name));
 
@@ -52,6 +60,19 @@ export default function InstagramProfileCard({
     key,
     ...sentiment[key],
   }));
+
+  const engagementRate = (() => {
+    if (!userInfo.followers_count || items.length === 0) return null;
+    const totalEngagement = items.reduce((sum, item) => sum + (item.likes || 0) + (item.comment_count || 0), 0);
+    const avgEngagement = totalEngagement / items.length;
+    return (avgEngagement / userInfo.followers_count) * 100;
+  })();
+
+  const lastCollectedAt = items.reduce<string | undefined>((latest, item) => {
+    if (!item.collected_at) return latest;
+    if (!latest || item.collected_at > latest) return item.collected_at;
+    return latest;
+  }, undefined);
 
   return (
     <div className="space-y-4">
@@ -80,6 +101,11 @@ export default function InstagramProfileCard({
             </div>
             {userInfo.username && <p className="text-sm text-slate-400 dark:text-slate-500">@{userInfo.username}</p>}
             {userInfo.biography && <p className="mt-1.5 line-clamp-2 break-words text-xs text-slate-500 dark:text-slate-400">{userInfo.biography}</p>}
+            {lastCollectedAt && (
+              <p className="mt-1.5 text-[11px] text-slate-400 dark:text-slate-500">
+                Diperbarui {formatRelativeTime(lastCollectedAt)}
+              </p>
+            )}
           </div>
 
           <div className="flex shrink-0 gap-5 text-center">
@@ -103,11 +129,27 @@ export default function InstagramProfileCard({
         </div>
       )}
 
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
         <StatCard icon={Grid3x3} label="Total Post" value={stats.total_posts.toLocaleString("id-ID")} />
         <StatCard icon={MessageSquare} label="Total Komentar" value={stats.total_comments.toLocaleString("id-ID")} />
-        <StatCard icon={TrendingUp} label="Dianalisis" value={stats.total_analyzed.toLocaleString("id-ID")} />
-        <StatCard icon={PieChart} label="Coverage" value={`${stats.coverage_pct.toFixed(1)}%`} />
+        <StatCard
+          icon={TrendingUp}
+          label="Dianalisis"
+          value={stats.total_analyzed.toLocaleString("id-ID")}
+          tooltip="Jumlah komentar yang sudah diproses oleh mesin analisis sentimen"
+        />
+        <StatCard
+          icon={PieChart}
+          label="Coverage"
+          value={`${stats.coverage_pct.toFixed(1)}%`}
+          tooltip="Persentase komentar yang sudah dianalisis dari total komentar yang terkumpul"
+        />
+        <StatCard
+          icon={Percent}
+          label="Engagement Rate"
+          value={engagementRate !== null ? `${engagementRate.toFixed(2)}%` : "-"}
+          tooltip="Rata-rata (like + komentar) per post dibagi jumlah followers, dari post yang diambil saat ini"
+        />
       </div>
 
       <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">

@@ -17,6 +17,11 @@ export interface OverviewWidgetVisibility {
   geoDistribution: boolean;
   trendVisuals: boolean;
   trendFeed: boolean;
+  shareOfVoiceGlobal: boolean;
+  topicGrowth: boolean;
+  entityRadar: boolean;
+  needsAttention: boolean;
+  dataHealth: boolean;
 }
 
 export type OverviewWidgetKey = keyof OverviewWidgetVisibility;
@@ -77,23 +82,33 @@ const DEFAULT_OVERVIEW_WIDGETS: OverviewWidgetVisibility = {
   geoDistribution: true,
   trendVisuals: true,
   trendFeed: true,
+  shareOfVoiceGlobal: true,
+  topicGrowth: true,
+  entityRadar: true,
+  needsAttention: true,
+  dataHealth: true,
 };
 
 const DEFAULT_OVERVIEW_WIDGET_ORDER: OverviewWidgetKey[] = [
+  "needsAttention",
   "sentiment",
+  "topicGrowth",
+  "shareOfVoiceGlobal",
+  "platformVolume",
+  "entityRadar",
   "trendWordCount",
   "trendTimeline",
-  "trendingSearches",
-  "trendVisuals",
-  "platformVolume",
-  "youtubeVisuals",
+  "trendNumberPerSearch",
   "trendDiscovery",
   "trendDiscoveryTwitter",
   "trendDiscoveryTiktok",
   "trendDiscoveryInstagram",
-  "trendNumberPerSearch",
+  "trendingSearches",
+  "youtubeVisuals",
+  "trendVisuals",
   "trendFeed",
   "geoDistribution",
+  "dataHealth",
 ];
 
 function reconcileOrder(stored: unknown): OverviewWidgetKey[] {
@@ -140,16 +155,19 @@ function mergeWithDefaults(stored: Partial<AppSettings>): AppSettings {
 export function useSettings() {
   const [settings, setSettings] = useState<AppSettings>(getSettings);
   const [saved, setSaved] = useState(false);
+  const [dirty, setDirty] = useState(false);
 
   function update<K extends keyof AppSettings>(key: K, value: AppSettings[K]) {
     setSettings((prev) => ({ ...prev, [key]: value }));
     setSaved(false);
+    setDirty(true);
   }
 
   function save() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
       setSaved(true);
+      setDirty(false);
       setTimeout(() => setSaved(false), 2500);
     } catch {}
   }
@@ -158,9 +176,10 @@ export function useSettings() {
     setSettings(DEFAULTS);
     localStorage.removeItem(STORAGE_KEY);
     setSaved(false);
+    setDirty(false);
   }
 
-  return { settings, update, save, reset, saved };
+  return { settings, update, save, reset, saved, dirty };
 }
 
 export function getSettings(): AppSettings {

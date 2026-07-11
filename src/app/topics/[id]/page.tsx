@@ -9,7 +9,11 @@ import { ArrowLeft, Eye, Globe, ImageOff, Loader2, Newspaper, Tag, ThumbsUp } fr
 import { FaFacebook, FaInstagram, FaTiktok, FaXTwitter, FaYoutube } from "react-icons/fa6";
 
 import DashboardLayout from "@/components/layout/DashboardLayout";
-import { getTopicDetail } from "@/features/topic/services/topic.service";
+import { getTopicDetail, getShareOfVoice, getTopEntities } from "@/features/topic/services/topic.service";
+import ShareOfVoiceCard, { type ShareOfVoiceItem } from "@/components/topic/ShareOfVoiceCard";
+import TopicEntitiesCard, { type TopicEntity } from "@/components/topic/TopicEntitiesCard";
+import { normalizeEntities, mergeEntities } from "@/lib/entities";
+import { normalizeShareOfVoice } from "@/lib/shareOfVoice";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 interface TopicPost {
@@ -96,6 +100,7 @@ function normalizeTopicDetail(raw: any): TopicDetail {
   };
 }
 
+
 function PostCard({ post }: { post: TopicPost }) {
   let dateStr = "";
   if (post.published_at) {
@@ -166,6 +171,8 @@ export default function TopicDetailPage({ params }: { params: Promise<{ id: stri
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [topic, setTopic] = useState<TopicDetail | null>(null);
+  const [shareOfVoice, setShareOfVoice] = useState<ShareOfVoiceItem[]>([]);
+  const [entities, setEntities] = useState<TopicEntity[]>([]);
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
@@ -198,6 +205,36 @@ export default function TopicDetailPage({ params }: { params: Promise<{ id: stri
       cancelled = true;
     };
   }, [authChecked, id, t]);
+
+  // Share of Voice & entitas dihitung dari keyword_id tiap keyword dalam topik —
+  // dijalankan setelah detail topik siap, gagal diam-diam (tidak menimpa error
+  // utama halaman) supaya widget tambahan ini tidak memblokir konten inti.
+  useEffect(() => {
+    if (!topic || topic.keywordGroups.length === 0) return;
+    let cancelled = false;
+    const keywordIds = topic.keywordGroups.map((g) => g.keywordId).filter(Boolean);
+    const keywordNameById = Object.fromEntries(topic.keywordGroups.map((g) => [g.keywordId, g.keyword]));
+
+    (async () => {
+      try {
+        const sovRaw = await getShareOfVoice(keywordIds);
+        if (!cancelled) setShareOfVoice(normalizeShareOfVoice(sovRaw, keywordNameById));
+      } catch (err) {
+        console.error("getShareOfVoice failed:", err);
+      }
+
+      const entityResults = await Promise.allSettled(keywordIds.map((kid) => getTopEntities(kid)));
+      if (cancelled) return;
+      const entityLists = entityResults
+        .filter((r): r is PromiseFulfilledResult<any> => r.status === "fulfilled")
+        .map((r) => normalizeEntities(r.value));
+      setEntities(mergeEntities(entityLists));
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [topic]);
 
   if (!authChecked) return null;
 
@@ -244,6 +281,10 @@ export default function TopicDetailPage({ params }: { params: Promise<{ id: stri
               ))}
             </div>
           </div>
+
+          {shareOfVoice.length > 1 && <ShareOfVoiceCard items={shareOfVoice} />}
+
+          <TopicEntitiesCard entities={entities} />
 
           {/* Results per keyword, separated per platform */}
           {topic.keywordGroups.length === 0 ? (

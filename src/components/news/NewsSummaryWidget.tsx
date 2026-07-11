@@ -1,7 +1,7 @@
 "use client";
 
 import type { LucideIcon } from "lucide-react";
-import { AlertTriangle, BarChart3, Globe2, Newspaper, Tags } from "lucide-react";
+import { AlertTriangle, BarChart3, Globe2, Info, Newspaper, Tags } from "lucide-react";
 
 import type { NewsAnalysisSummary } from "@/features/news/types/summary.types";
 
@@ -29,12 +29,17 @@ function entityColor(type: string) {
   return ENTITY_TYPE_COLOR[type] ?? { bg: "bg-slate-100 dark:bg-slate-800", text: "text-slate-600 dark:text-slate-400" };
 }
 
-function StatCard({ icon: Icon, label, value }: { icon: LucideIcon; label: string; value: string }) {
+function StatCard({ icon: Icon, label, value, tooltip }: { icon: LucideIcon; label: string; value: string; tooltip?: string }) {
   return (
     <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-3">
       <div className="flex items-center gap-1.5 text-slate-400 dark:text-slate-500">
         <Icon size={13} />
         <span className="text-[10px] font-semibold uppercase tracking-wider">{label}</span>
+        {tooltip && (
+          <span title={tooltip} className="shrink-0 cursor-help">
+            <Info size={11} />
+          </span>
+        )}
       </div>
       <p className="mt-1 text-lg font-bold text-slate-900 dark:text-slate-100">{value}</p>
     </div>
@@ -64,9 +69,24 @@ export default function NewsSummaryWidget({ data }: Props) {
       <div className="space-y-5 p-6">
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           <StatCard icon={Newspaper} label="Total Artikel" value={total_articles.toLocaleString("id-ID")} />
-          <StatCard icon={BarChart3} label="Dianalisis" value={total_analyzed.toLocaleString("id-ID")} />
-          <StatCard icon={Tags} label="Entitas" value={String(trending_entities.top.length)} />
-          <StatCard icon={Globe2} label="Sumber" value={String(sources.length)} />
+          <StatCard
+            icon={BarChart3}
+            label="Dianalisis"
+            value={total_analyzed.toLocaleString("id-ID")}
+            tooltip="Jumlah artikel yang sudah diproses oleh mesin analisis sentimen"
+          />
+          <StatCard
+            icon={Tags}
+            label="Entitas"
+            value={String(trending_entities.top.length)}
+            tooltip="Jumlah nama orang, organisasi, lokasi, atau event yang paling sering disebut di artikel"
+          />
+          <StatCard
+            icon={Globe2}
+            label="Sumber"
+            value={String(sources.length)}
+            tooltip="Jumlah media/situs berita berbeda yang menjadi sumber artikel"
+          />
         </div>
 
         {!fully_analyzed && (

@@ -1,18 +1,65 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Loader2, Newspaper, Search } from "lucide-react";
 
 import NewsResultCard from "@/components/news/NewsResultCard";
+import NegativeHighlightCard from "@/components/news/NegativeHighlightCard";
+import WordCloud from "@/components/dashboard/WordCloud";
 import { useNewsSearch } from "../hooks/useNewsSearch";
+import { useRecentNewsSearches } from "../hooks/useRecentSearches";
+import { formatRelativeTime } from "@/lib/formatRelativeTime";
+import { buildWordCloud } from "@/lib/wordCloud";
+
+const SORT_OPTIONS = [
+  { key: "terbaru", label: "Terbaru" },
+  { key: "negatif", label: "Paling Negatif" },
+] as const;
+
+type SortKey = (typeof SORT_OPTIONS)[number]["key"];
 
 export default function NewsSearchTab() {
   const [query, setQuery] = useState("");
   const { data, loading, error, hasSearched, search } = useNewsSearch();
+  const { recent, addRecentSearch } = useRecentNewsSearches();
+  const [sortBy, setSortBy] = useState<SortKey>("terbaru");
 
-  function handleSubmit(e: React.FormEvent) {
+  const sortedItems = useMemo(() => {
+    if (!data) return [];
+    const items = [...data.items];
+    if (sortBy === "negatif") {
+      return items.sort((a, b) => {
+        const aNeg = a.sentiment === "negatif" ? 1 : 0;
+        const bNeg = b.sentiment === "negatif" ? 1 : 0;
+        return bNeg - aNeg;
+      });
+    }
+    return items.sort((a, b) => (b.published_at ?? b.collected_at).localeCompare(a.published_at ?? a.collected_at));
+  }, [data, sortBy]);
+
+  const lastCollectedAt = useMemo(() => {
+    if (!data) return undefined;
+    return data.items.reduce<string | undefined>((latest, item) => {
+      if (!latest || item.collected_at > latest) return item.collected_at;
+      return latest;
+    }, undefined);
+  }, [data]);
+
+  const contentWordCloud = useMemo(() => {
+    if (!data) return [];
+    return buildWordCloud(data.items.map((item) => `${item.title} ${item.content}`));
+  }, [data]);
+
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    search(query);
+    const result = await search(query);
+    if (result?.query) addRecentSearch(result.query);
+  }
+
+  async function handleSelectRecent(term: string) {
+    setQuery(term);
+    const result = await search(term);
+    if (result?.query) addRecentSearch(result.query);
   }
 
   return (
@@ -37,6 +84,24 @@ export default function NewsSearchTab() {
         </button>
       </form>
 
+      {recent.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+            Pencarian Terakhir
+          </span>
+          {recent.map((term) => (
+            <button
+              key={term}
+              type="button"
+              onClick={() => handleSelectRecent(term)}
+              className="rounded-lg bg-slate-100 dark:bg-slate-800 px-2.5 py-1 text-xs font-medium text-slate-600 dark:text-slate-300 transition hover:bg-indigo-50 hover:text-indigo-700 dark:hover:bg-indigo-950/40 dark:hover:text-indigo-300"
+            >
+              {term}
+            </button>
+          ))}
+        </div>
+      )}
+
       {error && (
         <div className="rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-600 dark:bg-red-950/40">
           {error}
@@ -52,21 +117,50 @@ export default function NewsSearchTab() {
 
       {!loading && !error && hasSearched && data && (
         <>
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            <span className="font-semibold text-slate-700 dark:text-slate-300">{data.total}</span> hasil untuk{" "}
-            <span className="font-semibold text-slate-700 dark:text-slate-300">&ldquo;{data.query}&rdquo;</span>
-          </p>
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              <span className="font-semibold text-slate-700 dark:text-slate-300">{data.total}</span> hasil untuk{" "}
+              <span className="font-semibold text-slate-700 dark:text-slate-300">&ldquo;{data.query}&rdquo;</span>
+            </p>
+            {lastCollectedAt && (
+              <p className="text-xs text-slate-400 dark:text-slate-500">Diperbarui {formatRelativeTime(lastCollectedAt)}</p>
+            )}
+          </div>
 
           {data.items.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-slate-300 bg-white py-16 text-center text-sm text-slate-400 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-500">
               Tidak ada berita ditemukan untuk pencarian ini
             </div>
           ) : (
-            <div className="space-y-4">
-              {data.items.map((item) => (
-                <NewsResultCard key={item.post_id} item={item} />
-              ))}
-            </div>
+            <>
+              <NegativeHighlightCard items={data.items} />
+
+              {contentWordCloud.length > 0 && <WordCloud data={contentWordCloud} />}
+
+              <div className="flex items-center justify-end gap-2">
+                <span className="text-xs font-medium text-slate-400 dark:text-slate-500">Urutkan:</span>
+                <div className="inline-flex rounded-xl border border-slate-200 bg-slate-50 p-1 dark:border-slate-700 dark:bg-slate-800">
+                  {SORT_OPTIONS.map((opt) => (
+                    <button
+                      key={opt.key}
+                      type="button"
+                      onClick={() => setSortBy(opt.key)}
+                      className={`rounded-lg px-3 py-1.5 text-xs font-medium transition ${
+                        sortBy === opt.key ? "bg-white text-slate-900 shadow-sm dark:bg-slate-900 dark:text-slate-100" : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300"
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                {sortedItems.map((item) => (
+                  <NewsResultCard key={item.post_id} item={item} sentiment={item.sentiment} />
+                ))}
+              </div>
+            </>
           )}
         </>
       )}

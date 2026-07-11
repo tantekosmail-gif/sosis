@@ -13,6 +13,7 @@ import OverviewWidgetsSection from "@/features/settings/components/OverviewWidge
 import AboutSection from "@/features/settings/components/AboutSection";
 import { useSettings } from "@/features/settings/hooks/useSettings";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const TABS = [
   { key: "account",      icon: User },
@@ -30,7 +31,8 @@ export default function SettingsPage() {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<TabKey>("account");
   const [authChecked, setAuthChecked] = useState(false);
-  const { settings, update, save, saved } = useSettings();
+  const [pendingTab, setPendingTab] = useState<TabKey | null>(null);
+  const { settings, update, save, saved, dirty } = useSettings();
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
@@ -38,10 +40,34 @@ export default function SettingsPage() {
     setAuthChecked(true);
   }, [router]);
 
+  useEffect(() => {
+    function handleBeforeUnload(e: BeforeUnloadEvent) {
+      if (!dirty) return;
+      e.preventDefault();
+      e.returnValue = "";
+    }
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [dirty]);
+
   if (!authChecked) return null;
 
   const active = TABS.find((tab) => tab.key === activeTab)!;
   const activeLabels = t.settings.tabs[active.key];
+
+  function handleTabClick(tab: TabKey) {
+    if (tab === activeTab) return;
+    if (dirty) {
+      setPendingTab(tab);
+      return;
+    }
+    setActiveTab(tab);
+  }
+
+  function confirmTabSwitch() {
+    if (pendingTab) setActiveTab(pendingTab);
+    setPendingTab(null);
+  }
 
   return (
     <DashboardLayout>
@@ -62,7 +88,7 @@ export default function SettingsPage() {
               return (
                 <button
                   key={tab.key}
-                  onClick={() => setActiveTab(tab.key)}
+                  onClick={() => handleTabClick(tab.key)}
                   className={`flex shrink-0 items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-all lg:w-full ${
                     isActive
                       ? "bg-indigo-600 text-white shadow shadow-indigo-500/30"
@@ -111,6 +137,31 @@ export default function SettingsPage() {
           {activeTab === "about" && <AboutSection />}
         </div>
       </div>
+
+      <Dialog open={!!pendingTab} onOpenChange={(open) => !open && setPendingTab(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t.settings.unsavedConfirmTitle}</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-slate-500 dark:text-slate-400">{t.settings.unsavedConfirmDesc}</p>
+          <div className="flex justify-end gap-2 pt-2">
+            <button
+              type="button"
+              onClick={() => setPendingTab(null)}
+              className="h-9 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 text-sm font-medium text-slate-600 dark:text-slate-300 transition hover:bg-slate-50 dark:hover:bg-slate-800"
+            >
+              {t.settings.unsavedConfirmNo}
+            </button>
+            <button
+              type="button"
+              onClick={confirmTabSwitch}
+              className="h-9 rounded-lg bg-red-600 px-4 text-sm font-medium text-white transition hover:bg-red-700"
+            >
+              {t.settings.unsavedConfirmYes}
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </DashboardLayout>
   );
 }

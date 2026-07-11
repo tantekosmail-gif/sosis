@@ -37,7 +37,11 @@
   "overview": {
     "title": "Overview",
     "subtitle": "Ringkasan aktivitas & sentimen dari seluruh platform yang dipantau",
-    "resultsTitle": "Hasil pencarian untuk"
+    "removeWidgetAria": "Hapus widget",
+    "removeWidgetConfirmTitle": "Hapus widget?",
+    "removeWidgetConfirmDesc": "Widget ini akan disembunyikan dari Overview. Anda bisa memunculkannya kembali lewat Pengaturan.",
+    "removeWidgetConfirmYes": "Ya, hapus",
+    "removeWidgetConfirmNo": "Batal"
   },
   "platforms": {
     "youtube": { "subtitle": "Video viral & analisis sentimen keyword YouTube" },
@@ -222,15 +226,6 @@
     "heroDesc": "Lacak, analisis, dan pahami apa yang orang bicarakan tentang brand kamu di media sosial dan berita.",
     "quote": "Intelijen sosial yang presisi untuk tim berbasis data. Ketahui pendapat publik sebelum menjadi krisis."
   },
-  "search": {
-    "keywordPlaceholderEmpty": "Ketik keyword lalu tekan Enter...",
-    "keywordPlaceholderMore": "Tambah keyword lagi...",
-    "similarTopics": "Topik serupa",
-    "searchButton": "Search",
-    "searching": "Mencari...",
-    "errorKeywordRequired": "Masukkan minimal satu keyword",
-    "errorSearchFailed": "Pencarian gagal. Silakan coba lagi."
-  },
   "topics": {
     "pageTitle": "Topik",
     "addButton": "Tambah Topik",
@@ -244,12 +239,19 @@
     "keywordLabel": "Keyword",
     "keywordPlaceholderEmpty": "Ketik keyword lalu tekan Enter...",
     "keywordPlaceholderMore": "Tambah keyword lagi...",
+    "aiSuggestButton": "AI Suggest",
+    "aiSuggestEmpty": "Tidak ada saran keyword baru",
+    "aiSuggestError": "Gagal mendapatkan saran keyword dari AI",
     "errorNameRequired": "Nama topik wajib diisi",
     "errorKeywordRequired": "Tambahkan minimal satu keyword",
     "saving": "Menyimpan...",
     "addSubmit": "Simpan Topik",
     "viewButton": "Lihat",
     "deleteAria": "Hapus topik",
+    "deleteConfirmTitle": "Hapus topik?",
+    "deleteConfirmDesc": "Yakin ingin menghapus \"{name}\"? Tindakan ini tidak dapat dibatalkan.",
+    "deleteConfirmYes": "Ya, hapus",
+    "deleteConfirmNo": "Batal",
     "recurringLabel": "Pencarian Berkala",
     "recurringOn": "Aktif",
     "recurringOff": "Nonaktif",
@@ -275,6 +277,10 @@
   "settings": {
     "title": "Pengaturan",
     "subtitle": "Kelola akun, konfigurasi AI, dan preferensi aplikasi",
+    "unsavedConfirmTitle": "Perubahan belum disimpan",
+    "unsavedConfirmDesc": "Ada perubahan yang belum disimpan pada tab ini. Tetap pindah tab?",
+    "unsavedConfirmYes": "Ya, pindah",
+    "unsavedConfirmNo": "Tetap di sini",
     "tabs": {
       "account": { "label": "Akun", "description": "Profil & keamanan" },
       "ai": { "label": "Model AI", "description": "Provider & konfigurasi" },

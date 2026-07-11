@@ -103,6 +103,11 @@ const WIDGET_META: Record<OverviewWidgetKey, { title: string; description: strin
   geoDistribution: { title: "Peta Lokasi Mentions", description: "Peta sebaran lokasi mentions 24 jam terakhir" },
   trendVisuals: { title: "Postingan Visual (Lintas Platform)", description: "Postingan visual lintas platform untuk keyword trending, bisa pindah keyword" },
   trendFeed: { title: "Feed Post & Komentar", description: "Feed post & komentar lintas platform, keyword mengikuti ranking Keyword Trending" },
+  shareOfVoiceGlobal: { title: "Share of Voice — Semua Topik", description: "Porsi mention tiap keyword aktif dibandingkan total mention lintas semua topik" },
+  topicGrowth: { title: "Topik Naik/Turun", description: "Topik dengan pertumbuhan mention tercepat dibanding periode sebelumnya" },
+  entityRadar: { title: "Entity Radar — Semua Topik", description: "Orang/organisasi/lokasi/event yang paling sering disebut lintas semua topik" },
+  needsAttention: { title: "Butuh Perhatian", description: "Akun dengan porsi sentimen negatif tertinggi, digabung dari semua platform" },
+  dataHealth: { title: "Kesehatan Data", description: "Progres analisis sentimen per platform — deteksi data yang masih parsial" },
 };
 
 export default function OverviewWidgetsSection({ settings, update, onSave, saved }: Props) {
@@ -145,9 +150,17 @@ export default function OverviewWidgetsSection({ settings, update, onSave, saved
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
-        <div className="border-b border-slate-100 dark:border-slate-800 px-6 py-5">
-          <h3 className="font-semibold text-slate-900 dark:text-slate-100">{t.settings.widgetsPage.title}</h3>
-          <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">{t.settings.widgetsPage.desc}</p>
+        <div className="flex items-start justify-between gap-4 border-b border-slate-100 dark:border-slate-800 px-6 py-5">
+          <div>
+            <h3 className="font-semibold text-slate-900 dark:text-slate-100">{t.settings.widgetsPage.title}</h3>
+            <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">{t.settings.widgetsPage.desc}</p>
+          </div>
+          <button
+            onClick={onSave}
+            className="flex shrink-0 items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-5 py-2.5 text-sm font-semibold text-white shadow shadow-indigo-500/20 hover:from-indigo-700 hover:to-violet-700 transition"
+          >
+            {saved ? <><CheckCircle2 size={15} /> {t.common.saved}</> : t.settings.widgetsPage.saveButton}
+          </button>
         </div>
 
         <div className="px-6">
@@ -178,15 +191,6 @@ export default function OverviewWidgetsSection({ settings, update, onSave, saved
             );
           })}
         </div>
-      </div>
-
-      <div className="flex justify-end">
-        <button
-          onClick={onSave}
-          className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-5 py-2.5 text-sm font-semibold text-white shadow shadow-indigo-500/20 hover:from-indigo-700 hover:to-violet-700 transition"
-        >
-          {saved ? <><CheckCircle2 size={15} /> {t.common.saved}</> : t.settings.widgetsPage.saveButton}
-        </button>
       </div>
     </div>
   );

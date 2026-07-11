@@ -13,9 +13,9 @@ export function useTikTokPosts() {
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
 
   const search = useCallback(
-    async (targetUsername: string, forceRefresh = false) => {
+    async (targetUsername: string, forceRefresh = false): Promise<TikTokPostsData | null> => {
       const trimmed = targetUsername.trim().replace(/^@/, "");
-      if (!trimmed) return;
+      if (!trimmed) return null;
 
       try {
         setLoading(true);
@@ -29,8 +29,10 @@ export function useTikTokPosts() {
           forceRefresh,
         });
         setData(result);
+        return result;
       } catch (err: any) {
         setError(err?.message || "Gagal memuat data TikTok");
+        return null;
       } finally {
         setLoading(false);
       }

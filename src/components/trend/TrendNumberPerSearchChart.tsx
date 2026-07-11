@@ -1,11 +1,24 @@
 "use client";
 
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LabelList } from "recharts";
+import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis, LabelList } from "recharts";
 import { SlidersHorizontal } from "lucide-react";
 
 import type { TrendTimelineData } from "@/features/trends/types/timeline.types";
 
-const ACCENT_COLOR = "#6366f1";
+// Ramp sequential satu hue (indigo, brand accent app ini) — magnitude rendah
+// = pucat, tinggi = pekat. Dipakai sama di light & dark karena tiap bar sudah
+// punya label angka langsung di ujungnya (relief kontras), jadi tidak perlu
+// ramp terpisah per mode.
+const SEQUENTIAL_RAMP = ["#c7d2fe", "#a5b4fc", "#818cf8", "#6366f1", "#4f46e5"];
+const ACCENT_COLOR = SEQUENTIAL_RAMP[3];
+const GRIDLINE_COLOR = "rgba(148, 163, 184, 0.15)";
+
+function colorForValue(value: number, maxValue: number) {
+  if (maxValue <= 0) return SEQUENTIAL_RAMP[0];
+  const ratio = value / maxValue;
+  const idx = Math.min(SEQUENTIAL_RAMP.length - 1, Math.floor(ratio * SEQUENTIAL_RAMP.length));
+  return SEQUENTIAL_RAMP[idx];
+}
 
 function truncate(label: string, max = 32) {
   const clean = label.trim();
@@ -28,6 +41,11 @@ interface Props {
   data: TrendTimelineData;
 }
 
+// Widget ini di Overview cuma untuk sekilas pandang — dibatasi ke top 8 supaya
+// tingginya tidak jomplang dibanding widget lain, terlepas dari berapa banyak
+// keyword yang di-fetch lewat setting trendRankingTopN.
+const MAX_VISIBLE = 8;
+
 export default function TrendNumberPerSearchChart({ data }: Props) {
   const chartData = data.keywords
     .map((keyword) => ({
@@ -35,9 +53,11 @@ export default function TrendNumberPerSearchChart({ data }: Props) {
       label: truncate(keyword),
       value: data.series[keyword]?.total_mentions ?? 0,
     }))
-    .sort((a, b) => b.value - a.value);
+    .sort((a, b) => b.value - a.value)
+    .slice(0, MAX_VISIBLE);
 
   const isEmpty = chartData.length === 0;
+  const maxValue = chartData.reduce((max, item) => Math.max(max, item.value), 0);
 
   return (
     <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
@@ -60,21 +80,25 @@ export default function TrendNumberPerSearchChart({ data }: Props) {
           <div style={{ height: chartData.length * 44 + 20 }}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData} layout="vertical" margin={{ top: 0, right: 36, left: 0, bottom: 0 }} barSize={20}>
-                <XAxis type="number" allowDecimals={false} tick={{ fontSize: 11, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
+                <CartesianGrid horizontal={false} stroke={GRIDLINE_COLOR} />
+                <XAxis type="number" allowDecimals={false} tick={{ fontSize: 11, fill: "#898781" }} axisLine={false} tickLine={false} />
                 <YAxis
                   type="category"
                   dataKey="label"
                   width={180}
-                  tick={{ fontSize: 12, fill: "#475569" }}
+                  tick={{ fontSize: 12, fill: "#898781" }}
                   axisLine={false}
                   tickLine={false}
                 />
-                <Tooltip content={<BarTooltip />} cursor={{ fill: "#f8fafc" }} />
-                <Bar dataKey="value" radius={[0, 4, 4, 0]} fill={ACCENT_COLOR}>
+                <Tooltip content={<BarTooltip />} cursor={{ fill: "rgba(148, 163, 184, 0.08)" }} />
+                <Bar dataKey="value" radius={[0, 4, 4, 0]}>
+                  {chartData.map((item) => (
+                    <Cell key={item.fullLabel} fill={colorForValue(item.value, maxValue)} />
+                  ))}
                   <LabelList
                     dataKey="value"
                     position="right"
-                    style={{ fill: "#475569", fontSize: 11, fontWeight: 600 }}
+                    style={{ fill: "#898781", fontSize: 11, fontWeight: 600 }}
                   />
                 </Bar>
               </BarChart>

@@ -44,12 +44,13 @@ function excerpt(content: string, maxLength = 220) {
 
 interface Props {
   item: NewsArticleBase;
-  sentiment?: NewsSentimentScore | null;
+  sentiment?: NewsSentimentScore | string | null;
 }
 
 export default function NewsResultCard({ item, sentiment }: Props) {
   const date = formatDate(item.published_at) ?? formatDate(item.collected_at);
-  const sentimentColor = sentiment ? SENTIMENT_COLOR[sentiment.label] : null;
+  const sentimentLabel = typeof sentiment === "string" ? sentiment : sentiment?.label;
+  const sentimentColor = sentimentLabel ? SENTIMENT_COLOR[sentimentLabel] : null;
 
   return (
     <a
@@ -74,10 +75,10 @@ export default function NewsResultCard({ item, sentiment }: Props) {
           <span>{getSourceName(item.url)}</span>
           {date && <span className="text-slate-300">•</span>}
           {date && <span className="text-slate-400 dark:text-slate-500">{date}</span>}
-          {sentiment && sentimentColor && (
+          {sentimentLabel && sentimentColor && (
             <span className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-semibold ${sentimentColor.bg} ${sentimentColor.text}`}>
               <span className={`h-1.5 w-1.5 rounded-full ${sentimentColor.dot}`} />
-              {SENTIMENT_LABEL[sentiment.label] ?? sentiment.label}
+              {SENTIMENT_LABEL[sentimentLabel] ?? sentimentLabel}
             </span>
           )}
         </div>

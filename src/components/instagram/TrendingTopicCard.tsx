@@ -87,7 +87,7 @@ function PostMiniCard({
           href={post.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-slate-100 dark:bg-slate-800"
+          className="h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-slate-100 dark:bg-slate-800"
         >
           <img
             src={post.thumbnail}

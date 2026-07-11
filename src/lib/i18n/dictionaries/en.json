@@ -37,7 +37,11 @@
   "overview": {
     "title": "Overview",
     "subtitle": "Summary of activity & sentiment across all monitored platforms",
-    "resultsTitle": "Search results for"
+    "removeWidgetAria": "Remove widget",
+    "removeWidgetConfirmTitle": "Remove widget?",
+    "removeWidgetConfirmDesc": "This widget will be hidden from Overview. You can bring it back later from Settings.",
+    "removeWidgetConfirmYes": "Yes, remove",
+    "removeWidgetConfirmNo": "Cancel"
   },
   "platforms": {
     "youtube": { "subtitle": "Viral videos & keyword sentiment analysis for YouTube" },
@@ -222,15 +226,6 @@
     "heroDesc": "Track, analyze, and understand what people are saying about your brand across social media and the news.",
     "quote": "Precision social intelligence for data-driven teams. Know what the public thinks before it becomes a crisis."
   },
-  "search": {
-    "keywordPlaceholderEmpty": "Type a keyword and press Enter...",
-    "keywordPlaceholderMore": "Add another keyword...",
-    "similarTopics": "Similar topics",
-    "searchButton": "Search",
-    "searching": "Searching...",
-    "errorKeywordRequired": "Enter at least one keyword",
-    "errorSearchFailed": "Search failed. Please try again."
-  },
   "topics": {
     "pageTitle": "Topics",
     "addButton": "Add Topic",
@@ -244,12 +239,19 @@
     "keywordLabel": "Keyword",
     "keywordPlaceholderEmpty": "Type a keyword and press Enter...",
     "keywordPlaceholderMore": "Add another keyword...",
+    "aiSuggestButton": "AI Suggest",
+    "aiSuggestEmpty": "No new keyword suggestions found",
+    "aiSuggestError": "Failed to get AI keyword suggestions",
     "errorNameRequired": "Topic name is required",
     "errorKeywordRequired": "Add at least one keyword",
     "saving": "Saving...",
     "addSubmit": "Save Topic",
     "viewButton": "View",
     "deleteAria": "Delete topic",
+    "deleteConfirmTitle": "Delete topic?",
+    "deleteConfirmDesc": "Are you sure you want to delete \"{name}\"? This action cannot be undone.",
+    "deleteConfirmYes": "Yes, delete",
+    "deleteConfirmNo": "Cancel",
     "recurringLabel": "Recurring Search",
     "recurringOn": "Active",
     "recurringOff": "Inactive",
@@ -275,6 +277,10 @@
   "settings": {
     "title": "Settings",
     "subtitle": "Manage your account, AI configuration, and app preferences",
+    "unsavedConfirmTitle": "Unsaved changes",
+    "unsavedConfirmDesc": "You have unsaved changes on this tab. Switch tabs anyway?",
+    "unsavedConfirmYes": "Yes, switch",
+    "unsavedConfirmNo": "Stay",
     "tabs": {
       "account": { "label": "Account", "description": "Profile & security" },
       "ai": { "label": "AI Model", "description": "Provider & configuration" },

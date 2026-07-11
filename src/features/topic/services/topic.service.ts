@@ -76,3 +76,72 @@ export async function setTopicSchedule(topicId: string, payload: TopicSchedulePa
   const { data } = await api.post(`/api/v1/search/topics/${topicId}/schedule`, payload);
   return data;
 }
+
+const DEFAULT_SOV_PLATFORMS = ["youtube", "instagram", "facebook", "twitter", "tiktok"];
+// Endpoint ini default ke 30 hari terakhir kalau date_from/date_to tidak dikirim —
+// pakai tanggal jauh ke belakang supaya cakupannya all-time, bukan cuma sebulan
+// terakhir (topik lama yang datanya sudah tidak berubah akan selalu tampil 0 kalau ikut default itu).
+const SOV_ALL_TIME_FROM = "2000-01-01T00:00:00Z";
+
+// GET /api/v1/metrics/sov — Share of Voice antar keyword (porsi mention). Query array
+// params dikirim manual (bukan lewat axios `params`) supaya bentuknya pasti
+// `keyword_ids=a&keyword_ids=b`, sesuai konvensi FastAPI untuk List[str] di query.
+export async function getShareOfVoice(keywordIds: string[], platforms: string[] = DEFAULT_SOV_PLATFORMS) {
+  const search = new URLSearchParams();
+  keywordIds.forEach((id) => search.append("keyword_ids", id));
+  platforms.forEach((p) => search.append("platforms", p));
+  search.set("date_from", SOV_ALL_TIME_FROM);
+  search.set("date_to", new Date().toISOString());
+  const { data } = await api.get(`/api/v1/metrics/sov?${search.toString()}`);
+  return data;
+}
+
+// GET /api/v1/entities/top/{keyword_id} — top entitas (orang/organisasi/lokasi/event) untuk satu keyword.
+export async function getTopEntities(keywordId: string, topN = 15) {
+  const { data } = await api.get(`/api/v1/entities/top/${keywordId}`, { params: { top_n: topN } });
+  return data;
+}
+
+// GET /api/v1/metrics/topic/{topic_id} — metrik agregat 1 topik, termasuk mention growth
+// vs periode sebelumnya kalau include_growth=true.
+export async function getTopicMetrics(topicId: string, platforms: string[] = DEFAULT_SOV_PLATFORMS) {
+  const search = new URLSearchParams();
+  platforms.forEach((p) => search.append("platforms", p));
+  search.set("include_growth", "true");
+  search.set("date_from", SOV_ALL_TIME_FROM);
+  search.set("date_to", new Date().toISOString());
+  const { data } = await api.get(`/api/v1/metrics/topic/${topicId}?${search.toString()}`);
+  return data;
+}
+
+export interface GenerateReportPayload {
+  topic_id?: string;
+  format: "json" | "pdf" | "docx";
+  [key: string]: unknown;
+}
+
+// POST /api/v1/reports/generate — trigger pembuatan laporan async (job).
+// CATATAN: skema request/response endpoint ini ("GenerateReportRequest" /
+// "ReportJobResponse") tidak terdokumentasi lengkap di spec yang tersedia —
+// field selain "format" belum terverifikasi terhadap backend nyata.
+export async function generateReport(payload: GenerateReportPayload) {
+  const { data } = await api.post("/api/v1/reports/generate", payload);
+  return data;
+}
+
+export interface SuggestKeywordsPayload {
+  name: string;
+  existingKeywords?: string[];
+}
+
+// POST /api/topics/suggest-keywords — saran keyword dari AI berdasarkan nama topik (route lokal Next.js).
+export async function suggestTopicKeywords(payload: SuggestKeywordsPayload): Promise<string[]> {
+  const res = await fetch("/api/topics/suggest-keywords", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data?.error || "Gagal mendapatkan saran keyword");
+  return Array.isArray(data.keywords) ? data.keywords : [];
+}

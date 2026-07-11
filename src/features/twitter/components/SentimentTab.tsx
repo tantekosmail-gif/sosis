@@ -1,19 +1,32 @@
 "use client";
 
-import { useState } from "react";
-import { AlertTriangle, Loader2, RefreshCw, Search } from "lucide-react";
+import { useMemo, useState } from "react";
+import { AlertTriangle, Info, Loader2, RefreshCw, Search } from "lucide-react";
 
 import TwitterProfileCard from "@/components/twitter/TwitterProfileCard";
 import TwitterPostGrid from "@/components/twitter/TwitterPostGrid";
+import NegativeHighlightCard from "@/components/twitter/NegativeHighlightCard";
+import TopHashtags from "@/components/twitter/TopHashtags";
 import TwitterCommentsList from "@/components/twitter/TwitterCommentsList";
 import TwitterSummaryWidget from "@/components/twitter/TwitterSummaryWidget";
 import TwitterDiscoverPanel from "@/components/twitter/TwitterDiscoverPanel";
 import CommentsModal from "@/components/common/CommentsModal";
+import WordCloud from "@/components/dashboard/WordCloud";
 import { useTwitterPosts } from "../hooks/useTwitterPosts";
 import { useTwitterSummary } from "../hooks/useTwitterSummary";
+import { useRecentTwitterSearches } from "../hooks/useRecentSearches";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
+import { buildWordCloud } from "@/lib/wordCloud";
 
 const MAX_POSTS_OPTIONS = [3, 5, 10];
+
+const SORT_OPTIONS = [
+  { key: "terbaru", label: "Terbaru" },
+  { key: "negatif", label: "Paling Negatif" },
+  { key: "komentar", label: "Paling Banyak Balasan" },
+] as const;
+
+type SortKey = (typeof SORT_OPTIONS)[number]["key"];
 
 export default function TwitterSentimentTab() {
   const { t } = useTranslation();
@@ -33,15 +46,36 @@ export default function TwitterSentimentTab() {
   } = useTwitterPosts();
 
   const { data: summary } = useTwitterSummary();
+  const { recent, addRecentSearch } = useRecentTwitterSearches();
+  const [sortBy, setSortBy] = useState<SortKey>("terbaru");
 
-  function handleSearch(e: React.FormEvent) {
+  const sortedItems = useMemo(() => {
+    if (!data) return [];
+    const items = [...data.items];
+    if (sortBy === "negatif") {
+      return items.sort((a, b) => b.sentiment_summary.negatif.percentage - a.sentiment_summary.negatif.percentage);
+    }
+    if (sortBy === "komentar") {
+      return items.sort((a, b) => b.comment_count - a.comment_count);
+    }
+    return items.sort((a, b) => (b.published_at || "").localeCompare(a.published_at || ""));
+  }, [data, sortBy]);
+
+  const commentsWordCloud = useMemo(() => {
+    if (!data) return [];
+    return buildWordCloud(data.items.flatMap((item) => item.comments.map((c) => c.content)));
+  }, [data]);
+
+  async function handleSearch(e: React.FormEvent) {
     e.preventDefault();
-    search(usernameInput);
+    const result = await search(usernameInput);
+    if (result?.username) addRecentSearch(result.username);
   }
 
-  function handleSelectAccount(username: string) {
+  async function handleSelectAccount(username: string) {
     setUsernameInput(username);
-    search(username);
+    const result = await search(username);
+    if (result?.username) addRecentSearch(result.username);
   }
 
   return (
@@ -112,6 +146,24 @@ export default function TwitterSentimentTab() {
             </button>
           )}
         </div>
+
+        {recent.length > 0 && (
+          <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-slate-100 dark:border-slate-800 pt-3">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+              Pencarian Terakhir
+            </span>
+            {recent.map((username) => (
+              <button
+                key={username}
+                type="button"
+                onClick={() => handleSelectAccount(username)}
+                className="rounded-lg bg-slate-100 dark:bg-slate-800 px-2.5 py-1 text-xs font-medium text-slate-600 dark:text-slate-300 transition hover:bg-sky-50 hover:text-sky-700 dark:hover:bg-sky-950/40 dark:hover:text-sky-300"
+              >
+                @{username}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {error && (
@@ -153,10 +205,44 @@ export default function TwitterSentimentTab() {
             </div>
           )}
 
-          <TwitterProfileCard pageInfo={data.page_info} stats={data.stats} sentiment={data.sentiment} />
+          {data.scrape?.skipped_reason && (
+            <div className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-sm text-slate-600 dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-300">
+              <Info size={18} className="mt-0.5 shrink-0 text-slate-400" />
+              <div>
+                <p className="font-semibold">Data tidak diperbarui</p>
+                <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{data.scrape.skipped_reason}</p>
+              </div>
+            </div>
+          )}
+
+          <TwitterProfileCard pageInfo={data.page_info} stats={data.stats} sentiment={data.sentiment} items={data.items} />
+
+          <NegativeHighlightCard items={data.items} onSelect={(item) => setSelectedPostId(item.post_id)} />
+
+          <TopHashtags items={data.items} />
+
+          {commentsWordCloud.length > 0 && <WordCloud data={commentsWordCloud} />}
+
+          <div className="flex items-center justify-end gap-2">
+            <span className="text-xs font-medium text-slate-400 dark:text-slate-500">Urutkan:</span>
+            <div className="inline-flex rounded-xl border border-slate-200 bg-slate-50 p-1 dark:border-slate-700 dark:bg-slate-800">
+              {SORT_OPTIONS.map((opt) => (
+                <button
+                  key={opt.key}
+                  type="button"
+                  onClick={() => setSortBy(opt.key)}
+                  className={`rounded-lg px-3 py-1.5 text-xs font-medium transition ${
+                    sortBy === opt.key ? "bg-white text-slate-900 shadow-sm dark:bg-slate-900 dark:text-slate-100" : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300"
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
 
           <TwitterPostGrid
-            data={data.items}
+            data={sortedItems}
             selectedPostId={selectedPostId}
             onSelectPost={(item) => setSelectedPostId(item.post_id)}
           />

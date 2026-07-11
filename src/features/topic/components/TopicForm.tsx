@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, type KeyboardEvent } from "react";
-import { Tag, X } from "lucide-react";
+import { Loader2, Sparkles, Tag, X } from "lucide-react";
+import { toast } from "sonner";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
+import { suggestTopicKeywords } from "../services/topic.service";
 
 export interface TopicFormData {
   name: string;
@@ -23,6 +25,7 @@ export default function TopicForm({ onSubmit, loading = false, submitLabel, bare
   const [keywords, setKeywords] = useState<string[]>([]);
   const [keywordInput, setKeywordInput] = useState("");
   const [error, setError] = useState("");
+  const [suggesting, setSuggesting] = useState(false);
 
   function addKeyword(raw: string) {
     const trimmed = raw.trim();
@@ -41,6 +44,30 @@ export default function TopicForm({ onSubmit, loading = false, submitLabel, bare
       addKeyword(keywordInput);
     } else if (e.key === "Backspace" && !keywordInput && keywords.length > 0) {
       setKeywords((prev) => prev.slice(0, -1));
+    }
+  }
+
+  async function handleAiSuggest() {
+    const trimmedName = name.trim();
+    if (!trimmedName) {
+      setError(t.topics.errorNameRequired);
+      return;
+    }
+
+    setSuggesting(true);
+    try {
+      const suggested = await suggestTopicKeywords({ name: trimmedName, existingKeywords: keywords });
+      if (suggested.length === 0) {
+        toast.info(t.topics.aiSuggestEmpty);
+      } else {
+        setKeywords((prev) => [...prev, ...suggested.filter((kw) => !prev.includes(kw))]);
+        setError("");
+      }
+    } catch (err) {
+      console.error("suggestTopicKeywords failed:", err);
+      toast.error(t.topics.aiSuggestError);
+    } finally {
+      setSuggesting(false);
     }
   }
 
@@ -78,9 +105,20 @@ export default function TopicForm({ onSubmit, loading = false, submitLabel, bare
       </div>
 
       <div>
-        <label className="mb-2.5 block text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-          {t.topics.keywordLabel}
-        </label>
+        <div className="mb-2.5 flex items-center justify-between gap-2">
+          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+            {t.topics.keywordLabel}
+          </label>
+          <button
+            type="button"
+            onClick={handleAiSuggest}
+            disabled={suggesting || !name.trim()}
+            className="flex items-center gap-1.5 rounded-lg border border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-950/40 px-2.5 py-1 text-xs font-medium text-indigo-700 dark:text-indigo-300 transition hover:bg-indigo-100 dark:hover:bg-indigo-900/60 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {suggesting ? <Loader2 size={13} className="animate-spin" /> : <Sparkles size={13} />}
+            {t.topics.aiSuggestButton}
+          </button>
+        </div>
         <div className="flex min-h-11 flex-wrap items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 transition focus-within:border-indigo-400 focus-within:bg-white dark:focus-within:bg-slate-900 focus-within:ring-2 focus-within:ring-indigo-500/20">
           <Tag size={16} className="shrink-0 text-slate-400 dark:text-slate-500" />
 

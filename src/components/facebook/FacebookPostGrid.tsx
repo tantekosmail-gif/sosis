@@ -10,6 +10,18 @@ const SENTIMENT_BAR_COLOR: Record<string, string> = {
   negatif: "bg-red-500",
 };
 
+const SENTIMENT_LABEL: Record<string, string> = {
+  positif: "Positif",
+  netral: "Netral",
+  negatif: "Negatif",
+};
+
+function getDominantSentiment(summary: FacebookPostSentimentBreakdown): "positif" | "netral" | "negatif" | null {
+  const total = summary.positif.count + summary.netral.count + summary.negatif.count;
+  if (total === 0) return null;
+  return (["positif", "netral", "negatif"] as const).reduce((a, b) => (summary[b].count > summary[a].count ? b : a));
+}
+
 function formatDate(dateStr?: string) {
   if (!dateStr) return null;
   try {
@@ -63,6 +75,7 @@ export default function FacebookPostGrid({
       {data.map((item) => {
         const date = formatDate(item.published_at);
         const isSelected = item.post_id === selectedPostId;
+        const dominant = getDominantSentiment(item.sentiment_summary);
 
         return (
           <div
@@ -72,13 +85,20 @@ export default function FacebookPostGrid({
             }`}
           >
             {item.thumbnail && (
-              <a href={item.url} target="_blank" rel="noopener noreferrer" className="relative block aspect-square w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
+              <a href={item.url} target="_blank" rel="noopener noreferrer" className="relative block aspect-[16/9] w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
                 <img
                   src={item.thumbnail}
                   alt=""
                   className="h-full w-full object-cover transition-transform hover:scale-105"
                   onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
                 />
+
+                {dominant && (
+                  <span
+                    title={`Dominan: ${SENTIMENT_LABEL[dominant]}`}
+                    className={`absolute left-2 top-2 h-3 w-3 rounded-full ring-2 ring-white dark:ring-slate-900 ${SENTIMENT_BAR_COLOR[dominant]}`}
+                  />
+                )}
               </a>
             )}
 

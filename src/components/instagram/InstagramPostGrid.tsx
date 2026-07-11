@@ -10,6 +10,18 @@ const SENTIMENT_BAR_COLOR: Record<string, string> = {
   negatif: "bg-red-500",
 };
 
+const SENTIMENT_LABEL: Record<string, string> = {
+  positif: "Positif",
+  netral: "Netral",
+  negatif: "Negatif",
+};
+
+function getDominantSentiment(summary: PostSentimentBreakdown): "positif" | "netral" | "negatif" | null {
+  const total = summary.positif.count + summary.netral.count + summary.negatif.count;
+  if (total === 0) return null;
+  return (["positif", "netral", "negatif"] as const).reduce((a, b) => (summary[b].count > summary[a].count ? b : a));
+}
+
 function formatDate(dateStr?: string) {
   if (!dateStr) return null;
   try {
@@ -63,6 +75,9 @@ export default function InstagramPostGrid({
       {data.map((item) => {
         const date = formatDate(item.published_at);
         const isSelected = item.post_id === selectedPostId;
+        const isVideo = item.is_video || item.media_type === "VIDEO";
+        const aspectClass = isVideo ? "aspect-[9/16]" : "aspect-[4/5]";
+        const dominant = getDominantSentiment(item.sentiment_summary);
 
         return (
           <div
@@ -71,7 +86,7 @@ export default function InstagramPostGrid({
               isSelected ? "border-indigo-400 ring-2 ring-indigo-500/20" : "border-slate-200 dark:border-slate-700"
             }`}
           >
-            <a href={item.url} target="_blank" rel="noopener noreferrer" className="relative block aspect-square w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
+            <a href={item.url} target="_blank" rel="noopener noreferrer" className={`relative block ${aspectClass} w-full overflow-hidden bg-slate-100 dark:bg-slate-800`}>
               {item.thumbnail ? (
                 <img
                   src={item.thumbnail}
@@ -81,6 +96,13 @@ export default function InstagramPostGrid({
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center text-xs text-slate-300">No thumbnail</div>
+              )}
+
+              {dominant && (
+                <span
+                  title={`Dominan: ${SENTIMENT_LABEL[dominant]}`}
+                  className={`absolute left-2 top-2 h-3 w-3 rounded-full ring-2 ring-white dark:ring-slate-900 ${SENTIMENT_BAR_COLOR[dominant]}`}
+                />
               )}
 
               {item.is_video && (
