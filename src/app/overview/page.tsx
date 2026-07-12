@@ -44,7 +44,7 @@ function RemovableWidget({
   ariaLabel: string;
 }) {
   return (
-    <div className={`group relative${className ? ` ${className}` : ""}`}>
+    <div className={`group relative flex h-full flex-col${className ? ` ${className}` : ""}`}>
       <button
         onClick={onClose}
         aria-label={ariaLabel}

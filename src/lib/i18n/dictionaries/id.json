@@ -43,6 +43,123 @@
     "removeWidgetConfirmYes": "Ya, hapus",
     "removeWidgetConfirmNo": "Batal"
   },
+  "overviewWidgets": {
+    "common": {
+      "other": "Lainnya",
+      "topicUnit": "topik",
+      "noMentionsData": "Belum ada data mentions"
+    },
+    "relativeTime": {
+      "justNow": "baru saja",
+      "minutesAgo": "{n} menit lalu",
+      "hoursAgo": "{n} jam lalu",
+      "daysAgo": "{n} hari lalu"
+    },
+    "needsAttention": {
+      "title": "Butuh Perhatian",
+      "desc": "Akun dengan porsi sentimen negatif tertinggi, digabung dari semua platform yang dipantau.",
+      "negativeLine": "{pct}% negatif · {count}"
+    },
+    "topicGrowth": {
+      "title": "Topik Naik/Turun",
+      "desc": "Perubahan jumlah mention dibanding periode sebelumnya — menangkap momentum, bukan cuma volume mentah.",
+      "empty": "Belum ada data metrik topik untuk ditampilkan.",
+      "growthUnavailable": "Data growth belum tersedia dari server — diurutkan berdasarkan jumlah mention saja.",
+      "mentionsCount": "{n} mention"
+    },
+    "dataHealth": {
+      "title": "Kesehatan Data",
+      "desc": "Seberapa banyak data yang sudah selesai dianalisis per platform — hasil bisa parsial kalau belum 100%.",
+      "analyzedLine": "{analyzed} / {total} dianalisis ({pct}%)"
+    },
+    "platformVolume": {
+      "title": "Volume Post & Komentar per Platform",
+      "totalsLine": "{posts} post · {comments} komentar"
+    },
+    "shareOfVoice": {
+      "defaultTitle": "Share of Voice — Semua Topik",
+      "defaultDesc": "Porsi mention tiap keyword aktif dibandingkan total mention, lintas semua topik & platform yang dipantau.",
+      "otherKeywords": "Lainnya ({n} keyword)",
+      "empty": "Belum ada mention yang tercatat untuk keyword-keyword ini.",
+      "totalMentionsLabel": "total mention"
+    },
+    "entityRadar": {
+      "defaultTitle": "Entitas Trending",
+      "defaultDesc": "Orang, organisasi, lokasi, atau event yang paling sering disebut di seluruh keyword topik ini.",
+      "globalTitle": "Entity Radar — Semua Topik",
+      "globalDesc": "Orang, organisasi, lokasi, atau event yang paling sering disebut di seluruh topik yang dipantau.",
+      "empty": "Belum ada entitas yang terdeteksi — kemungkinan post pada keyword ini belum melalui proses analisis (NER)."
+    },
+    "overallSentiment": {
+      "title": "Sentimen Publik Gabungan",
+      "descLine": "Agregat sentimen dari {n} platform yang dipantau",
+      "empty": "Belum ada data sentimen yang dianalisis",
+      "overallLabel": "Sentimen Keseluruhan",
+      "itemsAnalyzed": "{n} item dianalisis"
+    },
+    "videoViral": {
+      "title": "Video Viral"
+    },
+    "postinganVisual": {
+      "title": "Postingan Visual",
+      "desc": "Postingan lintas platform untuk keyword trending",
+      "empty": "Tidak ada postingan untuk keyword \"{keyword}\""
+    },
+    "feedPostKomentar": {
+      "title": "Feed Post & Komentar",
+      "desc": "Postingan & komentar lintas platform untuk keyword trending",
+      "empty": "Tidak ada postingan untuk keyword \"{keyword}\"",
+      "sourcePost": "Post",
+      "sourceComment": "Komentar",
+      "openPost": "Buka postingan"
+    },
+    "trendTimeline": {
+      "title": "Timeline Mentions per Jam",
+      "unitDay": "hari",
+      "unitHour": "jam",
+      "descLine": "Mentions per {unit} · {n} keyword teratas",
+      "empty": "Belum ada data mentions"
+    },
+    "trendNumberPerSearch": {
+      "title": "Mentions per Keyword (7 Hari)",
+      "descLine": "Total mentions per keyword · {from} – {to}",
+      "empty": "Belum ada data mentions",
+      "tooltipUnit": "total mentions"
+    },
+    "trendWordCount": {
+      "title": "Ranking Keyword Trending",
+      "desc": "Total mentions, diurutkan",
+      "empty": "Belum ada data mentions"
+    },
+    "trendDiscovery": {
+      "title": "Trend Discovery",
+      "subtitle": "Topik trending lintas sumber (Twitter, TikTok, Instagram, Google Trends, YouTube)",
+      "tooltipScore": "skor topik",
+      "notValidated": "Belum divalidasi lintas sumber",
+      "relatedAccounts": "{n} akun terkait",
+      "mergedIntoOther": "digabung ke Lainnya",
+      "unconfirmedLine": "{n} belum divalidasi lintas sumber",
+      "empty": "Belum ada topik trending hari ini",
+      "bySource": {
+        "twitter": { "title": "Twitter/X Trends", "subtitle": "Topik trending native Twitter/X" },
+        "tiktok": { "title": "TikTok Trends", "subtitle": "Topik hasil sapuan akun TikTok" },
+        "instagram": { "title": "Instagram Trends", "subtitle": "Topik hasil sapuan akun Instagram" }
+      }
+    },
+    "geoDistribution": {
+      "title": "Peta Lokasi Mentions",
+      "descLine": "Sebaran lokasi mentions · {matched} dari {checked} lokasi cocok",
+      "empty": "Belum ada data lokasi",
+      "loadingMap": "Memuat peta..."
+    },
+    "trendingSearches": {
+      "title": "Pencarian Trending (Google Trends)",
+      "descLine": "Top pencarian Google Trends di {geo} · {period} terakhir",
+      "updatedPrefix": "Diperbarui",
+      "empty": "Belum ada data trending",
+      "searchUnit": "pencarian"
+    }
+  },
   "platforms": {
     "youtube": { "subtitle": "Video viral & analisis sentimen keyword YouTube" },
     "instagram": { "subtitle": "Trending akun & analisis sentimen komentar Instagram" },

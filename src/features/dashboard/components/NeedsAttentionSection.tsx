@@ -5,6 +5,7 @@ import { AlertTriangle, Loader2 } from "lucide-react";
 import { FaFacebook, FaInstagram, FaTiktok, FaXTwitter } from "react-icons/fa6";
 
 import { useNeedsAttention, type AttentionAccount } from "../hooks/useNeedsAttention";
+import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 const PLATFORM_META: Record<AttentionAccount["platform"], { label: string; icon: React.ComponentType<{ size?: number; className?: string }>; color: string; href: string }> = {
   instagram: { label: "Instagram", icon: FaInstagram, color: "text-pink-500", href: "/instagram" },
@@ -15,6 +16,7 @@ const PLATFORM_META: Record<AttentionAccount["platform"], { label: string; icon:
 
 export default function NeedsAttentionSection() {
   const { accounts, loading } = useNeedsAttention();
+  const { t } = useTranslation();
 
   if (loading) {
     return (
@@ -27,13 +29,13 @@ export default function NeedsAttentionSection() {
   if (accounts.length === 0) return null;
 
   return (
-    <div className="rounded-2xl border border-red-200 dark:border-red-900/60 bg-white dark:bg-slate-900 shadow-sm p-5">
+    <div className="flex h-full flex-col rounded-2xl border border-red-200 dark:border-red-900/60 bg-white dark:bg-slate-900 shadow-sm p-5">
       <div className="mb-1 flex items-center gap-2">
         <AlertTriangle size={16} className="text-red-600" />
-        <h2 className="font-semibold text-slate-900 dark:text-slate-100">Butuh Perhatian</h2>
+        <h2 className="font-semibold text-slate-900 dark:text-slate-100">{t.overviewWidgets.needsAttention.title}</h2>
       </div>
       <p className="mb-4 text-xs text-slate-400 dark:text-slate-500">
-        Akun dengan porsi sentimen negatif tertinggi, digabung dari semua platform yang dipantau.
+        {t.overviewWidgets.needsAttention.desc}
       </p>
 
       <div className="space-y-2">
@@ -51,7 +53,9 @@ export default function NeedsAttentionSection() {
                 @{account.username}
               </span>
               <span className="text-sm font-semibold text-red-600 dark:text-red-400">
-                {(account.negatifRatio * 100).toFixed(0)}% negatif · {account.negatifCount}
+                {t.overviewWidgets.needsAttention.negativeLine
+                  .replace("{pct}", (account.negatifRatio * 100).toFixed(0))
+                  .replace("{count}", String(account.negatifCount))}
               </span>
             </Link>
           );

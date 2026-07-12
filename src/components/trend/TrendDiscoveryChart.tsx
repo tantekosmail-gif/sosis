@@ -5,6 +5,7 @@ import { ShieldCheck, type LucideIcon } from "lucide-react";
 
 import type { TrendDiscoveryTopic } from "@/features/trends/types/discovery.types";
 import { CATEGORICAL_PALETTE, OTHER_COLOR } from "@/lib/chartColors";
+import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 const TOP_N = 5;
 
@@ -37,20 +38,21 @@ export default function TrendDiscoveryChart({
   showConfirmation = true,
   chartType = "bar",
 }: Props) {
-  const unconfirmed = topics.filter((t) => !t.confirmed_by || t.confirmed_by.length === 0).length;
+  const { t } = useTranslation();
+  const unconfirmed = topics.filter((topic) => !topic.confirmed_by || topic.confirmed_by.length === 0).length;
 
   const ranked = topics
-    .map((t) => ({ ...t, value: Math.round(t.score * 100), label: truncate(t.topic) }))
+    .map((topic) => ({ ...topic, value: Math.round(topic.score * 100), label: truncate(topic.topic) }))
     .sort((a, b) => b.value - a.value);
 
   const chartData = ranked.slice(0, 10);
 
   const top = ranked.slice(0, TOP_N);
   const rest = ranked.slice(TOP_N);
-  const restTotal = rest.reduce((sum, t) => sum + t.value, 0);
+  const restTotal = rest.reduce((sum, topic) => sum + topic.value, 0);
   const pieData = [
-    ...top.map((t, i) => ({ ...t, name: t.label, fill: CATEGORICAL_PALETTE[i % CATEGORICAL_PALETTE.length] })),
-    ...(rest.length > 0 ? [{ name: "Lainnya", value: restTotal, count: rest.length, fill: OTHER_COLOR }] : []),
+    ...top.map((topic, i) => ({ ...topic, name: topic.label, fill: CATEGORICAL_PALETTE[i % CATEGORICAL_PALETTE.length] })),
+    ...(rest.length > 0 ? [{ name: t.overviewWidgets.common.other, value: restTotal, count: rest.length, fill: OTHER_COLOR }] : []),
   ];
 
   function BarTooltip({ active, payload }: any) {
@@ -62,7 +64,7 @@ export default function TrendDiscoveryChart({
         <p className="mt-1 text-lg font-bold" style={{ color: accentColor }}>
           {Math.round(item.score * 100)}%
         </p>
-        <p className="mt-0.5 text-[11px] text-slate-400 dark:text-slate-500">skor topik</p>
+        <p className="mt-0.5 text-[11px] text-slate-400 dark:text-slate-500">{t.overviewWidgets.trendDiscovery.tooltipScore}</p>
         {showConfirmation &&
           (item.confirmed_by?.length > 0 ? (
             <div className="mt-2 flex flex-wrap gap-1">
@@ -73,10 +75,12 @@ export default function TrendDiscoveryChart({
               ))}
             </div>
           ) : (
-            <p className="mt-2 text-[11px] text-slate-400 dark:text-slate-500">Belum divalidasi lintas sumber</p>
+            <p className="mt-2 text-[11px] text-slate-400 dark:text-slate-500">{t.overviewWidgets.trendDiscovery.notValidated}</p>
           ))}
         {item.related_accounts?.length > 0 && (
-          <p className="mt-1.5 text-[11px] text-slate-400 dark:text-slate-500">{item.related_accounts.length} akun terkait</p>
+          <p className="mt-1.5 text-[11px] text-slate-400 dark:text-slate-500">
+            {t.overviewWidgets.trendDiscovery.relatedAccounts.replace("{n}", String(item.related_accounts.length))}
+          </p>
         )}
       </div>
     );
@@ -89,9 +93,11 @@ export default function TrendDiscoveryChart({
       <div className="max-w-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3 shadow-lg">
         <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">{item.name}</p>
         <p className="mt-1 text-lg font-bold" style={{ color: item.fill }}>
-          {item.count ? `${item.count} topik` : `${item.value}%`}
+          {item.count ? `${item.count} ${t.overviewWidgets.common.topicUnit}` : `${item.value}%`}
         </p>
-        <p className="mt-0.5 text-[11px] text-slate-400 dark:text-slate-500">{item.count ? "digabung ke Lainnya" : "skor topik"}</p>
+        <p className="mt-0.5 text-[11px] text-slate-400 dark:text-slate-500">
+          {item.count ? t.overviewWidgets.trendDiscovery.mergedIntoOther : t.overviewWidgets.trendDiscovery.tooltipScore}
+        </p>
       </div>
     );
   }
@@ -100,7 +106,7 @@ export default function TrendDiscoveryChart({
   const pieTotal = pieData.reduce((sum, d) => sum + d.value, 0);
 
   return (
-    <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 shadow-sm">
+    <div className="flex h-full flex-col rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 shadow-sm">
       <div className="mb-5 flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <div className={`flex h-9 w-9 items-center justify-center rounded-xl ${iconClassName}`}>
@@ -112,12 +118,14 @@ export default function TrendDiscoveryChart({
           </div>
         </div>
         {showConfirmation && unconfirmed > 0 && (
-          <span className="shrink-0 text-[11px] text-slate-400 dark:text-slate-500">{unconfirmed} belum divalidasi lintas sumber</span>
+          <span className="shrink-0 text-[11px] text-slate-400 dark:text-slate-500">
+            {t.overviewWidgets.trendDiscovery.unconfirmedLine.replace("{n}", String(unconfirmed))}
+          </span>
         )}
       </div>
 
       {isEmpty ? (
-        <p className="py-8 text-center text-sm text-slate-400 dark:text-slate-500">Belum ada topik trending hari ini</p>
+        <p className="py-8 text-center text-sm text-slate-400 dark:text-slate-500">{t.overviewWidgets.trendDiscovery.empty}</p>
       ) : chartType === "pie" ? (
         <div className="h-72">
           <ResponsiveContainer width="100%" height="100%">

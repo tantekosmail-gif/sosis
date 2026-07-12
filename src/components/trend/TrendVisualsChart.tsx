@@ -5,6 +5,8 @@ import { Camera, ExternalLink, Images, LayoutGrid } from "lucide-react";
 
 import type { TrendVisualsData } from "@/features/trends/types/visuals.types";
 import { getPlatformIcon } from "@/lib/platformIcons";
+import { formatRelativeTime } from "@/lib/formatRelativeTime";
+import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 const RAIL_SIZE = 4;
 
@@ -17,18 +19,6 @@ function PlatformBadge({ platform }: { platform: string }) {
   );
 }
 
-function formatRelativeTime(dateStr?: string) {
-  if (!dateStr) return "";
-  const diffMs = Date.now() - new Date(dateStr).getTime();
-  const diffMin = Math.round(diffMs / 60_000);
-  if (diffMin < 1) return "baru saja";
-  if (diffMin < 60) return `${diffMin} menit lalu`;
-  const diffHour = Math.round(diffMin / 60);
-  if (diffHour < 24) return `${diffHour} jam lalu`;
-  const diffDay = Math.round(diffHour / 24);
-  return `${diffDay} hari lalu`;
-}
-
 interface Props {
   keywords: string[];
   selectedKeyword: string;
@@ -38,6 +28,7 @@ interface Props {
 
 export default function TrendVisualsChart({ keywords, selectedKeyword, onSelectKeyword, data }: Props) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const { t, language } = useTranslation();
 
   useEffect(() => {
     setActiveIndex(0);
@@ -50,14 +41,14 @@ export default function TrendVisualsChart({ keywords, selectedKeyword, onSelectK
   const hasMore = items.length > RAIL_SIZE;
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm">
+    <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm">
       <div className="flex items-center gap-3 border-b border-slate-100 dark:border-slate-800 px-5 py-3.5">
         <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-950/40">
           <Images size={17} className="text-indigo-600" />
         </div>
         <div>
-          <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Postingan Visual</h2>
-          <p className="text-xs text-slate-400 dark:text-slate-500">Postingan lintas platform untuk keyword trending</p>
+          <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">{t.overviewWidgets.postinganVisual.title}</h2>
+          <p className="text-xs text-slate-400 dark:text-slate-500">{t.overviewWidgets.postinganVisual.desc}</p>
         </div>
       </div>
 
@@ -82,7 +73,7 @@ export default function TrendVisualsChart({ keywords, selectedKeyword, onSelectK
 
       {items.length === 0 ? (
         <p className="py-10 text-center text-sm text-slate-400 dark:text-slate-500">
-          Tidak ada postingan untuk keyword &quot;{data.keyword}&quot;
+          {t.overviewWidgets.postinganVisual.empty.replace("{keyword}", data.keyword)}
         </p>
       ) : (
         <div className="flex gap-3 p-4">
@@ -114,7 +105,7 @@ export default function TrendVisualsChart({ keywords, selectedKeyword, onSelectK
 
             <div className="absolute inset-x-0 bottom-0 p-4">
               <p className="truncate text-[11px] font-medium uppercase tracking-wide text-white/70">
-                {active.author} &middot; {formatRelativeTime(active.published_at)}
+                {active.author} &middot; {formatRelativeTime(active.published_at, language)}
               </p>
               <p className="mt-1 line-clamp-2 text-lg font-bold leading-snug text-white sm:text-xl">
                 {active.title}

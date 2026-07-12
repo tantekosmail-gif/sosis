@@ -4,9 +4,11 @@ import { Loader2 } from "lucide-react";
 
 import TopicEntitiesCard from "@/components/topic/TopicEntitiesCard";
 import { useGlobalEntities } from "../hooks/useGlobalEntities";
+import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 export default function GlobalEntityRadarSection() {
   const { entities, loading } = useGlobalEntities();
+  const { t } = useTranslation();
 
   if (loading) {
     return (
@@ -19,8 +21,8 @@ export default function GlobalEntityRadarSection() {
   return (
     <TopicEntitiesCard
       entities={entities}
-      title="Entity Radar — Semua Topik"
-      description="Orang, organisasi, lokasi, atau event yang paling sering disebut di seluruh topik yang dipantau."
+      title={t.overviewWidgets.entityRadar.globalTitle}
+      description={t.overviewWidgets.entityRadar.globalDesc}
     />
   );
 }

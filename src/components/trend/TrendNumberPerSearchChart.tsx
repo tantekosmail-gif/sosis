@@ -4,6 +4,7 @@ import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis
 import { SlidersHorizontal } from "lucide-react";
 
 import type { TrendTimelineData } from "@/features/trends/types/timeline.types";
+import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 // Ramp sequential satu hue (indigo, brand accent app ini) — magnitude rendah
 // = pucat, tinggi = pekat. Dipakai sama di light & dark karena tiap bar sudah
@@ -25,14 +26,14 @@ function truncate(label: string, max = 32) {
   return clean.length > max ? `${clean.slice(0, max).trimEnd()}…` : clean;
 }
 
-function BarTooltip({ active, payload }: any) {
+function BarTooltip({ active, payload, unitLabel }: any) {
   if (!active || !payload?.length) return null;
   const item = payload[0].payload;
   return (
     <div className="max-w-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3 shadow-lg">
       <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">{item.fullLabel}</p>
       <p className="mt-1 text-lg font-bold" style={{ color: ACCENT_COLOR }}>{item.value}</p>
-      <p className="mt-0.5 text-[11px] text-slate-400 dark:text-slate-500">total mentions</p>
+      <p className="mt-0.5 text-[11px] text-slate-400 dark:text-slate-500">{unitLabel}</p>
     </div>
   );
 }
@@ -47,6 +48,7 @@ interface Props {
 const MAX_VISIBLE = 8;
 
 export default function TrendNumberPerSearchChart({ data }: Props) {
+  const { t } = useTranslation();
   const chartData = data.keywords
     .map((keyword) => ({
       fullLabel: keyword,
@@ -60,22 +62,24 @@ export default function TrendNumberPerSearchChart({ data }: Props) {
   const maxValue = chartData.reduce((max, item) => Math.max(max, item.value), 0);
 
   return (
-    <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
+    <div className="flex h-full flex-col rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
       <div className="flex items-center gap-3 border-b border-slate-100 dark:border-slate-800 px-6 py-5">
         <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-950/40">
           <SlidersHorizontal size={17} className="text-indigo-600" />
         </div>
         <div>
-          <h2 className="font-semibold text-slate-900 dark:text-slate-100">Mentions per Keyword (7 Hari)</h2>
+          <h2 className="font-semibold text-slate-900 dark:text-slate-100">{t.overviewWidgets.trendNumberPerSearch.title}</h2>
           <p className="text-xs text-slate-400 dark:text-slate-500">
-            Total mentions per keyword &middot; {data.date_from} &ndash; {data.date_to}
+            {t.overviewWidgets.trendNumberPerSearch.descLine
+              .replace("{from}", data.date_from)
+              .replace("{to}", data.date_to)}
           </p>
         </div>
       </div>
 
       <div className="p-6">
         {isEmpty ? (
-          <p className="py-8 text-center text-sm text-slate-400 dark:text-slate-500">Belum ada data mentions</p>
+          <p className="py-8 text-center text-sm text-slate-400 dark:text-slate-500">{t.overviewWidgets.trendNumberPerSearch.empty}</p>
         ) : (
           <div style={{ height: chartData.length * 44 + 20 }}>
             <ResponsiveContainer width="100%" height="100%">
@@ -90,7 +94,10 @@ export default function TrendNumberPerSearchChart({ data }: Props) {
                   axisLine={false}
                   tickLine={false}
                 />
-                <Tooltip content={<BarTooltip />} cursor={{ fill: "rgba(148, 163, 184, 0.08)" }} />
+                <Tooltip
+                  content={<BarTooltip unitLabel={t.overviewWidgets.trendNumberPerSearch.tooltipUnit} />}
+                  cursor={{ fill: "rgba(148, 163, 184, 0.08)" }}
+                />
                 <Bar dataKey="value" radius={[0, 4, 4, 0]}>
                   {chartData.map((item) => (
                     <Cell key={item.fullLabel} fill={colorForValue(item.value, maxValue)} />

@@ -5,11 +5,7 @@ import { ExternalLink, Rss } from "lucide-react";
 import type { TrendFeedData } from "@/features/trends/types/feed.types";
 import { getPlatformIcon } from "@/lib/platformIcons";
 import { formatRelativeTime } from "@/lib/formatRelativeTime";
-
-const SOURCE_LABEL: Record<string, string> = {
-  post: "Post",
-  comment: "Komentar",
-};
+import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 interface Props {
   keywords: string[];
@@ -20,16 +16,22 @@ interface Props {
 
 export default function TrendFeedChart({ keywords, selectedKeyword, onSelectKeyword, data }: Props) {
   const items = data.items;
+  const { t, language } = useTranslation();
+
+  const SOURCE_LABEL: Record<string, string> = {
+    post: t.overviewWidgets.feedPostKomentar.sourcePost,
+    comment: t.overviewWidgets.feedPostKomentar.sourceComment,
+  };
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm">
+    <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm">
       <div className="flex items-center gap-3 border-b border-slate-100 dark:border-slate-800 px-6 py-5">
         <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-950/40">
           <Rss size={17} className="text-indigo-600" />
         </div>
         <div>
-          <h2 className="font-semibold text-slate-900 dark:text-slate-100">Feed Post & Komentar</h2>
-          <p className="text-xs text-slate-400 dark:text-slate-500">Postingan & komentar lintas platform untuk keyword trending</p>
+          <h2 className="font-semibold text-slate-900 dark:text-slate-100">{t.overviewWidgets.feedPostKomentar.title}</h2>
+          <p className="text-xs text-slate-400 dark:text-slate-500">{t.overviewWidgets.feedPostKomentar.desc}</p>
         </div>
       </div>
 
@@ -54,7 +56,7 @@ export default function TrendFeedChart({ keywords, selectedKeyword, onSelectKeyw
 
       {items.length === 0 ? (
         <p className="py-10 text-center text-sm text-slate-400 dark:text-slate-500">
-          Tidak ada postingan untuk keyword &quot;{data.keyword}&quot;
+          {t.overviewWidgets.feedPostKomentar.empty.replace("{keyword}", data.keyword)}
         </p>
       ) : (
         <ul className="max-h-[32rem] divide-y divide-slate-100 dark:divide-slate-800 overflow-y-auto">
@@ -73,7 +75,7 @@ export default function TrendFeedChart({ keywords, selectedKeyword, onSelectKeyw
                       {SOURCE_LABEL[item.source_type] ?? item.source_type}
                     </span>
                   </div>
-                  <span className="shrink-0 text-[11px] text-slate-400 dark:text-slate-500">{formatRelativeTime(item.published_at)}</span>
+                  <span className="shrink-0 text-[11px] text-slate-400 dark:text-slate-500">{formatRelativeTime(item.published_at, language)}</span>
                 </div>
 
                 <p className="mt-1.5 line-clamp-3 whitespace-pre-line break-words text-sm leading-snug text-slate-600 dark:text-slate-400">
@@ -86,7 +88,7 @@ export default function TrendFeedChart({ keywords, selectedKeyword, onSelectKeyw
                   rel="noopener noreferrer"
                   className="mt-2 inline-flex items-center gap-1 text-[11px] font-semibold text-indigo-600 hover:text-indigo-700"
                 >
-                  Buka postingan <ExternalLink size={11} />
+                  {t.overviewWidgets.feedPostKomentar.openPost} <ExternalLink size={11} />
                 </a>
               </li>
             );

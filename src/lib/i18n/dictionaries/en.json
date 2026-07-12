@@ -43,6 +43,123 @@
     "removeWidgetConfirmYes": "Yes, remove",
     "removeWidgetConfirmNo": "Cancel"
   },
+  "overviewWidgets": {
+    "common": {
+      "other": "Other",
+      "topicUnit": "topics",
+      "noMentionsData": "No mentions data yet"
+    },
+    "relativeTime": {
+      "justNow": "just now",
+      "minutesAgo": "{n} min ago",
+      "hoursAgo": "{n}h ago",
+      "daysAgo": "{n}d ago"
+    },
+    "needsAttention": {
+      "title": "Needs Attention",
+      "desc": "Accounts with the highest share of negative sentiment, combined across all monitored platforms.",
+      "negativeLine": "{pct}% negative · {count}"
+    },
+    "topicGrowth": {
+      "title": "Rising/Falling Topics",
+      "desc": "Change in mention count vs. the previous period — captures momentum, not just raw volume.",
+      "empty": "No topic metric data to show yet.",
+      "growthUnavailable": "Growth data isn't available from the server yet — sorted by mention count only.",
+      "mentionsCount": "{n} mentions"
+    },
+    "dataHealth": {
+      "title": "Data Health",
+      "desc": "How much data has finished being analyzed per platform — results may be partial until it hits 100%.",
+      "analyzedLine": "{analyzed} / {total} analyzed ({pct}%)"
+    },
+    "platformVolume": {
+      "title": "Post & Comment Volume per Platform",
+      "totalsLine": "{posts} posts · {comments} comments"
+    },
+    "shareOfVoice": {
+      "defaultTitle": "Share of Voice — All Topics",
+      "defaultDesc": "Share of mentions per active keyword vs. total mentions, across all monitored topics & platforms.",
+      "otherKeywords": "Other ({n} keywords)",
+      "empty": "No mentions recorded yet for these keywords.",
+      "totalMentionsLabel": "total mentions"
+    },
+    "entityRadar": {
+      "defaultTitle": "Trending Entities",
+      "defaultDesc": "People, organizations, locations, or events mentioned most often across all monitored keywords.",
+      "globalTitle": "Entity Radar — All Topics",
+      "globalDesc": "People, organizations, locations, or events mentioned most often across all monitored topics.",
+      "empty": "No entities detected yet — posts for this keyword may not have gone through NER analysis yet."
+    },
+    "overallSentiment": {
+      "title": "Combined Public Sentiment",
+      "descLine": "Aggregate sentiment from {n} monitored platforms",
+      "empty": "No sentiment data analyzed yet",
+      "overallLabel": "Overall Sentiment",
+      "itemsAnalyzed": "{n} items analyzed"
+    },
+    "videoViral": {
+      "title": "Viral Videos"
+    },
+    "postinganVisual": {
+      "title": "Visual Posts",
+      "desc": "Cross-platform posts for trending keywords",
+      "empty": "No posts for keyword \"{keyword}\""
+    },
+    "feedPostKomentar": {
+      "title": "Post & Comment Feed",
+      "desc": "Posts & comments across platforms for trending keywords",
+      "empty": "No posts for keyword \"{keyword}\"",
+      "sourcePost": "Post",
+      "sourceComment": "Comment",
+      "openPost": "Open post"
+    },
+    "trendTimeline": {
+      "title": "Mentions Timeline per Hour",
+      "unitDay": "day",
+      "unitHour": "hour",
+      "descLine": "Mentions per {unit} · top {n} keywords",
+      "empty": "No mentions data yet"
+    },
+    "trendNumberPerSearch": {
+      "title": "Mentions per Keyword (7 Days)",
+      "descLine": "Total mentions per keyword · {from} – {to}",
+      "empty": "No mentions data yet",
+      "tooltipUnit": "total mentions"
+    },
+    "trendWordCount": {
+      "title": "Trending Keyword Ranking",
+      "desc": "Total mentions, sorted",
+      "empty": "No mentions data yet"
+    },
+    "trendDiscovery": {
+      "title": "Trend Discovery",
+      "subtitle": "Trending topics across sources (Twitter, TikTok, Instagram, Google Trends, YouTube)",
+      "tooltipScore": "topic score",
+      "notValidated": "Not yet validated across sources",
+      "relatedAccounts": "{n} related accounts",
+      "mergedIntoOther": "merged into Other",
+      "unconfirmedLine": "{n} not yet validated across sources",
+      "empty": "No trending topics today yet",
+      "bySource": {
+        "twitter": { "title": "Twitter/X Trends", "subtitle": "Native Twitter/X trending topics" },
+        "tiktok": { "title": "TikTok Trends", "subtitle": "Topics gathered from monitored TikTok accounts" },
+        "instagram": { "title": "Instagram Trends", "subtitle": "Topics gathered from monitored Instagram accounts" }
+      }
+    },
+    "geoDistribution": {
+      "title": "Mentions Location Map",
+      "descLine": "Mentions location spread · {matched} of {checked} locations matched",
+      "empty": "No location data yet",
+      "loadingMap": "Loading map..."
+    },
+    "trendingSearches": {
+      "title": "Trending Searches (Google Trends)",
+      "descLine": "Top Google Trends searches in {geo} · last {period}",
+      "updatedPrefix": "Updated",
+      "empty": "No trending data yet",
+      "searchUnit": "searches"
+    }
+  },
   "platforms": {
     "youtube": { "subtitle": "Viral videos & keyword sentiment analysis for YouTube" },
     "instagram": { "subtitle": "Trending accounts & comment sentiment analysis for Instagram" },

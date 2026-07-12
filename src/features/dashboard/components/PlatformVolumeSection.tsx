@@ -2,9 +2,11 @@
 
 import { usePlatformOverviewData } from "../hooks/usePlatformOverviewData";
 import PlatformVolumeChart from "./PlatformVolumeChart";
+import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 export default function PlatformVolumeSection() {
   const { data: cards, isLoading } = usePlatformOverviewData();
+  const { t } = useTranslation();
 
   if (isLoading) {
     return <div className="h-72 animate-pulse rounded-2xl border border-slate-200 bg-slate-100 dark:border-slate-700 dark:bg-slate-800" />;
@@ -21,12 +23,13 @@ export default function PlatformVolumeSection() {
   );
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+    <div className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
       <div className="mb-4">
-        <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Volume Post & Komentar per Platform</h2>
+        <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">{t.overviewWidgets.platformVolume.title}</h2>
         <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">
-          <span className="font-semibold text-slate-700 dark:text-slate-300">{totals.posts.toLocaleString("id-ID")}</span> post ·{" "}
-          <span className="font-semibold text-slate-700 dark:text-slate-300">{totals.comments.toLocaleString("id-ID")}</span> komentar
+          {t.overviewWidgets.platformVolume.totalsLine
+            .replace("{posts}", totals.posts.toLocaleString("id-ID"))
+            .replace("{comments}", totals.comments.toLocaleString("id-ID"))}
         </p>
       </div>
 

@@ -3,9 +3,11 @@
 import { Loader2, Minus, TrendingDown, TrendingUp } from "lucide-react";
 
 import { useTopicGrowth } from "../hooks/useTopicGrowth";
+import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 export default function TopicGrowthSection() {
   const { items, loading } = useTopicGrowth();
+  const { t } = useTranslation();
 
   if (loading) {
     return (
@@ -28,24 +30,24 @@ export default function TopicGrowthSection() {
   const anyGrowthAvailable = items.some((i) => i.growthPct !== null);
 
   return (
-    <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm p-5">
+    <div className="flex h-full flex-col rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm p-5">
       <div className="mb-1 flex items-center gap-2">
         <TrendingUp size={16} className="text-indigo-600" />
-        <h2 className="font-semibold text-slate-900 dark:text-slate-100">Topik Naik/Turun</h2>
+        <h2 className="font-semibold text-slate-900 dark:text-slate-100">{t.overviewWidgets.topicGrowth.title}</h2>
       </div>
       <p className="mb-4 text-xs text-slate-400 dark:text-slate-500">
-        Perubahan jumlah mention dibanding periode sebelumnya — menangkap momentum, bukan cuma volume mentah.
+        {t.overviewWidgets.topicGrowth.desc}
       </p>
 
       {sorted.length === 0 ? (
         <p className="rounded-xl border border-dashed border-slate-200 dark:border-slate-700 py-6 text-center text-sm text-slate-400 dark:text-slate-500">
-          Belum ada data metrik topik untuk ditampilkan.
+          {t.overviewWidgets.topicGrowth.empty}
         </p>
       ) : (
         <>
           {!anyGrowthAvailable && (
             <p className="mb-3 text-[11px] text-amber-600 dark:text-amber-400">
-              Data growth belum tersedia dari server — diurutkan berdasarkan jumlah mention saja.
+              {t.overviewWidgets.topicGrowth.growthUnavailable}
             </p>
           )}
           <div className="space-y-2">
@@ -69,7 +71,9 @@ export default function TopicGrowthSection() {
                   <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{item.topicName}</span>
                   <span className={`flex items-center gap-1 text-sm font-semibold ${color}`}>
                     <Icon size={14} />
-                    {growth === null ? `${item.mentions.toLocaleString("id-ID")} mention` : `${isUp ? "+" : ""}${growth.toFixed(1)}%`}
+                    {growth === null
+                      ? t.overviewWidgets.topicGrowth.mentionsCount.replace("{n}", item.mentions.toLocaleString("id-ID"))
+                      : `${isUp ? "+" : ""}${growth.toFixed(1)}%`}
                   </span>
                 </div>
               );

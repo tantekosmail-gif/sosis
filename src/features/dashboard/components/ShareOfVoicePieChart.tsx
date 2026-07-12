@@ -4,6 +4,7 @@ import { Cell, Pie, PieChart as RechartsPieChart, ResponsiveContainer, Tooltip }
 import { PieChart } from "lucide-react";
 
 import type { ShareOfVoiceItem } from "@/lib/shareOfVoice";
+import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 // Palet kategorikal tervalidasi (8 hue, urutan tetap) — lolos validate_palette.js
 // untuk light & dark. Didefinisikan sebagai CSS var lewat Tailwind arbitrary
@@ -26,7 +27,7 @@ interface Segment {
   fill: string;
 }
 
-function buildSegments(items: ShareOfVoiceItem[]): Segment[] {
+function buildSegments(items: ShareOfVoiceItem[], otherLabelTemplate: string): Segment[] {
   const sorted = [...items].sort((a, b) => b.percentage - a.percentage);
   const top = sorted.slice(0, MAX_SLOTS);
   const rest = sorted.slice(MAX_SLOTS);
@@ -42,7 +43,7 @@ function buildSegments(items: ShareOfVoiceItem[]): Segment[] {
   if (rest.length > 0) {
     segments.push({
       key: "__other__",
-      label: `Lainnya (${rest.length} keyword)`,
+      label: otherLabelTemplate.replace("{n}", String(rest.length)),
       percentage: rest.reduce((sum, i) => sum + i.percentage, 0),
       mentions: rest.reduce((sum, i) => sum + i.mentions, 0),
       fill: SERIES_FILL[7],
@@ -67,27 +68,30 @@ function SliceTooltip({ active, payload }: { active?: boolean; payload?: { paylo
 
 export default function ShareOfVoicePieChart({
   items,
-  title = "Share of Voice — Semua Topik",
-  description = "Porsi mention tiap keyword aktif dibandingkan total mention, lintas semua topik & platform yang dipantau.",
+  title,
+  description,
 }: {
   items: ShareOfVoiceItem[];
   title?: string;
   description?: string;
 }) {
+  const { t } = useTranslation();
   const totalMentions = items.reduce((sum, item) => sum + item.mentions, 0);
-  const segments = buildSegments(items);
+  const segments = buildSegments(items, t.overviewWidgets.shareOfVoice.otherKeywords);
+  const resolvedTitle = title ?? t.overviewWidgets.shareOfVoice.defaultTitle;
+  const resolvedDescription = description ?? t.overviewWidgets.shareOfVoice.defaultDesc;
 
   return (
-    <div className={`rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm p-5 ${SERIES_VARS}`}>
+    <div className={`flex h-full flex-col rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm p-5 ${SERIES_VARS}`}>
       <div className="mb-4 flex items-center gap-2">
         <PieChart size={16} className="text-indigo-600" />
-        <h2 className="font-semibold text-slate-900 dark:text-slate-100">{title}</h2>
+        <h2 className="font-semibold text-slate-900 dark:text-slate-100">{resolvedTitle}</h2>
       </div>
-      <p className="mb-4 text-xs text-slate-400 dark:text-slate-500">{description}</p>
+      <p className="mb-4 text-xs text-slate-400 dark:text-slate-500">{resolvedDescription}</p>
 
       {totalMentions === 0 || segments.length === 0 ? (
         <p className="rounded-xl border border-dashed border-slate-200 dark:border-slate-700 py-6 text-center text-sm text-slate-400 dark:text-slate-500">
-          Belum ada mention yang tercatat untuk keyword-keyword ini.
+          {t.overviewWidgets.shareOfVoice.empty}
         </p>
       ) : (
         <div className="flex flex-col items-center gap-5">
@@ -116,7 +120,7 @@ export default function ShareOfVoicePieChart({
               <span className="text-xl font-bold text-slate-900 dark:text-slate-100">
                 {totalMentions.toLocaleString("id-ID")}
               </span>
-              <span className="text-[11px] text-slate-400 dark:text-slate-500">total mention</span>
+              <span className="text-[11px] text-slate-400 dark:text-slate-500">{t.overviewWidgets.shareOfVoice.totalMentionsLabel}</span>
             </div>
           </div>
 

@@ -3,12 +3,14 @@
 import { Hash } from "lucide-react";
 
 import type { TrendTimelineData } from "@/features/trends/types/timeline.types";
+import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 interface Props {
   data: TrendTimelineData;
 }
 
 export default function TrendWordCountChart({ data }: Props) {
+  const { t } = useTranslation();
   const ranked = data.keywords
     .map((keyword) => ({ keyword, total: data.series[keyword]?.total_mentions ?? 0 }))
     .sort((a, b) => b.total - a.total);
@@ -22,14 +24,14 @@ export default function TrendWordCountChart({ data }: Props) {
           <Hash size={17} className="text-amber-600" />
         </div>
         <div>
-          <h2 className="font-semibold text-slate-900 dark:text-slate-100">Ranking Keyword Trending</h2>
-          <p className="text-xs text-slate-400 dark:text-slate-500">Total mentions, diurutkan</p>
+          <h2 className="font-semibold text-slate-900 dark:text-slate-100">{t.overviewWidgets.trendWordCount.title}</h2>
+          <p className="text-xs text-slate-400 dark:text-slate-500">{t.overviewWidgets.trendWordCount.desc}</p>
         </div>
       </div>
 
       <div className="flex-1 p-6">
         {ranked.length === 0 ? (
-          <p className="py-8 text-center text-sm text-slate-400 dark:text-slate-500">Belum ada data mentions</p>
+          <p className="py-8 text-center text-sm text-slate-400 dark:text-slate-500">{t.overviewWidgets.trendWordCount.empty}</p>
         ) : (
           <div className="space-y-4">
             {ranked.map((item) => (

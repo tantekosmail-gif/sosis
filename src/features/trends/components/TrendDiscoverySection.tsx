@@ -4,9 +4,11 @@ import { Loader2 } from "lucide-react";
 
 import TrendDiscoveryChart from "@/components/trend/TrendDiscoveryChart";
 import { useTrendDiscovery } from "../hooks/useTrendDiscovery";
+import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 export default function TrendDiscoverySection() {
   const { data, loading, error } = useTrendDiscovery();
+  const { t } = useTranslation();
 
   if (loading) {
     return (
@@ -30,8 +32,8 @@ export default function TrendDiscoverySection() {
     <TrendDiscoveryChart
       topics={data.topics ?? []}
       date={data.date}
-      title="Trend Discovery"
-      subtitle="Topik trending lintas sumber (Twitter, TikTok, Instagram, Google Trends, YouTube)"
+      title={t.overviewWidgets.trendDiscovery.title}
+      subtitle={t.overviewWidgets.trendDiscovery.subtitle}
       chartType="pie"
     />
   );
