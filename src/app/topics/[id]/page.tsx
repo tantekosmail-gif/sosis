@@ -5,56 +5,16 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
-import { ArrowLeft, Eye, Globe, ImageOff, Loader2, Newspaper, Tag, ThumbsUp } from "lucide-react";
-import { FaFacebook, FaInstagram, FaTiktok, FaXTwitter, FaYoutube } from "react-icons/fa6";
+import { ArrowLeft, Eye, ImageOff, Loader2, Tag, ThumbsUp } from "lucide-react";
 
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { getTopicDetail, getShareOfVoice, getTopEntities } from "@/features/topic/services/topic.service";
+import { normalizeTopicDetail, platformMeta, type TopicDetail, type TopicPost } from "@/features/topic/lib/topicDetail";
 import ShareOfVoiceCard, { type ShareOfVoiceItem } from "@/components/topic/ShareOfVoiceCard";
 import TopicEntitiesCard, { type TopicEntity } from "@/components/topic/TopicEntitiesCard";
 import { normalizeEntities, mergeEntities } from "@/lib/entities";
 import { normalizeShareOfVoice } from "@/lib/shareOfVoice";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
-
-interface TopicPost {
-  id: string;
-  platform: string;
-  title: string;
-  author: string | null;
-  url: string;
-  view_count?: number;
-  likes?: number;
-  published_at?: string | null;
-  thumbnail_url?: string;
-}
-
-interface KeywordGroup {
-  keyword: string;
-  keywordId: string;
-  totalPosts: number;
-  posts: TopicPost[];
-}
-
-interface TopicDetail {
-  id: string;
-  name: string;
-  description?: string | null;
-  totalPosts: number;
-  keywordGroups: KeywordGroup[];
-}
-
-const PLATFORM_META: Record<string, { label: string; icon: React.ComponentType<{ size?: number; className?: string }>; color: string }> = {
-  youtube: { label: "YouTube", icon: FaYoutube, color: "text-red-500" },
-  instagram: { label: "Instagram", icon: FaInstagram, color: "text-pink-500" },
-  facebook: { label: "Facebook", icon: FaFacebook, color: "text-blue-600" },
-  twitter: { label: "Twitter/X", icon: FaXTwitter, color: "text-sky-500" },
-  tiktok: { label: "TikTok", icon: FaTiktok, color: "text-slate-900 dark:text-white" },
-  news: { label: "Berita", icon: Newspaper, color: "text-amber-500" },
-};
-
-function platformMeta(platform: string) {
-  return PLATFORM_META[platform] ?? { label: platform, icon: Globe, color: "text-slate-400" };
-}
 
 function groupByPlatform(posts: TopicPost[]): [string, TopicPost[]][] {
   const map = new Map<string, TopicPost[]>();
@@ -76,28 +36,6 @@ function stripMarkdown(text: string): string {
     .replace(/[*_`]/g, "")
     .replace(/\s+/g, " ")
     .trim();
-}
-
-// GET /search/topics/{id} mengembalikan postingan dikelompokkan per keyword
-// (keyword_details[].posts), berbeda dari response POST /search/topics yang
-// pakai array "results" flat + status/sentimen per keyword.
-function normalizeTopicDetail(raw: any): TopicDetail {
-  const body = raw?.data ?? raw;
-  const groups = body.keyword_details ?? [];
-  return {
-    id: body.id ?? body.topic_id,
-    name: body.name ?? body.topic,
-    description: body.description ?? null,
-    totalPosts: body.total_posts ?? 0,
-    keywordGroups: Array.isArray(groups)
-      ? groups.map((g: any) => ({
-          keyword: g.keyword,
-          keywordId: g.keyword_id,
-          totalPosts: g.total_posts ?? g.posts?.length ?? 0,
-          posts: g.posts ?? [],
-        }))
-      : [],
-  };
 }
 
 

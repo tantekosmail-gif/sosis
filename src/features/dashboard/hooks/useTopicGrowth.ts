@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 import { useTopics } from "@/features/topic/hooks/useTopics";
 import { getTopicMetrics } from "@/features/topic/services/topic.service";
+import { periodToRange, type PeriodPreset } from "@/lib/period";
 
 export interface TopicGrowthItem {
   topicId: string;
@@ -24,7 +25,7 @@ function normalizeTopicMetrics(raw: any): { mentions: number; growthPct: number 
   return { mentions, growthPct: typeof growthRaw === "number" ? growthRaw : null };
 }
 
-export function useTopicGrowth() {
+export function useTopicGrowth(period: PeriodPreset) {
   const { topics, loading: topicsLoading } = useTopics();
   const [items, setItems] = useState<TopicGrowthItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -41,7 +42,8 @@ export function useTopicGrowth() {
     (async () => {
       setLoading(true);
       const subset = topics.slice(0, MAX_TOPICS_CHECKED);
-      const results = await Promise.allSettled(subset.map((t) => getTopicMetrics(t.id)));
+      const { date_from, date_to } = periodToRange(period);
+      const results = await Promise.allSettled(subset.map((t) => getTopicMetrics(t.id, undefined, date_from, date_to)));
       if (cancelled) return;
 
       results.forEach((r, idx) => {
@@ -65,7 +67,7 @@ export function useTopicGrowth() {
     return () => {
       cancelled = true;
     };
-  }, [topics, topicsLoading]);
+  }, [topics, topicsLoading, period]);
 
   return { items, loading };
 }

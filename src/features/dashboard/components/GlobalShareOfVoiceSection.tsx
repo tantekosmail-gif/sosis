@@ -1,12 +1,16 @@
 "use client";
 
+import { useState } from "react";
 import { Loader2 } from "lucide-react";
 
+import PeriodSelect from "@/components/dashboard/PeriodSelect";
 import ShareOfVoicePieChart from "./ShareOfVoicePieChart";
 import { useGlobalShareOfVoice } from "../hooks/useGlobalShareOfVoice";
+import type { PeriodPreset } from "@/lib/period";
 
 export default function GlobalShareOfVoiceSection() {
-  const { items, loading, error } = useGlobalShareOfVoice();
+  const [period, setPeriod] = useState<PeriodPreset>("all");
+  const { items, loading, error } = useGlobalShareOfVoice(period);
 
   if (loading) {
     return (
@@ -27,5 +31,5 @@ export default function GlobalShareOfVoiceSection() {
   // Perbandingan cuma berarti kalau ada lebih dari 1 keyword aktif.
   if (items.length < 2) return null;
 
-  return <ShareOfVoicePieChart items={items} />;
+  return <ShareOfVoicePieChart items={items} headerRight={<PeriodSelect value={period} onChange={setPeriod} />} />;
 }

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { User, Sparkles, Settings2, Bell, Info, LayoutGrid } from "lucide-react";
+import { User, Sparkles, Settings2, Bell, Info, LayoutGrid, Users } from "lucide-react";
 
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import AccountSection from "@/features/settings/components/AccountSection";
@@ -11,6 +11,7 @@ import ScrapingSection from "@/features/settings/components/ScrapingSection";
 import NotificationSection from "@/features/settings/components/NotificationSection";
 import OverviewWidgetsSection from "@/features/settings/components/OverviewWidgetsSection";
 import AboutSection from "@/features/settings/components/AboutSection";
+import UsersSection from "@/features/users/components/UsersSection";
 import { useSettings } from "@/features/settings/hooks/useSettings";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -21,6 +22,7 @@ const TABS = [
   { key: "scraping",     icon: Settings2 },
   { key: "notification", icon: Bell },
   { key: "widgets",      icon: LayoutGrid },
+  { key: "users",        icon: Users },
   { key: "about",        icon: Info },
 ] as const;
 
@@ -134,6 +136,7 @@ export default function SettingsPage() {
           {activeTab === "widgets" && (
             <OverviewWidgetsSection settings={settings} update={update} onSave={save} saved={saved} />
           )}
+          {activeTab === "users" && <UsersSection />}
           {activeTab === "about" && <AboutSection />}
         </div>
       </div>

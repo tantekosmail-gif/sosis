@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
   listSavedTopics,
   searchByTopics,
   deleteTopic as deleteTopicApi,
   searchSavedTopic,
   setTopicSchedule,
+  getTopicDetail,
 } from "../services/topic.service";
 
 export interface Topic {
@@ -46,13 +47,26 @@ function extractTopicList(response: any): any[] {
 // Beberapa keyword bisa "found" dan sebagian lagi "needs_confirmation" sekaligus
 // (status jadi "partial_needs_confirmation"), jadi cek dari daftar keyword-nya,
 // bukan cuma exact match ke satu string status.
-function needsConfirmation(result: any): boolean {
+export function needsConfirmation(result: any): boolean {
   return (
     result?.status === "needs_confirmation" ||
     result?.status === "partial_needs_confirmation" ||
     (Array.isArray(result?.needs_confirmation_keywords) && result.needs_confirmation_keywords.length > 0)
   );
 }
+
+// Sama logikanya dengan needsConfirmation: sebagian keyword bisa "queued"
+// sementara sebagian lain sudah "found", jadi dicek dari daftar keyword-nya.
+export function isQueued(result: any): boolean {
+  return (
+    result?.status === "queued" ||
+    result?.status === "partial_queued" ||
+    (Array.isArray(result?.queued_keywords) && result.queued_keywords.length > 0)
+  );
+}
+
+const POLL_INTERVAL_MS = 8000;
+const POLL_TIMEOUT_MS = 5 * 60 * 1000;
 
 export function useTopics() {
   const [topics, setTopics] = useState<Topic[]>([]);
@@ -102,15 +116,66 @@ export function useTopics() {
     setTopics((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
-  // Auto-confirm: kalau tier-1 belum ketemu data, langsung kirim ulang dengan
-  // confirm_third_party=true supaya tier-3 (crawl) jalan tanpa perlu konfirmasi user.
-  const runTopicSearch = useCallback(async (id: string) => {
-    let result = await searchSavedTopic(id, { confirm_third_party: false });
-    if (needsConfirmation(result)) {
-      result = await searchSavedTopic(id, { confirm_third_party: true });
-    }
-    return result;
+  // confirmThirdParty HARUS false di percobaan pertama. Kalau hasilnya
+  // needs_confirmation, si pemanggil wajib menampilkan dialog persetujuan ke
+  // user dulu (pencarian pihak ketiga berbayar/berkuota) sebelum memanggil ulang
+  // dengan confirmThirdParty=true — lihat FLOW.md section 1 & 5.1.
+  const searchTopic = useCallback(async (id: string, confirmThirdParty: boolean) => {
+    return await searchSavedTopic(id, { confirm_third_party: confirmThirdParty });
   }, []);
+
+  // Timer polling aktif per topic_id, supaya bisa dibatalkan (ganti pencarian
+  // baru atau unmount) tanpa mengganggu polling topik lain yang sedang jalan.
+  const pollTimers = useRef(new Map<string, ReturnType<typeof setTimeout>>());
+
+  useEffect(() => {
+    const timers = pollTimers.current;
+    return () => {
+      timers.forEach((timer) => clearTimeout(timer));
+      timers.clear();
+    };
+  }, []);
+
+  // Poll GET /search/topics/{id} tiap 8 detik sampai total_posts bertambah dari
+  // baseline (posisi sebelum pencarian dijalankan) atau timeout ~5 menit —
+  // proses di server tetap lanjut walau polling di sini berhenti (FLOW.md 5.5).
+  const pollTopicResult = useCallback(
+    (id: string, baselineTotal: number, onDone: (found: boolean, latestTotal: number) => void) => {
+      const startedAt = Date.now();
+
+      const tick = async () => {
+        try {
+          const raw = await getTopicDetail(id);
+          const body = raw?.data ?? raw;
+          const latestTotal = body?.total_posts ?? 0;
+          if (latestTotal > baselineTotal) {
+            pollTimers.current.delete(id);
+            onDone(true, latestTotal);
+            return;
+          }
+        } catch (err) {
+          console.error("pollTopicResult failed:", err);
+        }
+
+        if (Date.now() - startedAt >= POLL_TIMEOUT_MS) {
+          pollTimers.current.delete(id);
+          onDone(false, baselineTotal);
+          return;
+        }
+
+        pollTimers.current.set(id, setTimeout(tick, POLL_INTERVAL_MS));
+      };
+
+      pollTimers.current.set(id, setTimeout(tick, POLL_INTERVAL_MS));
+
+      return () => {
+        const timer = pollTimers.current.get(id);
+        if (timer) clearTimeout(timer);
+        pollTimers.current.delete(id);
+      };
+    },
+    []
+  );
 
   const updateSchedule = useCallback(
     async (id: string, enabled: boolean, durationDays?: number | null) => {
@@ -120,5 +185,5 @@ export function useTopics() {
     [refresh]
   );
 
-  return { topics, loading, error, refresh, addTopic, removeTopic, runTopicSearch, updateSchedule };
+  return { topics, loading, error, refresh, addTopic, removeTopic, searchTopic, pollTopicResult, updateSchedule };
 }

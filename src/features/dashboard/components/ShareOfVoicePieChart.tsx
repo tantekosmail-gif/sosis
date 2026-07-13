@@ -70,10 +70,12 @@ export default function ShareOfVoicePieChart({
   items,
   title,
   description,
+  headerRight,
 }: {
   items: ShareOfVoiceItem[];
   title?: string;
   description?: string;
+  headerRight?: React.ReactNode;
 }) {
   const { t } = useTranslation();
   const totalMentions = items.reduce((sum, item) => sum + item.mentions, 0);
@@ -83,9 +85,12 @@ export default function ShareOfVoicePieChart({
 
   return (
     <div className={`flex h-full flex-col rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm p-5 ${SERIES_VARS}`}>
-      <div className="mb-4 flex items-center gap-2">
-        <PieChart size={16} className="text-indigo-600" />
-        <h2 className="font-semibold text-slate-900 dark:text-slate-100">{resolvedTitle}</h2>
+      <div className="mb-4 flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <PieChart size={16} className="text-indigo-600" />
+          <h2 className="font-semibold text-slate-900 dark:text-slate-100">{resolvedTitle}</h2>
+        </div>
+        {headerRight}
       </div>
       <p className="mb-4 text-xs text-slate-400 dark:text-slate-500">{resolvedDescription}</p>
 

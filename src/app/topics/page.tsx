@@ -1,20 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
-import { ChevronRight, Eye, Loader2, Plus, Tags, Trash2 } from "lucide-react";
+import { ChevronRight, Eye, Loader2, Plus, Search, Tags, Trash2 } from "lucide-react";
 
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import TopicForm, { type TopicFormData } from "@/features/topic/components/TopicForm";
-import { useTopics, type Topic } from "@/features/topic/hooks/useTopics";
+import { useTopics, needsConfirmation, isQueued, type Topic } from "@/features/topic/hooks/useTopics";
+import { apiErrorMessage } from "@/features/topic/lib/apiError";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-
-function apiErrorMessage(err: any, fallback: string): string {
-  return err?.response?.data?.error?.message || err?.response?.data?.message || err?.message || fallback;
-}
 
 function ScheduleToggle({
   topic,
@@ -78,7 +75,20 @@ export default function TopicsPage() {
   const [submitting, setSubmitting] = useState(false);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Topic | null>(null);
-  const { topics, loading, error, addTopic, removeTopic, updateSchedule } = useTopics();
+  const [searchBusyId, setSearchBusyId] = useState<string | null>(null);
+  const [pollingId, setPollingId] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<{ topic: Topic; keywords: string[] } | null>(null);
+  const { topics, loading, error, refresh, addTopic, removeTopic, searchTopic, pollTopicResult, updateSchedule } =
+    useTopics();
+  const cancelPollRef = useRef<Map<string, () => void>>(new Map());
+
+  useEffect(() => {
+    const cancels = cancelPollRef.current;
+    return () => {
+      cancels.forEach((cancel) => cancel());
+      cancels.clear();
+    };
+  }, []);
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
@@ -129,6 +139,46 @@ export default function TopicsPage() {
     router.push(`/topics/${topic.id}`);
   }
 
+  // confirmThirdParty HARUS false di percobaan pertama (lihat FLOW.md section 1).
+  // Kalau backend balas needs_confirmation, tampilkan dialog persetujuan dan
+  // TUNGGU user klik "Ya" sebelum memanggil ulang dengan confirmThirdParty=true.
+  async function handleSearch(topic: Topic, confirmThirdParty: boolean) {
+    setSearchBusyId(topic.id);
+    try {
+      const result = await searchTopic(topic.id, confirmThirdParty);
+
+      if (needsConfirmation(result)) {
+        setConfirmTarget({ topic, keywords: result?.needs_confirmation_keywords ?? [] });
+        return;
+      }
+      setConfirmTarget(null);
+
+      if (isQueued(result)) {
+        toast.info(t.topics.searchQueued);
+        setPollingId(topic.id);
+        const cancel = pollTopicResult(topic.id, topic.totalPosts ?? 0, (found, latestTotal) => {
+          cancelPollRef.current.delete(topic.id);
+          setPollingId((cur) => (cur === topic.id ? null : cur));
+          if (found) {
+            toast.success(t.topics.searchFoundToast.replace("{count}", String(latestTotal - (topic.totalPosts ?? 0))));
+          } else {
+            toast.info(t.topics.searchTimeout);
+          }
+          refresh();
+        });
+        cancelPollRef.current.set(topic.id, cancel);
+      } else {
+        toast.success(t.topics.searchFoundImmediate);
+        await refresh();
+      }
+    } catch (err) {
+      console.error("searchTopic failed:", err);
+      toast.error(apiErrorMessage(err, t.topics.searchError));
+    } finally {
+      setSearchBusyId(null);
+    }
+  }
+
   async function handleScheduleChange(topic: Topic, enabled: boolean, durationDays?: number) {
     setBusyId(topic.id);
     try {
@@ -147,9 +197,7 @@ export default function TopicsPage() {
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">{t.topics.pageTitle}</h1>
-          <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">
-            {t.topics.pageSubtitle}
-          </p>
+          <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">{t.topics.pageSubtitle}</p>
         </div>
         <button
           onClick={() => setCreateOpen(true)}
@@ -165,6 +213,38 @@ export default function TopicsPage() {
             <DialogTitle>{t.topics.addButton}</DialogTitle>
           </DialogHeader>
           <TopicForm onSubmit={handleSubmit} loading={submitting} bare />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!confirmTarget} onOpenChange={(open) => !open && setConfirmTarget(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t.topics.confirmDialogTitle}</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            {t.topics.confirmDialogDesc.replace("{keywords}", confirmTarget?.keywords.join(", ") ?? "")}
+          </p>
+          <div className="flex justify-end gap-2 pt-2">
+            <button
+              type="button"
+              onClick={() => setConfirmTarget(null)}
+              className="h-9 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 text-sm font-medium text-slate-600 dark:text-slate-300 transition hover:bg-slate-50 dark:hover:bg-slate-800"
+            >
+              {t.topics.confirmDialogNo}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                if (!confirmTarget) return;
+                const target = confirmTarget.topic;
+                setConfirmTarget(null);
+                handleSearch(target, true);
+              }}
+              className="flex h-9 items-center gap-1.5 rounded-lg bg-indigo-600 px-4 text-sm font-medium text-white transition hover:bg-indigo-700"
+            >
+              {t.topics.confirmDialogYes}
+            </button>
+          </div>
         </DialogContent>
       </Dialog>
 
@@ -269,6 +349,22 @@ export default function TopicsPage() {
                   </div>
 
                   <div className="flex shrink-0 items-center gap-2">
+                    <button
+                      onClick={() => handleSearch(topic, false)}
+                      disabled={searchBusyId === topic.id || pollingId === topic.id}
+                      className="flex h-9 items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-xs font-medium text-slate-600 dark:text-slate-400 transition hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50"
+                    >
+                      {searchBusyId === topic.id || pollingId === topic.id ? (
+                        <Loader2 size={13} className="animate-spin" />
+                      ) : (
+                        <Search size={13} />
+                      )}
+                      {pollingId === topic.id
+                        ? t.topics.polling
+                        : searchBusyId === topic.id
+                          ? t.topics.searching
+                          : t.topics.searchButton}
+                    </button>
                     <button
                       onClick={() => handleView(topic)}
                       className="flex h-9 items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-xs font-medium text-slate-600 dark:text-slate-400 transition hover:bg-slate-50 dark:hover:bg-slate-800"

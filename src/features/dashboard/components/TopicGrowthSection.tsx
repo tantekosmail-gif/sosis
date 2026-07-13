@@ -1,12 +1,16 @@
 "use client";
 
+import { useState } from "react";
 import { Loader2, Minus, TrendingDown, TrendingUp } from "lucide-react";
 
+import PeriodSelect from "@/components/dashboard/PeriodSelect";
 import { useTopicGrowth } from "../hooks/useTopicGrowth";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
+import type { PeriodPreset } from "@/lib/period";
 
 export default function TopicGrowthSection() {
-  const { items, loading } = useTopicGrowth();
+  const [period, setPeriod] = useState<PeriodPreset>("all");
+  const { items, loading } = useTopicGrowth(period);
   const { t } = useTranslation();
 
   if (loading) {
@@ -31,9 +35,12 @@ export default function TopicGrowthSection() {
 
   return (
     <div className="flex h-full flex-col rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm p-5">
-      <div className="mb-1 flex items-center gap-2">
-        <TrendingUp size={16} className="text-indigo-600" />
-        <h2 className="font-semibold text-slate-900 dark:text-slate-100">{t.overviewWidgets.topicGrowth.title}</h2>
+      <div className="mb-1 flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <TrendingUp size={16} className="text-indigo-600" />
+          <h2 className="font-semibold text-slate-900 dark:text-slate-100">{t.overviewWidgets.topicGrowth.title}</h2>
+        </div>
+        <PeriodSelect value={period} onChange={setPeriod} />
       </div>
       <p className="mb-4 text-xs text-slate-400 dark:text-slate-500">
         {t.overviewWidgets.topicGrowth.desc}

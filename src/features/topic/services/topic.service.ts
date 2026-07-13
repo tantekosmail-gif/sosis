@@ -86,12 +86,18 @@ const SOV_ALL_TIME_FROM = "2000-01-01T00:00:00Z";
 // GET /api/v1/metrics/sov — Share of Voice antar keyword (porsi mention). Query array
 // params dikirim manual (bukan lewat axios `params`) supaya bentuknya pasti
 // `keyword_ids=a&keyword_ids=b`, sesuai konvensi FastAPI untuk List[str] di query.
-export async function getShareOfVoice(keywordIds: string[], platforms: string[] = DEFAULT_SOV_PLATFORMS) {
+// dateFrom/dateTo opsional — default all-time kalau pemanggil tidak butuh filter periode.
+export async function getShareOfVoice(
+  keywordIds: string[],
+  platforms: string[] = DEFAULT_SOV_PLATFORMS,
+  dateFrom: string = SOV_ALL_TIME_FROM,
+  dateTo: string = new Date().toISOString()
+) {
   const search = new URLSearchParams();
   keywordIds.forEach((id) => search.append("keyword_ids", id));
   platforms.forEach((p) => search.append("platforms", p));
-  search.set("date_from", SOV_ALL_TIME_FROM);
-  search.set("date_to", new Date().toISOString());
+  search.set("date_from", dateFrom);
+  search.set("date_to", dateTo);
   const { data } = await api.get(`/api/v1/metrics/sov?${search.toString()}`);
   return data;
 }
@@ -103,13 +109,18 @@ export async function getTopEntities(keywordId: string, topN = 15) {
 }
 
 // GET /api/v1/metrics/topic/{topic_id} — metrik agregat 1 topik, termasuk mention growth
-// vs periode sebelumnya kalau include_growth=true.
-export async function getTopicMetrics(topicId: string, platforms: string[] = DEFAULT_SOV_PLATFORMS) {
+// vs periode sebelumnya kalau include_growth=true. dateFrom/dateTo opsional, default all-time.
+export async function getTopicMetrics(
+  topicId: string,
+  platforms: string[] = DEFAULT_SOV_PLATFORMS,
+  dateFrom: string = SOV_ALL_TIME_FROM,
+  dateTo: string = new Date().toISOString()
+) {
   const search = new URLSearchParams();
   platforms.forEach((p) => search.append("platforms", p));
   search.set("include_growth", "true");
-  search.set("date_from", SOV_ALL_TIME_FROM);
-  search.set("date_to", new Date().toISOString());
+  search.set("date_from", dateFrom);
+  search.set("date_to", dateTo);
   const { data } = await api.get(`/api/v1/metrics/topic/${topicId}?${search.toString()}`);
   return data;
 }
