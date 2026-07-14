@@ -158,7 +158,13 @@
       "title": "Mentions Location Map",
       "descLine": "Mentions location spread · {matched} of {checked} locations matched",
       "empty": "No location data yet",
-      "loadingMap": "Loading map..."
+      "loadingMap": "Loading map...",
+      "infoBanner": "This map shows the cities/regions mentioned most often in the posts and comments being monitored, from {from} to {to}. The bigger the circle on the map, the more often that location was mentioned.",
+      "legendLabel": "Circle size = number of mentions at that location",
+      "topLocationsTitle": "Most Mentioned Locations",
+      "mentionsUnit": "mentions",
+      "postsUnit": "posts",
+      "commentsUnit": "comments"
     },
     "trendingSearches": {
       "title": "Trending Searches (Google Trends)",

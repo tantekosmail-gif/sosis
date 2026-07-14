@@ -158,7 +158,13 @@
       "title": "Peta Lokasi Mentions",
       "descLine": "Sebaran lokasi mentions · {matched} dari {checked} lokasi cocok",
       "empty": "Belum ada data lokasi",
-      "loadingMap": "Memuat peta..."
+      "loadingMap": "Memuat peta...",
+      "infoBanner": "Peta ini menunjukkan kota/daerah yang paling sering disebut dalam postingan dan komentar yang dipantau, dari {from} sampai {to}. Semakin besar lingkaran di peta, semakin banyak yang menyebut lokasi tersebut.",
+      "legendLabel": "Ukuran lingkaran = jumlah mention di lokasi itu",
+      "topLocationsTitle": "Lokasi Paling Banyak Disebut",
+      "mentionsUnit": "mention",
+      "postsUnit": "post",
+      "commentsUnit": "komentar"
     },
     "trendingSearches": {
       "title": "Pencarian Trending (Google Trends)",
