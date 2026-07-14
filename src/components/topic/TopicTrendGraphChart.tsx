@@ -102,72 +102,74 @@ export default function TopicTrendGraphChart({ data, days, onDaysChange }: Props
         </p>
       ) : (
         <div className="space-y-6">
-          <div>
-            <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-              {labels.volumeTitle}
-            </h3>
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={volumeData} margin={{ top: 4, right: 8, left: -20, bottom: 0 }} barCategoryGap="20%">
-                <CartesianGrid vertical={false} stroke="#f1f5f9" />
-                <XAxis
-                  dataKey="date"
-                  tickFormatter={(v) => formatDay(v, locale)}
-                  tick={{ fontSize: 11, fill: "#94a3b8" }}
-                  axisLine={false}
-                  tickLine={false}
-                  interval="preserveStartEnd"
-                  minTickGap={16}
-                />
-                <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
-                <Tooltip content={<VolumeTooltip locale={locale} />} cursor={{ fill: "#f8fafc" }} />
-                <Legend wrapperStyle={{ fontSize: 12, paddingTop: 12 }} iconType="circle" iconSize={8} />
-                {data.platformKeys.map((platform, i) => (
-                  <Bar
-                    key={platform}
-                    dataKey={platform}
-                    name={platformMeta(platform).label}
-                    stackId="platforms"
-                    fill={platformColor(platform)}
-                    radius={i === data.platformKeys.length - 1 ? [4, 4, 0, 0] : undefined}
-                    maxBarSize={32}
+          <div className="grid gap-6 lg:grid-cols-2">
+            <div>
+              <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                {labels.volumeTitle}
+              </h3>
+              <ResponsiveContainer width="100%" height={220}>
+                <BarChart data={volumeData} margin={{ top: 4, right: 8, left: -20, bottom: 0 }} barCategoryGap="20%">
+                  <CartesianGrid vertical={false} stroke="#f1f5f9" />
+                  <XAxis
+                    dataKey="date"
+                    tickFormatter={(v) => formatDay(v, locale)}
+                    tick={{ fontSize: 11, fill: "#94a3b8" }}
+                    axisLine={false}
+                    tickLine={false}
+                    interval="preserveStartEnd"
+                    minTickGap={16}
                   />
-                ))}
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+                  <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
+                  <Tooltip content={<VolumeTooltip locale={locale} />} cursor={{ fill: "#f8fafc" }} />
+                  <Legend wrapperStyle={{ fontSize: 12, paddingTop: 12 }} iconType="circle" iconSize={8} />
+                  {data.platformKeys.map((platform, i) => (
+                    <Bar
+                      key={platform}
+                      dataKey={platform}
+                      name={platformMeta(platform).label}
+                      stackId="platforms"
+                      fill={platformColor(platform)}
+                      radius={i === data.platformKeys.length - 1 ? [4, 4, 0, 0] : undefined}
+                      maxBarSize={32}
+                    />
+                  ))}
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
 
-          <div>
-            <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-              {labels.sentimentTitle}
-            </h3>
-            <ResponsiveContainer width="100%" height={180}>
-              <BarChart data={sentimentData} margin={{ top: 4, right: 8, left: -20, bottom: 0 }} barCategoryGap="20%">
-                <CartesianGrid vertical={false} stroke="#f1f5f9" />
-                <XAxis
-                  dataKey="date"
-                  tickFormatter={(v) => formatDay(v, locale)}
-                  tick={{ fontSize: 11, fill: "#94a3b8" }}
-                  axisLine={false}
-                  tickLine={false}
-                  interval="preserveStartEnd"
-                  minTickGap={16}
-                />
-                <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
-                <Tooltip content={<VolumeTooltip locale={locale} />} cursor={{ fill: "#f8fafc" }} />
-                <Legend wrapperStyle={{ fontSize: 12, paddingTop: 12 }} iconType="circle" iconSize={8} />
-                {SENTIMENT_SERIES.map((s, i) => (
-                  <Bar
-                    key={s.key}
-                    dataKey={s.key}
-                    name={t.sentimentPie[s.key as "positive" | "neutral" | "negative"]}
-                    stackId="sentiment"
-                    fill={s.color}
-                    radius={i === SENTIMENT_SERIES.length - 1 ? [4, 4, 0, 0] : undefined}
-                    maxBarSize={32}
+            <div>
+              <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                {labels.sentimentTitle}
+              </h3>
+              <ResponsiveContainer width="100%" height={220}>
+                <BarChart data={sentimentData} margin={{ top: 4, right: 8, left: -20, bottom: 0 }} barCategoryGap="20%">
+                  <CartesianGrid vertical={false} stroke="#f1f5f9" />
+                  <XAxis
+                    dataKey="date"
+                    tickFormatter={(v) => formatDay(v, locale)}
+                    tick={{ fontSize: 11, fill: "#94a3b8" }}
+                    axisLine={false}
+                    tickLine={false}
+                    interval="preserveStartEnd"
+                    minTickGap={16}
                   />
-                ))}
-              </BarChart>
-            </ResponsiveContainer>
+                  <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
+                  <Tooltip content={<VolumeTooltip locale={locale} />} cursor={{ fill: "#f8fafc" }} />
+                  <Legend wrapperStyle={{ fontSize: 12, paddingTop: 12 }} iconType="circle" iconSize={8} />
+                  {SENTIMENT_SERIES.map((s, i) => (
+                    <Bar
+                      key={s.key}
+                      dataKey={s.key}
+                      name={t.sentimentPie[s.key as "positive" | "neutral" | "negative"]}
+                      stackId="sentiment"
+                      fill={s.color}
+                      radius={i === SENTIMENT_SERIES.length - 1 ? [4, 4, 0, 0] : undefined}
+                      maxBarSize={32}
+                    />
+                  ))}
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </div>
 
           {subTopics.length > 0 && (
