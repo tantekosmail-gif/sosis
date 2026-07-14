@@ -402,6 +402,13 @@
     "scheduleError": "Failed to update schedule",
     "postsUnit": "posts",
     "commentsUnit": "comments",
+    "topTopics": {
+      "title": "Top 5 Topics",
+      "desc": "Topics with the most posts, ranked from the busiest.",
+      "empty": "No topics with data to rank yet",
+      "rankPrefix": "#",
+      "mentionsUnit": "posts"
+    },
     "detail": {
       "backLink": "Topic List",
       "loadError": "Failed to load topic detail",

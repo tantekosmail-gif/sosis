@@ -12,6 +12,7 @@ import { useTopics, needsConfirmation, isQueued, type Topic } from "@/features/t
 import { apiErrorMessage } from "@/features/topic/lib/apiError";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import TopTopicsLeaderboard from "@/components/topic/TopTopicsLeaderboard";
 
 function ScheduleToggle({
   topic,
@@ -277,6 +278,8 @@ export default function TopicsPage() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {!loading && !error && <TopTopicsLeaderboard topics={topics} />}
 
       <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm">
         <div className="border-b border-slate-100 dark:border-slate-800 px-5 py-4">

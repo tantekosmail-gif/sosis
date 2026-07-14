@@ -402,6 +402,13 @@
     "scheduleError": "Gagal memperbarui jadwal",
     "postsUnit": "post",
     "commentsUnit": "komentar",
+    "topTopics": {
+      "title": "Top 5 Topik",
+      "desc": "Topik dengan jumlah post terbanyak, diurutkan dari yang paling ramai.",
+      "empty": "Belum ada topik dengan data untuk diranking",
+      "rankPrefix": "#",
+      "mentionsUnit": "post"
+    },
     "detail": {
       "backLink": "Daftar Topik",
       "loadError": "Gagal memuat detail topik",
