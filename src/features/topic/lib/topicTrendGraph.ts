@@ -29,35 +29,34 @@ function sortPlatformKeys(keys: Set<string>): string[] {
   return [...known, ...unknown];
 }
 
-// Skema response GET /search/topics/{id}/trend-graph belum diverifikasi lewat
-// network tap nyata -- di OpenAPI, response-nya "additionalProperties: true"
-// (bentuk bebas). Dinormalisasi defensif berdasarkan deskripsi endpoint: array
-// "days" berisi volume post per platform, sentimen komentar (lexicon_analyses),
-// dan sub-topik baru hasil AI-context discovery, masing-masing per hari, dengan
-// hari kosong tetap muncul (angka 0 / list kosong) supaya jumlah titik selalu
-// genap `days`.
+// Bentuk response GET /search/topics/{id}/trend-graph terverifikasi dari
+// network tap nyata: { success, data: { topic_id, name, days: [{ date,
+// total_posts, by_platform, sentiment: { positif, netral, negatif },
+// new_subtopics_found }] } }. Hari tanpa data tetap muncul dengan
+// by_platform/sentiment berupa object kosong `{}`, bukan hilang dari array.
+// Total hitungan sentiment bisa lebih besar dari total_posts karena dihitung
+// per komentar (lexicon_analyses), bukan per post.
 export function normalizeTopicTrendGraph(raw: any): TopicTrendGraph {
   const body = raw?.data ?? raw;
-  const list = body?.days ?? body?.timeline ?? body?.data_points ?? [];
+  const list = body?.days ?? [];
   const platformSet = new Set<string>();
 
   const days: TopicTrendDay[] = (Array.isArray(list) ? list : []).map((d: any) => {
-    const platforms: Record<string, number> = d.platforms ?? d.platform_counts ?? d.by_platform ?? d.counts ?? {};
+    const platforms: Record<string, number> = d.by_platform ?? {};
     Object.keys(platforms).forEach((p) => platformSet.add(p));
 
-    const sentimentRaw = d.sentiment ?? d.sentiments ?? {};
-    const totalFromPlatforms = Object.values(platforms).reduce((sum: number, n) => sum + (Number(n) || 0), 0);
+    const sentimentRaw = d.sentiment ?? {};
 
     return {
-      date: d.date ?? d.day ?? d.bucket ?? "",
+      date: d.date ?? "",
       platforms,
-      totalPosts: d.total_posts ?? d.total ?? totalFromPlatforms,
+      totalPosts: d.total_posts ?? 0,
       sentiment: {
-        positive: sentimentRaw.positive ?? 0,
-        neutral: sentimentRaw.neutral ?? 0,
-        negative: sentimentRaw.negative ?? 0,
+        positive: sentimentRaw.positif ?? 0,
+        neutral: sentimentRaw.netral ?? 0,
+        negative: sentimentRaw.negatif ?? 0,
       },
-      newSubTopics: d.new_sub_topics ?? d.sub_topics ?? d.subtopics ?? [],
+      newSubTopics: d.new_subtopics_found ?? [],
     };
   });
 
