@@ -408,7 +408,20 @@
       "keywordsTitle": "Keywords",
       "resultsTitle": "Post Results",
       "noResults": "No posts for this topic yet",
-      "viewSource": "Open source"
+      "viewSource": "Open source",
+      "trendGraph": {
+        "title": "Topic Trend Graph",
+        "desc": "Post volume per platform and comment sentiment over the last {n} days.",
+        "daysLabel": "Range",
+        "days7": "7 days",
+        "days14": "14 days",
+        "days30": "30 days",
+        "volumeTitle": "Post Volume per Platform",
+        "sentimentTitle": "Comment Sentiment",
+        "subTopicsTitle": "New Sub-topics Found",
+        "empty": "No trend data for this topic yet",
+        "loadError": "Failed to load trend graph"
+      }
     }
   },
   "settings": {

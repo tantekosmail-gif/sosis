@@ -125,6 +125,14 @@ export async function getTopicMetrics(
   return data;
 }
 
+// GET /api/v1/search/topics/{topic_id}/trend-graph — grafik tren N hari terakhir
+// (1-30, default 7) utk 1 topik: volume post per hari per platform + sentimen
+// komentar per hari + sub-topik baru yang ditemukan AI-context discovery per hari.
+export async function getTopicTrendGraph(topicId: string, days = 7) {
+  const { data } = await api.get(`/api/v1/search/topics/${topicId}/trend-graph`, { params: { days } });
+  return data;
+}
+
 export interface GenerateReportPayload {
   topic_id?: string;
   format: "json" | "pdf" | "docx";

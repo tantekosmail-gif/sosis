@@ -408,7 +408,20 @@
       "keywordsTitle": "Keyword",
       "resultsTitle": "Hasil Postingan",
       "noResults": "Belum ada postingan untuk topik ini",
-      "viewSource": "Buka sumber"
+      "viewSource": "Buka sumber",
+      "trendGraph": {
+        "title": "Grafik Tren Topik",
+        "desc": "Volume post per platform dan sentimen komentar dalam {n} hari terakhir.",
+        "daysLabel": "Rentang",
+        "days7": "7 hari",
+        "days14": "14 hari",
+        "days30": "30 hari",
+        "volumeTitle": "Volume Post per Platform",
+        "sentimentTitle": "Sentimen Komentar",
+        "subTopicsTitle": "Sub-topik Baru Ditemukan",
+        "empty": "Belum ada data tren untuk topik ini",
+        "loadError": "Gagal memuat grafik tren"
+      }
     }
   },
   "settings": {

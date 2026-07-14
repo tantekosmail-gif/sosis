@@ -8,10 +8,12 @@ import { id as idLocale } from "date-fns/locale";
 import { ArrowLeft, Eye, ImageOff, Loader2, Tag, ThumbsUp } from "lucide-react";
 
 import DashboardLayout from "@/components/layout/DashboardLayout";
-import { getTopicDetail, getShareOfVoice, getTopEntities } from "@/features/topic/services/topic.service";
+import { getTopicDetail, getShareOfVoice, getTopEntities, getTopicTrendGraph } from "@/features/topic/services/topic.service";
 import { normalizeTopicDetail, platformMeta, type TopicDetail, type TopicPost } from "@/features/topic/lib/topicDetail";
+import { normalizeTopicTrendGraph, type TopicTrendGraph } from "@/features/topic/lib/topicTrendGraph";
 import ShareOfVoiceCard, { type ShareOfVoiceItem } from "@/components/topic/ShareOfVoiceCard";
 import TopicEntitiesCard, { type TopicEntity } from "@/components/topic/TopicEntitiesCard";
+import TopicTrendGraphChart from "@/components/topic/TopicTrendGraphChart";
 import { normalizeEntities, mergeEntities } from "@/lib/entities";
 import { normalizeShareOfVoice } from "@/lib/shareOfVoice";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
@@ -111,6 +113,8 @@ export default function TopicDetailPage({ params }: { params: Promise<{ id: stri
   const [topic, setTopic] = useState<TopicDetail | null>(null);
   const [shareOfVoice, setShareOfVoice] = useState<ShareOfVoiceItem[]>([]);
   const [entities, setEntities] = useState<TopicEntity[]>([]);
+  const [trendDays, setTrendDays] = useState(7);
+  const [trendGraph, setTrendGraph] = useState<TopicTrendGraph | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
@@ -174,6 +178,26 @@ export default function TopicDetailPage({ params }: { params: Promise<{ id: stri
     };
   }, [topic]);
 
+  // Grafik tren dipisah dari effect detail topik supaya ganti rentang hari
+  // tidak perlu refetch ulang detail/SOV/entities.
+  useEffect(() => {
+    if (!authChecked) return;
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const raw = await getTopicTrendGraph(id, trendDays);
+        if (!cancelled) setTrendGraph(normalizeTopicTrendGraph(raw));
+      } catch (err) {
+        console.error("getTopicTrendGraph failed:", err);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [authChecked, id, trendDays]);
+
   if (!authChecked) return null;
 
   return (
@@ -219,6 +243,8 @@ export default function TopicDetailPage({ params }: { params: Promise<{ id: stri
               ))}
             </div>
           </div>
+
+          {trendGraph && <TopicTrendGraphChart data={trendGraph} days={trendDays} onDaysChange={setTrendDays} />}
 
           {shareOfVoice.length > 1 && <ShareOfVoiceCard items={shareOfVoice} />}
 
