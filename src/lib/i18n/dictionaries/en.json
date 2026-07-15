@@ -10,6 +10,7 @@
   "sidebar": {
     "mainMenu": "Main Menu",
     "overview": "Overview",
+    "engagement": "Engagement",
     "youtube": "YouTube",
     "instagram": "Instagram",
     "facebook": "Facebook",
@@ -189,6 +190,10 @@
   "compare": {
     "title": "Compare Platforms",
     "subtitle": "Compare the same topic/keyword across Facebook, Instagram, Twitter/X & TikTok"
+  },
+  "engagement": {
+    "title": "Engagement Dashboard",
+    "subtitle": "Engagement (Likes + Comments + Shares + Saves), reach, exposure & sentiment summary across all monitored platforms"
   },
   "accountSentimentTab": {
     "title": "Sentiment Analysis",

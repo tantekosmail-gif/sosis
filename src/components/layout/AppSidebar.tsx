@@ -3,13 +3,14 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronDown, ChevronLeft, ChevronRight, GitCompareArrows, Home, MessageCircle, Newspaper, Settings, Tags, Wrench, X } from "lucide-react";
+import { BarChart3, ChevronDown, ChevronLeft, ChevronRight, GitCompareArrows, Home, MessageCircle, Newspaper, Settings, Tags, Wrench, X } from "lucide-react";
 import { FaFacebook, FaInstagram, FaTiktok, FaXTwitter, FaYoutube } from "react-icons/fa6";
 import { LogoMark } from "@/components/brand/AppLogo";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 const menus = [
   { key: "overview",          href: "/overview",          icon: Home            },
+  { key: "engagement",        href: "/engagement",        icon: BarChart3       },
   { key: "topics",            href: "/topics",            icon: Tags            },
   { key: "youtube",           href: "/youtube",           icon: FaYoutube       },
   { key: "instagram",         href: "/instagram",         icon: FaInstagram     },

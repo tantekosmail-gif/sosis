@@ -10,6 +10,7 @@
   "sidebar": {
     "mainMenu": "Menu Utama",
     "overview": "Overview",
+    "engagement": "Engagement",
     "youtube": "YouTube",
     "instagram": "Instagram",
     "facebook": "Facebook",
@@ -189,6 +190,10 @@
   "compare": {
     "title": "Bandingkan Platform",
     "subtitle": "Bandingkan topik/keyword yang sama antara Facebook, Instagram, Twitter/X & TikTok"
+  },
+  "engagement": {
+    "title": "Dashboard Engagement",
+    "subtitle": "Ringkasan engagement (Like + Komentar + Share + Save), reach, exposure & sentimen dari seluruh platform yang dipantau"
   },
   "accountSentimentTab": {
     "title": "Analisis Sentimen",
