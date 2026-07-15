@@ -186,16 +186,6 @@ export default function AppSidebar({ open = false, onClose, collapsed = false, o
 
         {/* Bottom */}
         <div className="border-t border-slate-800 p-3">
-          <div className={collapsed ? "lg:hidden" : ""}>
-            <div className="rounded-xl bg-gradient-to-r from-indigo-600/20 to-violet-600/20 border border-indigo-500/20 p-3">
-              <p className="text-white text-xs font-semibold">Pro Plan</p>
-              <p className="text-slate-400 text-[10px] mt-0.5">All platforms active</p>
-              <div className="mt-2 h-1 rounded-full bg-slate-700">
-                <div className="h-1 w-3/4 rounded-full bg-gradient-to-r from-indigo-500 to-violet-500" />
-              </div>
-            </div>
-          </div>
-
           <button
             onClick={onToggleCollapsed}
             className="hidden w-full items-center justify-center rounded-xl p-2 text-slate-400 hover:bg-slate-800 hover:text-white lg:flex"

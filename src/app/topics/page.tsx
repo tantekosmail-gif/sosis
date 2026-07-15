@@ -198,7 +198,7 @@ export default function TopicsPage() {
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">{t.topics.pageTitle}</h1>
-          <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">{t.topics.pageSubtitle}</p>
+          {/* <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">{t.topics.pageSubtitle}</p> */}
         </div>
         <button
           onClick={() => setCreateOpen(true)}

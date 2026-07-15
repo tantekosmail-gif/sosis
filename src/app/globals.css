@@ -4,6 +4,49 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Tactical/phosphor green replaces the default indigo/violet — same ramp for
+   both so any existing `from-indigo-* to-violet-*` gradient collapses into a
+   flat green fill. Cool graphite (Tailwind's zinc) replaces slate so
+   neutrals read like a terminal/command-center console, not a SaaS blue-gray.
+   Red (destructive/status) is left untouched — reserved for alerts/critical. */
+@theme {
+  --color-indigo-50: #e8f6eb;
+  --color-indigo-100: #d1e8d6;
+  --color-indigo-200: #aed6b8;
+  --color-indigo-300: #7fbc8f;
+  --color-indigo-400: #459f5d;
+  --color-indigo-500: #007f33;
+  --color-indigo-600: #006114;
+  --color-indigo-700: #004800;
+  --color-indigo-800: #003300;
+  --color-indigo-900: #002200;
+  --color-indigo-950: #000c00;
+
+  --color-violet-50: #e8f6eb;
+  --color-violet-100: #d1e8d6;
+  --color-violet-200: #aed6b8;
+  --color-violet-300: #7fbc8f;
+  --color-violet-400: #459f5d;
+  --color-violet-500: #007f33;
+  --color-violet-600: #006114;
+  --color-violet-700: #004800;
+  --color-violet-800: #003300;
+  --color-violet-900: #002200;
+  --color-violet-950: #000c00;
+
+  --color-slate-50: oklch(98.5% 0 0);
+  --color-slate-100: oklch(96.7% 0.001 286.375);
+  --color-slate-200: oklch(92% 0.004 286.32);
+  --color-slate-300: oklch(87.1% 0.006 286.286);
+  --color-slate-400: oklch(70.5% 0.015 286.067);
+  --color-slate-500: oklch(55.2% 0.016 285.938);
+  --color-slate-600: oklch(44.2% 0.017 285.786);
+  --color-slate-700: oklch(37% 0.013 285.805);
+  --color-slate-800: oklch(27.4% 0.006 286.033);
+  --color-slate-900: oklch(21% 0.006 285.885);
+  --color-slate-950: oklch(14.1% 0.005 285.823);
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -61,8 +104,8 @@
   --popover: #ffffff;
   --popover-foreground: #0f172a;
 
-  /* Primary — indigo */
-  --primary: #4f46e5;
+  /* Primary — tactical green */
+  --primary: #006114;
   --primary-foreground: #ffffff;
 
   /* Secondary */
@@ -74,8 +117,8 @@
   --muted-foreground: #64748b;
 
   /* Accent */
-  --accent: #eef2ff;
-  --accent-foreground: #4f46e5;
+  --accent: #e8f6eb;
+  --accent-foreground: #006114;
 
   /* Destructive */
   --destructive: #ef4444;
@@ -83,7 +126,7 @@
   /* Border / Input / Ring */
   --border: #e2e8f0;
   --input: #e2e8f0;
-  --ring: #6366f1;
+  --ring: #007f33;
 
   /* Radius */
   --radius: 0.75rem;
@@ -126,7 +169,7 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-accent: oklch(0.269 0 0);
   --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary: oklch(0.52 0.15 149);
   --sidebar-primary-foreground: oklch(0.985 0 0);
   --sidebar-ring: oklch(0.556 0 0);
   --destructive: oklch(0.704 0.191 22.216);
@@ -156,7 +199,7 @@
   }
 
   ::selection{
-    @apply bg-blue-600 text-white;
+    @apply bg-indigo-600 text-white;
   }
   * {
     @apply border-border outline-ring/50;
