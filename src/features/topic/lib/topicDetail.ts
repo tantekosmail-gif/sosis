@@ -44,6 +44,15 @@ export function platformMeta(platform: string) {
   return PLATFORM_META[platform] ?? { label: platform, icon: Globe, color: "text-slate-400" };
 }
 
+// Posts tanpa published_at ditaruh di akhir, bukan dianggap "terbaru".
+function sortByNewest(posts: TopicPost[]): TopicPost[] {
+  return [...posts].sort((a, b) => {
+    const at = a.published_at ? new Date(a.published_at).getTime() : -Infinity;
+    const bt = b.published_at ? new Date(b.published_at).getTime() : -Infinity;
+    return bt - at;
+  });
+}
+
 // GET /search/topics/{id} mengembalikan postingan dikelompokkan per keyword
 // (keyword_details[].posts), berbeda dari response POST /search/topics yang
 // pakai array "results" flat + status/sentimen per keyword.
@@ -60,7 +69,7 @@ export function normalizeTopicDetail(raw: any): TopicDetail {
           keyword: g.keyword,
           keywordId: g.keyword_id,
           totalPosts: g.total_posts ?? g.posts?.length ?? 0,
-          posts: g.posts ?? [],
+          posts: sortByNewest(g.posts ?? []),
         }))
       : [],
   };
