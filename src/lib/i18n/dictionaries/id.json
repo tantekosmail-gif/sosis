@@ -193,7 +193,20 @@
   },
   "engagement": {
     "title": "Dashboard Engagement",
-    "subtitle": "Ringkasan engagement (Like + Komentar + Share + Save), reach, exposure & sentimen dari seluruh platform yang dipantau"
+    "subtitle": "Ringkasan engagement (Like + Komentar + Share + Save), reach, exposure & sentimen dari seluruh platform yang dipantau",
+    "cardView": "Kartu",
+    "tableView": "Tabel"
+  },
+  "engagementTable": {
+    "platform": "Platform",
+    "mentions": "Mentions",
+    "reach": "Reach",
+    "exposure": "Exposure",
+    "engagement": "Engagement",
+    "mentionGrowth": "Growth Mentions",
+    "sentiment": "Sentimen",
+    "noData": "Data tidak tersedia",
+    "notAvailable": "Tidak tersedia"
   },
   "accountSentimentTab": {
     "title": "Analisis Sentimen",

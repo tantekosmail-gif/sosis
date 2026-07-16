@@ -193,7 +193,20 @@
   },
   "engagement": {
     "title": "Engagement Dashboard",
-    "subtitle": "Engagement (Likes + Comments + Shares + Saves), reach, exposure & sentiment summary across all monitored platforms"
+    "subtitle": "Engagement (Likes + Comments + Shares + Saves), reach, exposure & sentiment summary across all monitored platforms",
+    "cardView": "Cards",
+    "tableView": "Table"
+  },
+  "engagementTable": {
+    "platform": "Platform",
+    "mentions": "Mentions",
+    "reach": "Reach",
+    "exposure": "Exposure",
+    "engagement": "Engagement",
+    "mentionGrowth": "Mention Growth",
+    "sentiment": "Sentiment",
+    "noData": "No data available",
+    "notAvailable": "Not available"
   },
   "accountSentimentTab": {
     "title": "Sentiment Analysis",

@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { AlertTriangle, Loader2 } from "lucide-react";
+import { AlertTriangle, LayoutGrid, Loader2, Table2 } from "lucide-react";
 
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import PeriodSelect from "@/components/dashboard/PeriodSelect";
 import EngagementSummaryCard from "@/components/engagement/EngagementSummaryCard";
+import EngagementSummaryTable from "@/components/engagement/EngagementSummaryTable";
 import EngagementCompositionChart from "@/components/engagement/EngagementCompositionChart";
 import EngagementTrendGrid from "@/components/engagement/EngagementTrendGrid";
 import { ENGAGEMENT_PLATFORMS, useEngagementDashboard } from "@/features/engagement/hooks/useEngagementDashboard";
@@ -19,6 +20,7 @@ export default function EngagementPage() {
   const { t } = useTranslation();
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [period, setPeriod] = useState<PeriodPreset>("30d");
+  const [view, setView] = useState<"cards" | "table">("cards");
   const { summaries, trends, errors, loading, range } = useEngagementDashboard(period);
 
   useEffect(() => {
@@ -51,7 +53,37 @@ export default function EngagementPage() {
             <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">{t.engagement.title}</h1>
             <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">{t.engagement.subtitle}</p>
           </div>
-          <PeriodSelect value={period} onChange={setPeriod} />
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-0.5 rounded-lg border border-slate-200 bg-slate-50 p-0.5 dark:border-slate-700 dark:bg-slate-800">
+              <button
+                type="button"
+                onClick={() => setView("cards")}
+                aria-pressed={view === "cards"}
+                className={`flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-medium transition ${
+                  view === "cards"
+                    ? "bg-white text-slate-900 shadow-sm dark:bg-slate-900 dark:text-slate-100"
+                    : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+                }`}
+              >
+                <LayoutGrid size={13} />
+                {t.engagement.cardView}
+              </button>
+              <button
+                type="button"
+                onClick={() => setView("table")}
+                aria-pressed={view === "table"}
+                className={`flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-medium transition ${
+                  view === "table"
+                    ? "bg-white text-slate-900 shadow-sm dark:bg-slate-900 dark:text-slate-100"
+                    : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+                }`}
+              >
+                <Table2 size={13} />
+                {t.engagement.tableView}
+              </button>
+            </div>
+            <PeriodSelect value={period} onChange={setPeriod} />
+          </div>
         </div>
 
         {!loading && Object.keys(errors).length > 0 && (
@@ -67,16 +99,22 @@ export default function EngagementPage() {
           </div>
         )}
 
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
-          {ENGAGEMENT_PLATFORMS.map((platform) => (
-            <EngagementSummaryCard
-              key={platform}
-              summary={summaries[platform]}
-              error={errors[platform]}
-              loading={loading}
-            />
-          ))}
-        </div>
+        {view === "cards" ? (
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+            {ENGAGEMENT_PLATFORMS.map((platform) => (
+              <EngagementSummaryCard
+                key={platform}
+                summary={summaries[platform]}
+                error={errors[platform]}
+                loading={loading}
+              />
+            ))}
+          </div>
+        ) : (
+          !loading && (
+            <EngagementSummaryTable summaries={summaries} errors={errors} platforms={ENGAGEMENT_PLATFORMS} />
+          )
+        )}
 
         {!loading && hasAnySummary && <EngagementCompositionChart summaries={summaries} />}
 
