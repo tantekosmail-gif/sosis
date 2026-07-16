@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { ChevronDown, ChevronRight } from "lucide-react";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import type { IconType } from "react-icons";
 import { FaFacebook, FaInstagram, FaTiktok, FaXTwitter, FaYoutube } from "react-icons/fa6";
@@ -8,6 +10,7 @@ import { ENGAGEMENT_PLATFORMS } from "@/features/engagement/hooks/useEngagementD
 import type { EngagementPlatform, EngagementTrend } from "@/features/engagement/types/engagement.types";
 import { PLATFORM_COLOR, PLATFORM_LABEL } from "@/features/engagement/lib/colors";
 import { fillDailySeries } from "@/features/engagement/lib/format";
+import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 const PLATFORM_ICON: Record<EngagementPlatform, IconType> = {
   youtube: FaYoutube,
@@ -99,6 +102,73 @@ function TrendPanel({ platform, trend, dateFrom, dateTo }: PanelProps) {
   );
 }
 
+function formatTableDate(date: string) {
+  return new Date(date).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
+}
+
+interface TableProps {
+  trends: Partial<Record<EngagementPlatform, EngagementTrend>>;
+  dateFrom: string;
+  dateTo: string;
+}
+
+function TrendTable({ trends, dateFrom, dateTo }: TableProps) {
+  const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
+
+  const seriesByPlatform = ENGAGEMENT_PLATFORMS.map((platform) => ({
+    platform,
+    data: fillDailySeries(trends[platform]?.series ?? [], dateFrom, dateTo),
+  }));
+  const dates = seriesByPlatform[0]?.data.map((d) => d.date) ?? [];
+  const rows = dates.map((date, i) => ({
+    date,
+    values: seriesByPlatform.map(({ data }) => data[i]?.mentions ?? 0),
+  }));
+
+  return (
+    <div className="mt-4">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
+      >
+        {open ? <ChevronDown size={15} /> : <ChevronRight size={15} />}
+        {open ? t.engagementTable.hideTable : t.engagementTable.viewAsTable}
+      </button>
+
+      {open && (
+        <div className="mt-3 max-h-96 overflow-y-auto overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900">
+          <table className="w-full text-sm">
+            <thead className="sticky top-0 bg-slate-50 text-[10px] uppercase tracking-wider text-slate-400 dark:bg-slate-950 dark:text-slate-500">
+              <tr>
+                <th className="px-4 py-3 text-left">{t.engagementTable.date}</th>
+                {ENGAGEMENT_PLATFORMS.map((platform) => (
+                  <th key={platform} className="px-4 py-3 text-right">
+                    {PLATFORM_LABEL[platform]}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+              {rows.map((row) => (
+                <tr key={row.date}>
+                  <td className="px-4 py-2.5 text-slate-700 dark:text-slate-300">{formatTableDate(row.date)}</td>
+                  {row.values.map((value, i) => (
+                    <td key={ENGAGEMENT_PLATFORMS[i]} className="px-4 py-2.5 text-right tabular-nums text-slate-700 dark:text-slate-300">
+                      {value.toLocaleString("id-ID")}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
 interface Props {
   trends: Partial<Record<EngagementPlatform, EngagementTrend>>;
   dateFrom: string;
@@ -117,6 +187,7 @@ export default function EngagementTrendGrid({ trends, dateFrom, dateTo }: Props)
           <TrendPanel key={platform} platform={platform} trend={trends[platform]} dateFrom={dateFrom} dateTo={dateTo} />
         ))}
       </div>
+      <TrendTable trends={trends} dateFrom={dateFrom} dateTo={dateTo} />
     </div>
   );
 }

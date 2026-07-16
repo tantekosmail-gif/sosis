@@ -206,7 +206,10 @@
     "mentionGrowth": "Growth Mentions",
     "sentiment": "Sentimen",
     "noData": "Data tidak tersedia",
-    "notAvailable": "Tidak tersedia"
+    "notAvailable": "Tidak tersedia",
+    "date": "Tanggal",
+    "viewAsTable": "Lihat sebagai tabel",
+    "hideTable": "Sembunyikan tabel"
   },
   "accountSentimentTab": {
     "title": "Analisis Sentimen",

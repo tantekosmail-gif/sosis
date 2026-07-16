@@ -206,7 +206,10 @@
     "mentionGrowth": "Mention Growth",
     "sentiment": "Sentiment",
     "noData": "No data available",
-    "notAvailable": "Not available"
+    "notAvailable": "Not available",
+    "date": "Date",
+    "viewAsTable": "View as table",
+    "hideTable": "Hide table"
   },
   "accountSentimentTab": {
     "title": "Sentiment Analysis",
