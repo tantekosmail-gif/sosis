@@ -10,9 +10,9 @@ import { useTranslation } from "@/lib/i18n/LanguageProvider";
 const RAIL_SIZE = 4;
 
 const RANK_STYLE: Record<number, string> = {
-  1: "bg-amber-400 text-white",
-  2: "bg-slate-400 text-white",
-  3: "bg-orange-400 text-white",
+  1: "bg-gradient-to-br from-amber-400 to-amber-600 text-white shadow-sm shadow-amber-500/40",
+  2: "bg-gradient-to-br from-slate-300 to-slate-500 text-white",
+  3: "bg-gradient-to-br from-orange-300 to-orange-500 text-white",
 };
 
 const SENTIMENT_BAR_COLOR: Record<string, string> = {
@@ -64,10 +64,12 @@ export default function VisualsPreviewWidget({ items }: { items: ViralVideoItem[
   const date = formatDate(active.published_at);
 
   return (
-    <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900">
+    <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-md dark:border-slate-700 dark:bg-slate-900">
       <div className="flex items-center justify-between border-b border-slate-100 px-5 py-3.5 dark:border-slate-800">
-        <div className="flex items-center gap-2">
-          <Flame size={15} className="text-orange-500" />
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-orange-400 to-red-500 shadow-sm shadow-orange-500/30">
+            <Flame size={17} className="text-white" />
+          </div>
           <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">{t.overviewWidgets.videoViral.title}</h2>
         </div>
         <Info size={16} className="text-slate-400 dark:text-slate-500" />
