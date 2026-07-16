@@ -21,11 +21,21 @@ export interface SearchedVideoItem {
 // search results rather than requiring the user to pick dates first.
 const DAYS_BACK = 365;
 
+// Local calendar date, not UTC — toISOString() would convert to UTC and, for
+// any visitor east of it (e.g. WIB/UTC+7), roll dateTo back to "yesterday"
+// during the first hours of the local day, silently excluding today's videos.
+function toLocalDateString(d: Date) {
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 function defaultRange() {
   const to = new Date();
   const from = new Date();
   from.setDate(from.getDate() - DAYS_BACK);
-  return { dateFrom: from.toISOString().slice(0, 10), dateTo: to.toISOString().slice(0, 10) };
+  return { dateFrom: toLocalDateString(from), dateTo: toLocalDateString(to) };
 }
 
 export function useVideoSearch() {
