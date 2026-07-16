@@ -8,10 +8,12 @@ import DashboardLayout from "@/components/layout/DashboardLayout";
 import PageTabs from "@/components/common/PageTabs";
 import YoutubeTrendingTab from "@/features/youtube/components/TrendingTab";
 import YoutubeSentimentTab from "@/features/youtube/components/SentimentTab";
+import VideoSearchTab from "@/features/youtube/components/VideoSearchTab";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 const TABS = [
   { key: "trending", label: "Trending" },
+  { key: "search", label: "Cari Video" },
   { key: "sentiment", label: "Sentiment" },
 ] as const;
 
@@ -55,7 +57,13 @@ export default function YoutubePage() {
 
         <PageTabs tabs={TABS} active={tab} onChange={setTab} />
 
-        {tab === "trending" ? <YoutubeTrendingTab /> : <YoutubeSentimentTab />}
+        {tab === "trending" ? (
+          <YoutubeTrendingTab />
+        ) : tab === "search" ? (
+          <VideoSearchTab />
+        ) : (
+          <YoutubeSentimentTab />
+        )}
       </div>
     </DashboardLayout>
   );
