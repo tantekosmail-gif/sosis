@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Camera, ChevronLeft, ChevronRight, Eye, Flame, Info, MessageCircle, Play } from "lucide-react";
+import { Camera, ChevronLeft, ChevronRight, Eye, Flame, MessageCircle, Play, RefreshCw } from "lucide-react";
 
 import type { ViralSentimentBreakdown, ViralVideoItem } from "@/features/youtube/types/viral.types";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
@@ -51,7 +51,13 @@ function SentimentBar({ summary }: { summary?: ViralSentimentBreakdown }) {
   );
 }
 
-export default function VisualsPreviewWidget({ items }: { items: ViralVideoItem[] }) {
+interface Props {
+  items: ViralVideoItem[];
+  refreshing?: boolean;
+  onRefresh?: () => void;
+}
+
+export default function VisualsPreviewWidget({ items, refreshing, onRefresh }: Props) {
   const [activeIndex, setActiveIndex] = useState(0);
   const { t } = useTranslation();
 
@@ -74,7 +80,18 @@ export default function VisualsPreviewWidget({ items }: { items: ViralVideoItem[
           </div>
           <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">{t.overviewWidgets.videoViral.title}</h2>
         </div>
-        <Info size={16} className="text-slate-400 dark:text-slate-500" />
+        {onRefresh && (
+          <button
+            type="button"
+            onClick={onRefresh}
+            disabled={refreshing}
+            title="Muat ulang data terbaru"
+            aria-label="Muat ulang data terbaru"
+            className="flex h-7 w-7 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-600 disabled:opacity-50 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-slate-300"
+          >
+            <RefreshCw size={14} className={refreshing ? "animate-spin" : ""} />
+          </button>
+        )}
       </div>
 
       <div className="flex flex-1 flex-col gap-3 p-4">

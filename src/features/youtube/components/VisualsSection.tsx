@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 
 import VisualsPreviewWidget from "@/components/youtube/VisualsPreviewWidget";
@@ -10,28 +10,29 @@ import type { ViralVideoItem } from "../types/viral.types";
 export default function VisualsSection() {
   const [items, setItems] = useState<ViralVideoItem[] | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    let cancelled = false;
-
-    (async () => {
-      try {
-        setLoading(true);
-        setError("");
-        const result = await getViralVideos({ limit: 8, limitComments: 0 });
-        if (!cancelled) setItems(result.items ?? []);
-      } catch (err: any) {
-        if (!cancelled) setError(err?.message || "Gagal memuat visuals video YouTube");
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
+  const fetchData = useCallback(async (isRefresh: boolean) => {
+    try {
+      if (isRefresh) setRefreshing(true);
+      else setLoading(true);
+      setError("");
+      const result = await getViralVideos({ limit: 8, limitComments: 0 });
+      setItems(result.items ?? []);
+    } catch (err: any) {
+      setError(err?.message || "Gagal memuat visuals video YouTube");
+    } finally {
+      if (isRefresh) setRefreshing(false);
+      else setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    (async () => {
+      await fetchData(false);
+    })();
+  }, [fetchData]);
 
   if (loading) {
     return (
@@ -51,5 +52,5 @@ export default function VisualsSection() {
 
   if (!items || items.length === 0) return null;
 
-  return <VisualsPreviewWidget items={items} />;
+  return <VisualsPreviewWidget items={items} refreshing={refreshing} onRefresh={() => fetchData(true)} />;
 }
