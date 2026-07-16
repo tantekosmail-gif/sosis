@@ -1,17 +1,45 @@
 "use client";
 
-import { ExternalLink, Eye, MessageCircle, ThumbsUp } from "lucide-react";
+import { ExternalLink, Eye, ThumbsUp } from "lucide-react";
 
 import type { SearchedVideoItem } from "@/features/youtube/hooks/useVideoSearch";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
-function formatDate(dateStr?: string) {
+function formatRelativeTime(dateStr?: string) {
   if (!dateStr) return null;
-  try {
-    return new Date(dateStr).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
-  } catch {
-    return null;
-  }
+  const date = new Date(dateStr);
+  if (Number.isNaN(date.getTime())) return null;
+
+  const diffMs = Date.now() - date.getTime();
+  const diffMinutes = Math.round(diffMs / 60_000);
+
+  if (diffMinutes < 1) return "Baru saja";
+  if (diffMinutes < 60) return `${diffMinutes} menit lalu`;
+
+  const diffHours = Math.round(diffMinutes / 60);
+  if (diffHours < 24) return `${diffHours} jam lalu`;
+
+  const diffDays = Math.round(diffHours / 24);
+  return `${diffDays} hari lalu`;
+}
+
+// Titles/channel names from the API come pre-HTML-escaped (e.g. "&amp;"
+// instead of "&"), so decode common entities before rendering as plain text.
+const HTML_ENTITIES: Record<string, string> = {
+  "&amp;": "&",
+  "&lt;": "<",
+  "&gt;": ">",
+  "&quot;": '"',
+  "&#39;": "'",
+  "&apos;": "'",
+  "&#x27;": "'",
+};
+
+function decodeHtmlEntities(text: string) {
+  return text
+    .replace(/&amp;|&lt;|&gt;|&quot;|&#39;|&apos;|&#x27;/g, (entity) => HTML_ENTITIES[entity])
+    .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number(code)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, code) => String.fromCharCode(parseInt(code, 16)));
 }
 
 function formatCompact(n: number) {
@@ -36,7 +64,7 @@ export default function VideoSearchGrid({ items }: { items: SearchedVideoItem[] 
   return (
     <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {items.map((item) => {
-        const date = formatDate(item.published_at);
+        const relativeTime = formatRelativeTime(item.published_at);
 
         return (
           <a
@@ -47,9 +75,9 @@ export default function VideoSearchGrid({ items }: { items: SearchedVideoItem[] 
             className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md dark:border-slate-700 dark:bg-slate-900"
           >
             <div className="relative aspect-video w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
-              {item.thumbnail_url ? (
+              {item.thumbnail ? (
                 <img
-                  src={item.thumbnail_url}
+                  src={item.thumbnail}
                   alt=""
                   className="h-full w-full object-cover transition-transform group-hover:scale-105"
                   onError={(e) => {
@@ -66,32 +94,25 @@ export default function VideoSearchGrid({ items }: { items: SearchedVideoItem[] 
 
             <div className="p-4">
               <h3 className="line-clamp-2 min-w-0 break-words text-sm font-semibold leading-snug text-slate-800 transition-colors group-hover:text-indigo-600 dark:text-slate-200">
-                {item.title}
+                {decodeHtmlEntities(item.title)}
               </h3>
-              <p className="mt-1.5 truncate text-xs text-slate-500 dark:text-slate-400">{item.channel}</p>
+              <p className="mt-1.5 truncate text-xs text-slate-500 dark:text-slate-400">{decodeHtmlEntities(item.channel)}</p>
 
               <div className="mt-3 flex items-center justify-between">
                 <div className="flex items-center gap-3 text-xs font-semibold text-slate-700 dark:text-slate-300">
                   <span className="flex items-center gap-1">
                     <Eye size={13} className="text-slate-400 dark:text-slate-500" />
-                    {formatCompact(item.view_count)}
+                    {formatCompact(item.views)}
                   </span>
-                  {item.like_count > 0 && (
+                  {item.likes > 0 && (
                     <span className="flex items-center gap-1">
                       <ThumbsUp size={12} className="text-slate-400 dark:text-slate-500" />
-                      {formatCompact(item.like_count)}
+                      {formatCompact(item.likes)}
                     </span>
                   )}
                 </div>
-                {date && <span className="text-[11px] text-slate-400 dark:text-slate-500">{date}</span>}
+                {relativeTime && <span className="text-[11px] text-slate-400 dark:text-slate-500">{relativeTime}</span>}
               </div>
-
-              {item.comment_count > 0 && (
-                <div className="mt-3 flex items-center gap-1 border-t border-slate-100 pt-3 text-[11px] text-slate-400 dark:border-slate-800 dark:text-slate-500">
-                  <MessageCircle size={12} />
-                  {item.comment_count} komentar
-                </div>
-              )}
             </div>
           </a>
         );

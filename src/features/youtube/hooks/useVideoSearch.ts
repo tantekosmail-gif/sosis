@@ -2,41 +2,23 @@
 
 import { useCallback, useState } from "react";
 
-import { dateSearch } from "@/features/search/services/dateSearch.service";
+import { searchRecentVideos } from "../services/search.service";
 
 export interface SearchedVideoItem {
   video_id: string;
   title: string;
   channel: string;
   url: string;
-  thumbnail_url: string;
-  view_count: number;
-  like_count: number;
-  comment_count: number;
+  thumbnail: string;
+  views: number;
+  likes: number;
   published_at: string;
 }
 
-// General keyword search (not trending) has no date-range picker in the UI —
-// widen the window so a plain keyword search behaves like YouTube's own
-// search results rather than requiring the user to pick dates first.
-const DAYS_BACK = 365;
-
-// Local calendar date, not UTC — toISOString() would convert to UTC and, for
-// any visitor east of it (e.g. WIB/UTC+7), roll dateTo back to "yesterday"
-// during the first hours of the local day, silently excluding today's videos.
-function toLocalDateString(d: Date) {
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
-
-function defaultRange() {
-  const to = new Date();
-  const from = new Date();
-  from.setDate(from.getDate() - DAYS_BACK);
-  return { dateFrom: toLocalDateString(from), dateTo: toLocalDateString(to) };
-}
+// Keyword search surfaces only recently published videos (last N hours)
+// rather than searching all-time, so results stay relevant to "what's
+// happening now" for a given keyword.
+const HOURS_BACK = 24;
 
 export function useVideoSearch() {
   const [keyword, setKeyword] = useState("");
@@ -59,19 +41,15 @@ export function useVideoSearch() {
     try {
       setLoading(true);
       setError("");
-      const { dateFrom, dateTo } = defaultRange();
-      const raw = await dateSearch({
-        platform: "youtube",
+      const raw = await searchRecentVideos({
         keyword: trimmed,
-        dateFrom,
-        dateTo,
-        sortBy: "newest",
-        includeSentiment: false,
-        limit: 24,
+        hoursBack: HOURS_BACK,
+        maxResults: 50,
       });
       const data = raw?.data ?? raw ?? {};
-      setItems(data.items ?? []);
-      setTotal(data.total ?? data.items?.length ?? 0);
+      const videos = data.videos ?? data.items ?? [];
+      setItems(videos);
+      setTotal(data.found ?? data.total ?? videos.length);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Gagal mencari video");
       setItems(null);

@@ -1,5 +1,21 @@
 import { create } from "zustand";
 
+// Local calendar date, not UTC — toISOString() would roll the date back for
+// any visitor east of UTC (e.g. WIB/UTC+7) during the first hours of the day.
+function toLocalDateString(d: Date) {
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function defaultDateRange() {
+  const to = new Date();
+  const from = new Date();
+  from.setDate(from.getDate() - 7);
+  return { startDate: toLocalDateString(from), endDate: toLocalDateString(to) };
+}
+
 interface FilterState {
   topic: string;
   platform: string;
@@ -27,9 +43,7 @@ export const useFilterStore = create<FilterState>((set) => ({
 
   interval: "1d",
 
-  startDate: "",
-
-  endDate: "",
+  ...defaultDateRange(),
 
   keyword: "",
 

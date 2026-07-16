@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Loader2, RefreshCw, Search } from "lucide-react";
+import { forwardRef, useImperativeHandle, useState } from "react";
+import { Loader2, RefreshCw } from "lucide-react";
 
 import ViralVideoGrid from "@/components/youtube/ViralVideoGrid";
 import ViralCommentsList from "@/components/youtube/ViralCommentsList";
@@ -14,9 +14,12 @@ import { useTranslation } from "@/lib/i18n/LanguageProvider";
 const LIMIT_OPTIONS = [10, 20, 50, 100];
 type SortBy = "rank" | "newest";
 
-export default function YoutubeTrendingTab() {
+export interface TrendingTabHandle {
+  search: (keyword: string) => void;
+}
+
+const YoutubeTrendingTab = forwardRef<TrendingTabHandle>(function YoutubeTrendingTab(_props, ref) {
   const { t } = useTranslation();
-  const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<SortBy>("rank");
 
   const {
@@ -32,6 +35,10 @@ export default function YoutubeTrendingTab() {
     selectedVideo,
   } = useViralVideos();
 
+  useImperativeHandle(ref, () => ({
+    search: (keyword: string) => setQ(keyword),
+  }));
+
   const sortedItems = !data?.items
     ? []
     : sortBy === "rank"
@@ -39,11 +46,6 @@ export default function YoutubeTrendingTab() {
       : [...data.items].sort(
           (a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime()
         );
-
-  function handleSearch(e: React.FormEvent) {
-    e.preventDefault();
-    setQ(search.trim());
-  }
 
   return (
     <div className="space-y-6">
@@ -56,22 +58,7 @@ export default function YoutubeTrendingTab() {
 
       {/* Filter bar */}
       <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-          <form onSubmit={handleSearch} className="flex-1">
-            <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-              {t.youtubeTrendingTab.searchLabel}
-            </label>
-            <div className="relative">
-              <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
-              <input
-                placeholder={t.youtubeTrendingTab.searchPlaceholder}
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="h-10 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 pl-10 pr-4 text-sm text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-indigo-400 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition"
-              />
-            </div>
-          </form>
-
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-end">
           <div className="shrink-0">
             <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
               {t.youtubeTrendingTab.sortLabel}
@@ -157,4 +144,6 @@ export default function YoutubeTrendingTab() {
       )}
     </div>
   );
-}
+});
+
+export default YoutubeTrendingTab;

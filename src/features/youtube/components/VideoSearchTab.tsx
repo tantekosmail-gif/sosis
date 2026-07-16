@@ -1,57 +1,42 @@
 "use client";
 
-import { useState } from "react";
-import { Loader2, Search } from "lucide-react";
+import { forwardRef, useImperativeHandle, useState } from "react";
+import { Loader2 } from "lucide-react";
 import { FaYoutube } from "react-icons/fa6";
 
 import VideoSearchGrid from "@/components/youtube/VideoSearchGrid";
 import { useVideoSearch } from "../hooks/useVideoSearch";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
-export default function VideoSearchTab() {
+type SortBy = "relevance" | "newest" | "popular";
+
+export interface VideoSearchTabHandle {
+  search: (keyword: string) => void;
+}
+
+const VideoSearchTab = forwardRef<VideoSearchTabHandle>(function VideoSearchTab(_props, ref) {
   const { t } = useTranslation();
-  const [input, setInput] = useState("");
+  const [sortBy, setSortBy] = useState<SortBy>("relevance");
   const { keyword, items, total, loading, error, search } = useVideoSearch();
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    search(input);
-  }
+  useImperativeHandle(ref, () => ({ search }));
+
+  const sortedItems = !items
+    ? items
+    : sortBy === "newest"
+      ? [...items].sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime())
+      : sortBy === "popular"
+        ? [...items].sort((a, b) => b.views - a.views)
+        : items;
+
+  const hasResults = !loading && !error && items !== null;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div>
         <h2 className="font-semibold text-slate-900 dark:text-slate-100">{t.youtubeSearchTab.title}</h2>
         <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">{t.youtubeSearchTab.subtitle}</p>
       </div>
-
-      <form
-        onSubmit={handleSubmit}
-        className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900"
-      >
-        <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-          {t.youtubeSearchTab.keywordLabel}
-        </label>
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <div className="relative flex-1">
-            <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
-            <input
-              placeholder={t.youtubeSearchTab.keywordPlaceholder}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 text-sm text-slate-800 placeholder:text-slate-400 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200 dark:placeholder:text-slate-500 dark:focus:bg-slate-900 transition"
-            />
-          </div>
-          <button
-            type="submit"
-            disabled={loading || !input.trim()}
-            className="flex h-10 shrink-0 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {loading ? <Loader2 size={15} className="animate-spin" /> : <Search size={15} />}
-            {t.youtubeSearchTab.searchButton}
-          </button>
-        </div>
-      </form>
 
       {error && (
         <div className="rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-600 dark:bg-red-950/40">
@@ -60,24 +45,42 @@ export default function VideoSearchTab() {
       )}
 
       {loading && (
-        <div className="flex flex-col items-center justify-center rounded-2xl border bg-white py-24 shadow-sm dark:bg-slate-900">
-          <Loader2 className="mb-4 h-10 w-10 animate-spin text-indigo-600" />
-          <p className="font-semibold text-slate-700 dark:text-slate-300">{t.youtubeSearchTab.loadingTitle}</p>
-          <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">{t.youtubeSearchTab.loadingDesc}</p>
+        <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-5 py-4 text-sm shadow-sm dark:border-slate-700 dark:bg-slate-900">
+          <Loader2 className="h-4 w-4 animate-spin text-indigo-600" />
+          <span className="text-slate-500 dark:text-slate-400">{t.youtubeSearchTab.loadingDesc}</span>
         </div>
       )}
 
-      {!loading && !error && items && (
-        <>
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            {t.youtubeSearchTab.showingPrefix}{" "}
-            <span className="font-semibold text-slate-700 dark:text-slate-300">{items.length}</span>{" "}
-            {t.youtubeSearchTab.showingMiddle}{" "}
-            <span className="font-semibold text-slate-700 dark:text-slate-300">{total}</span>{" "}
-            {t.youtubeSearchTab.showingSuffix} &ldquo;{keyword}&rdquo;
-          </p>
-          <VideoSearchGrid items={items} />
-        </>
+      {hasResults && (
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              {t.youtubeSearchTab.showingPrefix}{" "}
+              <span className="font-semibold text-slate-700 dark:text-slate-300">{sortedItems!.length}</span>{" "}
+              {t.youtubeSearchTab.showingMiddle}{" "}
+              <span className="font-semibold text-slate-700 dark:text-slate-300">{total}</span>{" "}
+              {t.youtubeSearchTab.showingSuffix} &ldquo;{keyword}&rdquo;
+            </p>
+
+            <div className="flex items-center gap-2">
+              <label className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                {t.youtubeSearchTab.sortLabel}
+              </label>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as SortBy)}
+                className="h-9 rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm text-slate-800 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200 dark:focus:bg-slate-900 transition"
+              >
+                <option value="relevance">{t.youtubeSearchTab.sortRelevance}</option>
+                <option value="newest">{t.youtubeSearchTab.sortNewest}</option>
+                <option value="popular">{t.youtubeSearchTab.sortPopular}</option>
+              </select>
+            </div>
+          </div>
+          <div className="mt-4">
+            <VideoSearchGrid items={sortedItems!} />
+          </div>
+        </div>
       )}
 
       {!loading && !error && items === null && (
@@ -88,4 +91,6 @@ export default function VideoSearchTab() {
       )}
     </div>
   );
-}
+});
+
+export default VideoSearchTab;

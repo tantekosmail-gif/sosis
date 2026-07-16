@@ -2,15 +2,29 @@
 
 import { useState } from "react";
 import { GitCompareArrows, Loader2, Search, X } from "lucide-react";
+import { toast } from "sonner";
 import {
   RadarChart, Radar, PolarGrid, PolarAngleAxis, ResponsiveContainer, Legend,
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
 } from "recharts";
 import { dateSearch } from "@/features/search/services/dateSearch.service";
+import { smartSearch } from "@/features/search/services/search.service";
 import { transformDashboard } from "@/features/analysis/transformers";
+import { transformDateSearch } from "@/features/analysis/transformers/dateSearch.transformer";
 import { DashboardData } from "@/types/dashboard.type";
 import { useFilterStore } from "@/stores/filterStore";
 import { getSettings } from "@/features/settings/hooks/useSettings";
+
+// FastAPI validation errors come back as `{ detail: [{ msg, loc, ... }] }`
+// instead of a plain string — flatten those into one readable line.
+function extractErrorMessage(err: any): string {
+  const detail = err?.response?.data?.detail;
+  if (Array.isArray(detail)) {
+    return detail.map((d: any) => d.msg).filter(Boolean).join("; ") || "Gagal membandingkan";
+  }
+  if (typeof detail === "string") return detail;
+  return err?.message ?? "Gagal membandingkan";
+}
 
 interface Props {
   platform: string;
@@ -52,14 +66,24 @@ export default function ComparePanel({ platform, baseKeyword }: Props) {
     setError("");
     try {
       const { searchResultLimit } = getSettings();
-      const [resA, resB] = await Promise.all([
-        dateSearch({ keyword: baseKeyword, platform, dateFrom: startDate, dateTo: endDate, limit: searchResultLimit, includeSentiment: true }),
-        dateSearch({ keyword: compareKeyword, platform, dateFrom: startDate, dateTo: endDate, limit: searchResultLimit, includeSentiment: true }),
-      ]);
-      setDataA(transformDashboard(platform, resA, baseKeyword));
-      setDataB(transformDashboard(platform, resB, compareKeyword));
+      const usingDateSearch = !!(startDate && endDate);
+
+      async function fetchOne(keyword: string) {
+        if (usingDateSearch) {
+          const res = await dateSearch({ keyword, platform, dateFrom: startDate, dateTo: endDate, limit: searchResultLimit, includeSentiment: true });
+          return transformDateSearch(res, platform, keyword);
+        }
+        const res = await smartSearch({ keyword, platform, limitVideos: searchResultLimit, limitComments: searchResultLimit });
+        return transformDashboard(platform, res, keyword);
+      }
+
+      const [resultA, resultB] = await Promise.all([fetchOne(baseKeyword), fetchOne(compareKeyword)]);
+      setDataA(resultA);
+      setDataB(resultB);
     } catch (e: any) {
-      setError(e.message ?? "Gagal membandingkan");
+      const message = extractErrorMessage(e);
+      setError(message);
+      toast.error("Gagal membandingkan", { description: message });
     } finally {
       setLoading(false);
     }

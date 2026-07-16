@@ -1,6 +1,7 @@
 "use client";
 
 import { Loader2, Zap } from "lucide-react";
+import { toast } from "sonner";
 import { useAnalyze } from "@/features/analysis/hooks/useAnalyze";
 import { useFilterStore } from "@/stores/filterStore";
 import { useDashboardStore } from "@/store/dashboard.store";
@@ -13,7 +14,7 @@ export default function AnalyzeButton() {
 
   async function handleClick() {
     if (!keyword.trim()) {
-      alert("Masukkan keyword");
+      toast.error("Masukkan keyword");
       return;
     }
     await execute(platform, keyword);

@@ -92,7 +92,7 @@ export default function YoutubeSentimentTab() {
         </button>
       </div>
 
-      <FilterBar />
+      <FilterBar showSearch={false} />
 
       {loading && (
         <div className="flex flex-col items-center justify-center rounded-2xl border bg-white dark:bg-slate-900 py-24 shadow-sm">
