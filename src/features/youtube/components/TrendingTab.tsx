@@ -12,10 +12,12 @@ import { useViralVideos } from "../hooks/useViralVideos";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 const LIMIT_OPTIONS = [10, 20, 50, 100];
+type SortBy = "rank" | "newest";
 
 export default function YoutubeTrendingTab() {
   const { t } = useTranslation();
   const [search, setSearch] = useState("");
+  const [sortBy, setSortBy] = useState<SortBy>("rank");
 
   const {
     data,
@@ -29,6 +31,14 @@ export default function YoutubeTrendingTab() {
     setSelectedVideoId,
     selectedVideo,
   } = useViralVideos();
+
+  const sortedItems = !data?.items
+    ? []
+    : sortBy === "rank"
+      ? data.items
+      : [...data.items].sort(
+          (a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime()
+        );
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -61,6 +71,20 @@ export default function YoutubeTrendingTab() {
               />
             </div>
           </form>
+
+          <div className="shrink-0">
+            <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+              {t.youtubeTrendingTab.sortLabel}
+            </label>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as SortBy)}
+              className="h-10 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-3.5 text-sm text-slate-800 dark:text-slate-200 focus:border-indigo-400 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition"
+            >
+              <option value="rank">{t.youtubeTrendingTab.sortRank}</option>
+              <option value="newest">{t.youtubeTrendingTab.sortNewest}</option>
+            </select>
+          </div>
 
           <div className="shrink-0">
             <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
@@ -113,10 +137,10 @@ export default function YoutubeTrendingTab() {
 
           <ViralOverview stats={data.stats} sentiment={data.sentiment} />
 
-          <VisualsPreviewWidget items={data.items} />
+          <VisualsPreviewWidget items={sortedItems} />
 
           <ViralVideoGrid
-            data={data.items}
+            data={sortedItems}
             selectedVideoId={selectedVideoId}
             onSelectVideo={(item) => setSelectedVideoId(item.video_id)}
           />
