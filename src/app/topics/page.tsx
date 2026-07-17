@@ -14,60 +14,6 @@ import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import TopTopicsLeaderboard from "@/components/topic/TopTopicsLeaderboard";
 
-function ScheduleToggle({
-  topic,
-  onChange,
-  disabled,
-  labels,
-}: {
-  topic: Topic;
-  onChange: (enabled: boolean, durationDays?: number) => void;
-  disabled: boolean;
-  labels: { on: string; off: string; unit: string };
-}) {
-  const [days, setDays] = useState(topic.scheduleDurationDays ?? 7);
-
-  return (
-    <div className="flex items-center gap-2">
-      <button
-        type="button"
-        role="switch"
-        aria-checked={topic.recurring}
-        disabled={disabled}
-        onClick={() => onChange(!topic.recurring, days)}
-        className={`relative h-5 w-9 shrink-0 rounded-full transition-colors disabled:opacity-50 ${
-          topic.recurring ? "bg-indigo-600" : "bg-slate-300 dark:bg-slate-700"
-        }`}
-      >
-        <span
-          className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow-sm transition-transform ${
-            topic.recurring ? "translate-x-4" : "translate-x-0"
-          }`}
-        />
-      </button>
-
-      {topic.recurring ? (
-        <span className="text-xs text-slate-500 dark:text-slate-400">
-          {labels.on} · {topic.scheduleDurationDays ?? days} {labels.unit}
-        </span>
-      ) : (
-        <>
-          <input
-            type="number"
-            min={1}
-            max={90}
-            value={days}
-            onChange={(e) => setDays(Number(e.target.value))}
-            disabled={disabled}
-            className="h-6 w-14 rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-1.5 text-xs text-slate-700 dark:text-slate-300 disabled:opacity-50"
-          />
-          <span className="text-xs text-slate-400 dark:text-slate-500">{labels.unit}</span>
-        </>
-      )}
-    </div>
-  );
-}
-
 export default function TopicsPage() {
   const router = useRouter();
   const { t } = useTranslation();
@@ -79,7 +25,7 @@ export default function TopicsPage() {
   const [searchBusyId, setSearchBusyId] = useState<string | null>(null);
   const [pollingId, setPollingId] = useState<string | null>(null);
   const [confirmTarget, setConfirmTarget] = useState<{ topic: Topic; keywords: string[] } | null>(null);
-  const { topics, loading, error, refresh, addTopic, removeTopic, searchTopic, pollTopicResult, updateSchedule } =
+  const { topics, loading, error, refresh, addTopic, removeTopic, searchTopic, pollTopicResult } =
     useTopics();
   const cancelPollRef = useRef<Map<string, () => void>>(new Map());
 
@@ -180,25 +126,11 @@ export default function TopicsPage() {
     }
   }
 
-  async function handleScheduleChange(topic: Topic, enabled: boolean, durationDays?: number) {
-    setBusyId(topic.id);
-    try {
-      await updateSchedule(topic.id, enabled, enabled ? durationDays : null);
-      toast.success(t.topics.scheduleSuccess);
-    } catch (err) {
-      console.error("updateSchedule failed:", err);
-      toast.error(apiErrorMessage(err, t.topics.scheduleError));
-    } finally {
-      setBusyId(null);
-    }
-  }
-
   return (
     <DashboardLayout>
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">{t.topics.pageTitle}</h1>
-          {/* <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">{t.topics.pageSubtitle}</p> */}
         </div>
         <button
           onClick={() => setCreateOpen(true)}
@@ -336,19 +268,6 @@ export default function TopicsPage() {
                       ))}
                     </div>
 
-                    <div className="mt-3 flex items-center gap-2 text-xs text-slate-400 dark:text-slate-500">
-                      <span className="font-medium text-slate-500 dark:text-slate-400">{t.topics.recurringLabel}</span>
-                      <ScheduleToggle
-                        topic={topic}
-                        disabled={isBusy}
-                        onChange={(enabled, days) => handleScheduleChange(topic, enabled, days)}
-                        labels={{
-                          on: t.topics.recurringOn,
-                          off: t.topics.recurringOff,
-                          unit: t.topics.durationDaysUnit,
-                        }}
-                      />
-                    </div>
                   </div>
 
                   <div className="flex shrink-0 items-center gap-2">

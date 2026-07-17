@@ -139,12 +139,53 @@ export interface GenerateReportPayload {
   [key: string]: unknown;
 }
 
+export interface ReportJob {
+  id: string;
+  status: "pending" | "processing" | "completed" | "failed" | string;
+  downloadUrl: string | null;
+  error: string | null;
+}
+
+// Bentuk response backend belum di-strict-type (skema "GenerateReportRequest" /
+// "ReportJobResponse" tidak terdokumentasi lengkap di spec yang tersedia), jadi
+// dinormalisasi secara defensif dengan beberapa kemungkinan nama field — sama
+// seperti normalizeTopic() di atas.
+function normalizeReportJob(raw: any): ReportJob {
+  const status = raw.status ?? raw.state ?? "pending";
+  return {
+    id: raw.id ?? raw.report_id ?? raw.job_id,
+    status,
+    downloadUrl: raw.download_url ?? raw.file_url ?? raw.url ?? null,
+    error: raw.error ?? raw.error_message ?? raw.message ?? null,
+  };
+}
+
+const REPORT_DONE_STATUSES = ["completed", "done", "success", "finished"];
+const REPORT_FAILED_STATUSES = ["failed", "error"];
+
+export function isReportDone(status: string) {
+  return REPORT_DONE_STATUSES.includes(status.toLowerCase());
+}
+
+export function isReportFailed(status: string) {
+  return REPORT_FAILED_STATUSES.includes(status.toLowerCase());
+}
+
 // POST /api/v1/reports/generate — trigger pembuatan laporan async (job).
-// CATATAN: skema request/response endpoint ini ("GenerateReportRequest" /
-// "ReportJobResponse") tidak terdokumentasi lengkap di spec yang tersedia —
-// field selain "format" belum terverifikasi terhadap backend nyata.
-export async function generateReport(payload: GenerateReportPayload) {
+export async function generateReport(payload: GenerateReportPayload): Promise<ReportJob> {
   const { data } = await api.post("/api/v1/reports/generate", payload);
+  return normalizeReportJob(data?.data ?? data);
+}
+
+// GET /api/v1/reports/{report_id} — cek status job laporan yang sedang diproses.
+export async function getReportStatus(reportId: string): Promise<ReportJob> {
+  const { data } = await api.get(`/api/v1/reports/${reportId}`);
+  return normalizeReportJob(data?.data ?? data);
+}
+
+// GET /api/v1/reports/{report_id}/download — unduh file laporan yang sudah selesai dibuat.
+export async function downloadReportFile(reportId: string): Promise<Blob> {
+  const { data } = await api.get(`/api/v1/reports/${reportId}/download`, { responseType: "blob" });
   return data;
 }
 

@@ -17,9 +17,11 @@
     "twitter": "Twitter/X",
     "tiktok": "TikTok",
     "news": "News",
+    "reports": "Reports",
+    "socialMediaGroup": "Social Media",
     "comparePlatforms": "Compare Platforms",
     "toolsGroup": "Tools",
-    "aiTopicSearch": "AI Topic Search",
+    "aiTopicSearch": "Topic Search",
     "topics": "Topics",
     "settings": "Settings",
     "brandTagline": "Media Monitoring"
@@ -215,8 +217,8 @@
     "title": "Sentiment Analysis",
     "analyzeButton": "Analyze",
     "refreshButton": "Refresh",
-    "loadingDesc": "Scraping may take a few seconds",
-    "scrapeErrorDesc": "The data below (if any) is from a previous scrape, not the latest.",
+    "loadingDesc": "Data collection may take a few seconds",
+    "scrapeErrorDesc": "The data below (if any) is from a previous data collection run, not the latest.",
     "instagram": {
       "desc": "Analyze comment sentiment from an Instagram account's posts",
       "usernameLabel": "Instagram Username",
@@ -378,14 +380,14 @@
       "platforms": { "label": "Social Media Monitoring", "description": "YouTube, Instagram, etc." },
       "news": { "label": "News", "description": "Trending & news search" },
       "compare": { "label": "Compare Platforms", "description": "One topic, many platforms" },
-      "ai": { "label": "AI Topic Search", "description": "Trending chat assistant" },
-      "settings": { "label": "Settings", "description": "Account, AI, & analysis" },
+      "ai": { "label": "Topic Search", "description": "Trending chat assistant" },
+      "settings": { "label": "Settings", "description": "Account & analysis" },
       "tips": { "label": "Tips & Notes", "description": "Important things to know" }
     }
   },
   "trendChat": {
-    "title": "AI Topic Search",
-    "subtitle": "Chat with AI to find & send trending topic recommendations"
+    "title": "Topic Search",
+    "subtitle": "Chat automatically to find & send trending topic recommendations"
   },
   "auth": {
     "welcomeBack": "Welcome back",
@@ -393,11 +395,7 @@
     "emailLabel": "Email",
     "passwordLabel": "Password",
     "signIn": "Sign In",
-    "signingIn": "Signing in...",
-    "heroTitle1": "Monitor every platform,",
-    "heroTitle2": "powered by AI.",
-    "heroDesc": "Track, analyze, and understand what people are saying about your brand across social media and the news.",
-    "quote": "Precision social intelligence for data-driven teams. Know what the public thinks before it becomes a crisis."
+    "signingIn": "Signing in..."
   },
   "topics": {
     "pageTitle": "Topic Monitoring",
@@ -412,9 +410,9 @@
     "keywordLabel": "Keyword",
     "keywordPlaceholderEmpty": "Type a keyword and press Enter...",
     "keywordPlaceholderMore": "Add another keyword...",
-    "aiSuggestButton": "AI Suggest",
+    "aiSuggestButton": "Auto-Generate",
     "aiSuggestEmpty": "No new keyword suggestions found",
-    "aiSuggestError": "Failed to get AI keyword suggestions",
+    "aiSuggestError": "Failed to get keyword suggestions",
     "errorNameRequired": "Topic name is required",
     "errorKeywordRequired": "Add at least one keyword",
     "saving": "Saving...",
@@ -479,17 +477,37 @@
       }
     }
   },
+  "reports": {
+    "pageTitle": "Reports",
+    "periodDaily": "Daily",
+    "periodWeekly": "Weekly",
+    "periodMonthly": "Monthly",
+    "periodYearly": "Yearly",
+    "topicLabel": "Topic",
+    "topicPlaceholder": "Select topic...",
+    "formatLabel": "Format",
+    "generateButton": "Generate Executive Report",
+    "generating": "Processing...",
+    "waitingForReport": "Waiting for report...",
+    "selectTopicFirst": "Select a topic first",
+    "generateQueued": "Report is being processed...",
+    "generateSuccess": "Report is ready, download started.",
+    "generateError": "Failed to generate report",
+    "generateTimeout": "Report isn't ready yet, check back in a bit.",
+    "downloadError": "Failed to download report",
+    "emptyTopics": "No topics yet. Add one on the Topics page first."
+  },
   "settings": {
     "title": "Settings",
-    "subtitle": "Manage your account, AI configuration, and app preferences",
+    "subtitle": "Manage your account, analysis configuration, and app preferences",
     "unsavedConfirmTitle": "Unsaved changes",
     "unsavedConfirmDesc": "You have unsaved changes on this tab. Switch tabs anyway?",
     "unsavedConfirmYes": "Yes, switch",
     "unsavedConfirmNo": "Stay",
     "tabs": {
       "account": { "label": "Account", "description": "Profile & security" },
-      "ai": { "label": "AI Model", "description": "Provider & configuration" },
-      "scraping": { "label": "Analysis", "description": "Scraping & default platform" },
+      "ai": { "label": "Analysis Engine", "description": "Provider & configuration" },
+      "scraping": { "label": "Analysis", "description": "Data Collection & default platform" },
       "notification": { "label": "Notifications", "description": "Notification preferences" },
       "widgets": { "label": "Overview Widgets", "description": "Show/hide widgets" },
       "users": { "label": "Users", "description": "Manage user accounts (admin)" },
@@ -513,17 +531,17 @@
       "logoutAllButton": "Logout All Sessions"
     },
     "ai": {
-      "providerTitle": "AI Provider",
-      "providerDesc": "Model used to generate the AI summary",
-      "configTitle": "Claude API Configuration",
-      "configDesc": "API key for Anthropic Claude access",
-      "apiKeyLabel": "Anthropic API Key",
-      "saveButton": "Save AI Settings"
+      "providerTitle": "Analysis Engine",
+      "providerDesc": "Model used to generate the automated summary",
+      "configTitle": "API Configuration",
+      "configDesc": "API key to enable automated analysis",
+      "apiKeyLabel": "API Key",
+      "saveButton": "Save Settings"
     },
     "scraping": {
       "defaultPlatformTitle": "Default Platform",
       "defaultPlatformDesc": "Platform selected first when opening the dashboard",
-      "scrapingParamsTitle": "Scraping Parameters",
+      "scrapingParamsTitle": "Data Collection Parameters",
       "dataParamsTitle": "Data Fetch Parameters",
       "maxPages": "Max Pages",
       "maxCommentsPerVideo": "Max Comments per Video",
@@ -542,7 +560,7 @@
       "title": "Notification Preferences",
       "desc": "Set when you want to receive in-app notifications",
       "analysisDone": "Analysis Complete",
-      "aiSummaryDone": "AI Summary Complete",
+      "aiSummaryDone": "Automated Summary Complete",
       "errorNotif": "Error Notifications",
       "saveButton": "Save Settings"
     },

@@ -2,12 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { User, Sparkles, Settings2, Bell, Info, LayoutGrid, Users } from "lucide-react";
+import { User, Bell, Info, LayoutGrid, Users } from "lucide-react";
 
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import AccountSection from "@/features/settings/components/AccountSection";
-import AIModelSection from "@/features/settings/components/AIModelSection";
-import ScrapingSection from "@/features/settings/components/ScrapingSection";
 import NotificationSection from "@/features/settings/components/NotificationSection";
 import OverviewWidgetsSection from "@/features/settings/components/OverviewWidgetsSection";
 import AboutSection from "@/features/settings/components/AboutSection";
@@ -18,8 +16,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 
 const TABS = [
   { key: "account",      icon: User },
-  { key: "ai",           icon: Sparkles },
-  { key: "scraping",     icon: Settings2 },
   { key: "notification", icon: Bell },
   { key: "widgets",      icon: LayoutGrid },
   { key: "users",        icon: Users },
@@ -76,7 +72,6 @@ export default function SettingsPage() {
       {/* Page header */}
       <div>
         <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">{t.settings.title}</h1>
-        <p className="mt-0.5 text-sm text-slate-400 dark:text-slate-500">{t.settings.subtitle}</p>
       </div>
 
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
@@ -124,12 +119,6 @@ export default function SettingsPage() {
           </div>
 
           {activeTab === "account" && <AccountSection />}
-          {activeTab === "ai" && (
-            <AIModelSection settings={settings} update={update} onSave={save} saved={saved} />
-          )}
-          {activeTab === "scraping" && (
-            <ScrapingSection settings={settings} update={update} onSave={save} saved={saved} />
-          )}
           {activeTab === "notification" && (
             <NotificationSection settings={settings} update={update} onSave={save} saved={saved} />
           )}

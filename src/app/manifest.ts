@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "MediaWatch",
     short_name: "MediaWatch",
-    description: "AI-Powered Social Media & News Monitoring Platform",
+    description: "Social Media & News Monitoring Platform",
     start_url: "/",
     display: "standalone",
     background_color: "#f8fafc",

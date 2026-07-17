@@ -22,7 +22,6 @@ import TopicGrowthSection from "@/features/dashboard/components/TopicGrowthSecti
 import GlobalEntityRadarSection from "@/features/dashboard/components/GlobalEntityRadarSection";
 import NeedsAttentionSection from "@/features/dashboard/components/NeedsAttentionSection";
 import DataHealthSection from "@/features/dashboard/components/DataHealthSection";
-import ExportReportButton from "@/features/dashboard/components/ExportReportButton";
 import {
   getSettings,
   setOverviewWidgetVisibility,
@@ -137,12 +136,8 @@ export default function OverviewPage() {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">{t.overview.title}</h1>
-            <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">{t.overview.subtitle}</p>
-          </div>
-          <ExportReportButton />
+        <div>
+          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">{t.overview.title}</h1>
         </div>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:grid-flow-dense">

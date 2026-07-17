@@ -51,7 +51,6 @@ export default function EngagementPage() {
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">{t.engagement.title}</h1>
-            <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">{t.engagement.subtitle}</p>
           </div>
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-0.5 rounded-lg border border-slate-200 bg-slate-50 p-0.5 dark:border-slate-700 dark:bg-slate-800">

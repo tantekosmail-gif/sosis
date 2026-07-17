@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type KeyboardEvent } from "react";
-import { Loader2, Sparkles, Tag, X } from "lucide-react";
+import { Loader2, Tag, X } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { suggestTopicKeywords } from "../services/topic.service";
@@ -115,7 +115,7 @@ export default function TopicForm({ onSubmit, loading = false, submitLabel, bare
             disabled={suggesting || !name.trim()}
             className="flex items-center gap-1.5 rounded-lg border border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-950/40 px-2.5 py-1 text-xs font-medium text-indigo-700 dark:text-indigo-300 transition hover:bg-indigo-100 dark:hover:bg-indigo-900/60 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {suggesting ? <Loader2 size={13} className="animate-spin" /> : <Sparkles size={13} />}
+            {suggesting && <Loader2 size={13} className="animate-spin" />}
             {t.topics.aiSuggestButton}
           </button>
         </div>

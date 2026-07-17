@@ -19,7 +19,7 @@ export function useAISummary() {
       console.log("AI RESULT:", result);
 
       if (getSettings().notifyOnAISummaryDone) {
-        const title = "Ringkasan AI selesai dibuat";
+        const title = "Ringkasan otomatis selesai dibuat";
         toast.success(title, { description: payload?.keyword ? `Keyword: ${payload.keyword}` : undefined });
         pushNotification({ type: "success", title, message: payload?.keyword ? `Keyword: ${payload.keyword}` : undefined });
       }
@@ -49,7 +49,7 @@ export function useAISummary() {
       console.error(err);
 
       if (getSettings().notifyOnError) {
-        const title = "Gagal membuat ringkasan AI";
+        const title = "Gagal membuat ringkasan otomatis";
         const message = err?.message || "Terjadi kesalahan";
         toast.error(title, { description: message });
         pushNotification({ type: "error", title, message });

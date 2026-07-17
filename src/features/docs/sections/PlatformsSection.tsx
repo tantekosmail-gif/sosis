@@ -28,8 +28,8 @@ export default function PlatformsSection() {
           dan menjalankan pencarian.
         </p>
         <DocNote>
-          Jika pengambilan data terbaru gagal, aplikasi menampilkan peringatan dan menampilkan data hasil
-          scraping sebelumnya (jika tersedia) sebagai gantinya.
+          Jika pengambilan data terbaru gagal, aplikasi menampilkan peringatan dan menampilkan hasil
+          pengumpulan data sebelumnya (jika tersedia) sebagai gantinya.
         </DocNote>
       </DocCard>
 
@@ -45,7 +45,7 @@ export default function PlatformsSection() {
             <strong>Analisis Sentimen</strong> &mdash; di sini pencariannya berbasis <strong>kata kunci</strong>,
             bukan username. Setelah menganalisis, kamu mendapat dashboard lengkap: statistik exposure,
             breakdown sentimen, grafik sentimen dari waktu ke waktu, daftar top post, tabel komentar,
-            word cloud, dan ringkasan yang dibuat AI.
+            word cloud, dan ringkasan yang dibuat otomatis.
           </li>
         </ul>
         <p>

@@ -58,7 +58,7 @@ const YoutubeTrendingTab = forwardRef<TrendingTabHandle>(function YoutubeTrendin
 
       {/* Filter bar */}
       <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-end">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
           <div className="shrink-0">
             <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
               {t.youtubeTrendingTab.sortLabel}

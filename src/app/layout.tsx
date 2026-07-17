@@ -14,7 +14,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "MediaWatch",
-  description: "AI-Powered Social Media & News Monitoring Platform",
+  description: "Social Media & News Monitoring Platform",
   icons: {
     icon: [
       { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },

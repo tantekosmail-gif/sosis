@@ -3,21 +3,27 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BarChart3, ChevronDown, ChevronLeft, ChevronRight, GitCompareArrows, Home, MessageCircle, Newspaper, Settings, Tags, Wrench, X } from "lucide-react";
+import { BarChart3, ChevronDown, ChevronLeft, ChevronRight, FileText, GitCompareArrows, Home, MessageCircle, Newspaper, Settings, Share2, Tags, Wrench, X } from "lucide-react";
 import { FaFacebook, FaInstagram, FaTiktok, FaXTwitter, FaYoutube } from "react-icons/fa6";
-import { LogoMark } from "@/components/brand/AppLogo";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 const menus = [
   { key: "overview",          href: "/overview",          icon: Home            },
   { key: "engagement",        href: "/engagement",        icon: BarChart3       },
   { key: "topics",            href: "/topics",            icon: Tags            },
-  { key: "youtube",           href: "/youtube",           icon: FaYoutube       },
-  { key: "instagram",         href: "/instagram",         icon: FaInstagram     },
-  { key: "facebook",          href: "/facebook",          icon: FaFacebook      },
-  { key: "twitter",           href: "/twitter",           icon: FaXTwitter      },
-  { key: "tiktok",            href: "/tiktok",            icon: FaTiktok        },
+  {
+    key: "socialMediaGroup",
+    icon: Share2,
+    children: [
+      { key: "youtube",     href: "/youtube",     icon: FaYoutube   },
+      { key: "instagram",   href: "/instagram",   icon: FaInstagram },
+      { key: "facebook",    href: "/facebook",     icon: FaFacebook  },
+      { key: "twitter",     href: "/twitter",      icon: FaXTwitter  },
+      { key: "tiktok",      href: "/tiktok",       icon: FaTiktok    },
+    ],
+  },
   { key: "news",              href: "/news",              icon: Newspaper       },
+  { key: "reports",           href: "/reports",           icon: FileText        },
   {
     key: "toolsGroup",
     icon: Wrench,
@@ -64,13 +70,11 @@ export default function AppSidebar({ open = false, onClose, collapsed = false, o
         {/* Brand */}
         <div className={`flex h-16 items-center gap-3 border-b border-slate-800 px-5 ${collapsed ? "lg:justify-center lg:px-0" : "justify-between"}`}>
           <div className="flex items-center gap-3">
-            <div className="h-8 w-8 shrink-0 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
-              <LogoMark size={15} className="text-white" />
-            </div>
             <div className={collapsed ? "lg:hidden" : ""}>
-              <p className="text-white font-bold text-sm leading-none whitespace-nowrap">MediaWatch</p>
-              <p className="text-slate-500 text-[10px] mt-0.5 whitespace-nowrap">{t.sidebar.brandTagline}</p>
+              <p className="text-white font-bold text-lg leading-none tracking-tight whitespace-nowrap">MediaWatch</p>
+              <p className="text-slate-500 text-[10px] mt-1 whitespace-nowrap">{t.sidebar.brandTagline}</p>
             </div>
+            <p className={`hidden text-white font-bold text-sm leading-none ${collapsed ? "lg:block" : ""}`}>MW</p>
           </div>
 
           <button

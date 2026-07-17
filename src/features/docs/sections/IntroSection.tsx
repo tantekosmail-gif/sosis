@@ -5,10 +5,10 @@ export default function IntroSection() {
     <div className="space-y-6">
       <DocCard title="Apa itu MediaWatch?">
         <p>
-          MediaWatch adalah platform monitoring media sosial &amp; berita berbasis AI. Aplikasi ini
+          MediaWatch adalah platform monitoring media sosial &amp; berita. Aplikasi ini
           mengumpulkan, memantau, dan menganalisis percakapan publik dari berbagai platform, lalu
           menyajikannya dalam bentuk dashboard yang mudah dibaca: statistik, sentimen, topik trending,
-          hingga ringkasan yang dibuat oleh AI.
+          hingga ringkasan yang dibuat otomatis.
         </p>
         <p>Platform yang dipantau saat ini:</p>
         <ul className="list-disc space-y-1 pl-5">
@@ -37,8 +37,8 @@ export default function IntroSection() {
           <li><strong>Monitoring Media Sosial</strong> &mdash; cara pakai halaman YouTube/Instagram/Facebook/Twitter/TikTok.</li>
           <li><strong>Berita</strong> &mdash; trending berita dan pencarian berita.</li>
           <li><strong>Bandingkan Platform</strong> &mdash; membandingkan satu topik di banyak platform sekaligus.</li>
-          <li><strong>Cari Topik AI</strong> &mdash; asisten chat AI untuk menemukan topik trending.</li>
-          <li><strong>Pengaturan</strong> &mdash; konfigurasi akun, AI, dan analisis.</li>
+          <li><strong>Pencarian Topik</strong> &mdash; asisten chat untuk menemukan topik trending.</li>
+          <li><strong>Pengaturan</strong> &mdash; konfigurasi akun dan analisis.</li>
           <li><strong>Tips &amp; Catatan Penting</strong> &mdash; hal-hal yang perlu diketahui sebelum menggunakan aplikasi lebih jauh.</li>
         </ul>
       </DocCard>

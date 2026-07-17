@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Sparkles, Eye, EyeOff, CheckCircle2 } from "lucide-react";
+import { Cpu, Eye, EyeOff, CheckCircle2 } from "lucide-react";
 import { AppSettings } from "../hooks/useSettings";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
@@ -27,19 +27,19 @@ export default function AIModelSection({ settings, update, onSave, saved }: Prop
         <div className="px-6 py-6">
           <div className="flex items-start gap-4 rounded-2xl border-2 border-violet-500 bg-violet-50/60 p-5 dark:bg-violet-950/40">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600">
-              <Sparkles size={18} className="text-white" />
+              <Cpu size={18} className="text-white" />
             </div>
             <div>
-              <p className="font-semibold text-slate-900 dark:text-slate-100">Claude API <span className="ml-2 inline-block rounded-lg bg-violet-100 px-2 py-0.5 text-[11px] font-semibold text-violet-700">{t.common.active}</span></p>
+              <p className="font-semibold text-slate-900 dark:text-slate-100">Mesin Analisis <span className="ml-2 inline-block rounded-lg bg-violet-100 px-2 py-0.5 text-[11px] font-semibold text-violet-700">{t.common.active}</span></p>
               <p className="mt-1 text-sm text-slate-500 leading-relaxed dark:text-slate-400">
-                Menggunakan <span className="font-mono text-xs bg-slate-100 dark:bg-slate-800 px-1 rounded">claude-haiku-4-5-20251001</span> dari Anthropic — cepat dan akurat untuk analisis Bahasa Indonesia.
+                Model default sudah dikonfigurasi — cepat dan akurat untuk analisis Bahasa Indonesia.
               </p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Claude API Key */}
+      {/* API Key */}
       <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden dark:border-slate-700 dark:bg-slate-900">
         <div className="border-b border-slate-100 px-6 py-5 dark:border-slate-800">
           <h3 className="font-semibold text-slate-900 dark:text-slate-100">{t.settings.ai.configTitle}</h3>

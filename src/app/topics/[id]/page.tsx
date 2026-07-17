@@ -210,9 +210,6 @@ export default function TopicDetailPage({ params }: { params: Promise<{ id: stri
           <ArrowLeft size={12} /> {t.topics.detail.backLink}
         </Link>
         <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">{topic?.name ?? "..."}</h1>
-        {topic?.description && (
-          <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">{topic.description}</p>
-        )}
       </div>
 
       {loading ? (

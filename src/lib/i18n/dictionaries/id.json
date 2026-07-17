@@ -17,9 +17,11 @@
     "twitter": "Twitter/X",
     "tiktok": "TikTok",
     "news": "Berita",
+    "reports": "Laporan",
+    "socialMediaGroup": "Social Media",
     "comparePlatforms": "Bandingkan Platform",
     "toolsGroup": "Tools",
-    "aiTopicSearch": "Cari Topik AI",
+    "aiTopicSearch": "Pencarian Topik",
     "topics": "Topik",
     "settings": "Settings",
     "brandTagline": "Pemantauan Media"
@@ -215,8 +217,8 @@
     "title": "Analisis Sentimen",
     "analyzeButton": "Analisis",
     "refreshButton": "Refresh",
-    "loadingDesc": "Proses scraping bisa butuh beberapa detik",
-    "scrapeErrorDesc": "Data di bawah ini (jika ada) berasal dari hasil scraping sebelumnya, bukan data terbaru.",
+    "loadingDesc": "Proses pengumpulan data bisa butuh beberapa detik",
+    "scrapeErrorDesc": "Data di bawah ini (jika ada) berasal dari hasil pengumpulan data sebelumnya, bukan data terbaru.",
     "instagram": {
       "desc": "Analisis sentimen komentar dari postingan sebuah akun Instagram",
       "usernameLabel": "Username Instagram",
@@ -378,14 +380,14 @@
       "platforms": { "label": "Monitoring Media Sosial", "description": "YouTube, Instagram, dll." },
       "news": { "label": "Berita", "description": "Trending & pencarian berita" },
       "compare": { "label": "Bandingkan Platform", "description": "Satu topik, banyak platform" },
-      "ai": { "label": "Cari Topik AI", "description": "Asisten chat trending" },
-      "settings": { "label": "Pengaturan", "description": "Akun, AI, & analisis" },
+      "ai": { "label": "Pencarian Topik", "description": "Asisten chat trending" },
+      "settings": { "label": "Pengaturan", "description": "Akun & analisis" },
       "tips": { "label": "Tips & Catatan", "description": "Hal penting yang perlu diketahui" }
     }
   },
   "trendChat": {
-    "title": "Cari Topik AI",
-    "subtitle": "Chat dengan AI untuk mencari & mengirim rekomendasi topik trending"
+    "title": "Pencarian Topik",
+    "subtitle": "Chat otomatis untuk mencari & mengirim rekomendasi topik trending"
   },
   "auth": {
     "welcomeBack": "Selamat datang kembali",
@@ -393,11 +395,7 @@
     "emailLabel": "Email",
     "passwordLabel": "Password",
     "signIn": "Masuk",
-    "signingIn": "Memproses...",
-    "heroTitle1": "Pantau setiap platform,",
-    "heroTitle2": "didukung AI.",
-    "heroDesc": "Lacak, analisis, dan pahami apa yang orang bicarakan tentang brand kamu di media sosial dan berita.",
-    "quote": "Intelijen sosial yang presisi untuk tim berbasis data. Ketahui pendapat publik sebelum menjadi krisis."
+    "signingIn": "Memproses..."
   },
   "topics": {
     "pageTitle": "Pemantauan Topik",
@@ -412,9 +410,9 @@
     "keywordLabel": "Keyword",
     "keywordPlaceholderEmpty": "Ketik keyword lalu tekan Enter...",
     "keywordPlaceholderMore": "Tambah keyword lagi...",
-    "aiSuggestButton": "AI Suggest",
+    "aiSuggestButton": "Generate Otomatis",
     "aiSuggestEmpty": "Tidak ada saran keyword baru",
-    "aiSuggestError": "Gagal mendapatkan saran keyword dari AI",
+    "aiSuggestError": "Gagal mendapatkan saran keyword otomatis",
     "errorNameRequired": "Nama topik wajib diisi",
     "errorKeywordRequired": "Tambahkan minimal satu keyword",
     "saving": "Menyimpan...",
@@ -479,17 +477,37 @@
       }
     }
   },
+  "reports": {
+    "pageTitle": "Laporan",
+    "periodDaily": "Harian",
+    "periodWeekly": "Mingguan",
+    "periodMonthly": "Bulanan",
+    "periodYearly": "Tahunan",
+    "topicLabel": "Topik",
+    "topicPlaceholder": "Pilih topik...",
+    "formatLabel": "Format",
+    "generateButton": "Generate Laporan Eksekutif",
+    "generating": "Memproses...",
+    "waitingForReport": "Menunggu laporan...",
+    "selectTopicFirst": "Pilih topik dulu",
+    "generateQueued": "Laporan sedang diproses...",
+    "generateSuccess": "Laporan siap, unduhan dimulai.",
+    "generateError": "Gagal membuat laporan",
+    "generateTimeout": "Laporan belum selesai diproses, cek lagi beberapa saat lagi.",
+    "downloadError": "Gagal mengunduh laporan",
+    "emptyTopics": "Belum ada topik. Tambahkan topik dulu di halaman Topik."
+  },
   "settings": {
     "title": "Pengaturan",
-    "subtitle": "Kelola akun, konfigurasi AI, dan preferensi aplikasi",
+    "subtitle": "Kelola akun, konfigurasi analisis, dan preferensi aplikasi",
     "unsavedConfirmTitle": "Perubahan belum disimpan",
     "unsavedConfirmDesc": "Ada perubahan yang belum disimpan pada tab ini. Tetap pindah tab?",
     "unsavedConfirmYes": "Ya, pindah",
     "unsavedConfirmNo": "Tetap di sini",
     "tabs": {
       "account": { "label": "Akun", "description": "Profil & keamanan" },
-      "ai": { "label": "Model AI", "description": "Provider & konfigurasi" },
-      "scraping": { "label": "Analisis", "description": "Scraping & platform default" },
+      "ai": { "label": "Mesin Analisis", "description": "Provider & konfigurasi" },
+      "scraping": { "label": "Analisis", "description": "Pengumpulan Data & platform default" },
       "notification": { "label": "Notifikasi", "description": "Preferensi pemberitahuan" },
       "widgets": { "label": "Widget Overview", "description": "Tampil/sembunyikan widget" },
       "users": { "label": "User", "description": "Kelola akun pengguna (admin)" },
@@ -513,17 +531,17 @@
       "logoutAllButton": "Logout Semua Sesi"
     },
     "ai": {
-      "providerTitle": "Provider AI",
-      "providerDesc": "Model yang digunakan untuk Generate AI Summary",
-      "configTitle": "Konfigurasi Claude API",
-      "configDesc": "API key untuk akses Anthropic Claude",
-      "apiKeyLabel": "Anthropic API Key",
-      "saveButton": "Simpan Pengaturan AI"
+      "providerTitle": "Mesin Analisis",
+      "providerDesc": "Model yang digunakan untuk menghasilkan ringkasan otomatis",
+      "configTitle": "Konfigurasi API",
+      "configDesc": "API key untuk mengaktifkan analisis otomatis",
+      "apiKeyLabel": "API Key",
+      "saveButton": "Simpan Pengaturan"
     },
     "scraping": {
       "defaultPlatformTitle": "Platform Default",
       "defaultPlatformDesc": "Platform yang dipilih pertama kali saat membuka dashboard",
-      "scrapingParamsTitle": "Parameter Scraping",
+      "scrapingParamsTitle": "Parameter Pengumpulan Data",
       "dataParamsTitle": "Parameter Pengambilan Data",
       "maxPages": "Max Pages",
       "maxCommentsPerVideo": "Max Komentar per Video",
@@ -542,7 +560,7 @@
       "title": "Preferensi Notifikasi",
       "desc": "Atur kapan kamu ingin mendapat pemberitahuan dalam aplikasi",
       "analysisDone": "Analisis Selesai",
-      "aiSummaryDone": "AI Summary Selesai",
+      "aiSummaryDone": "Ringkasan Otomatis Selesai",
       "errorNotif": "Notifikasi Error",
       "saveButton": "Simpan Pengaturan"
     },

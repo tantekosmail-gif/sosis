@@ -35,9 +35,6 @@ export default function NotFound() {
         </p>
 
         <h1 className="mt-4 text-xl font-bold text-slate-900 dark:text-slate-100">{t.notFound.title}</h1>
-        <p className="mt-2 text-sm text-slate-400 dark:text-slate-500">
-          {t.notFound.desc}
-        </p>
 
         {pathname && (
           <code className="mt-4 max-w-full truncate rounded-lg bg-slate-100 dark:bg-slate-800 px-3 py-1.5 text-xs text-slate-500 dark:text-slate-400">

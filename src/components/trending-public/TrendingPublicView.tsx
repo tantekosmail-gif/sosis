@@ -53,9 +53,6 @@ export default function TrendingPublicView({ geo }: { geo: string }) {
             </div>
             <div>
               <h1 className="text-base font-bold text-slate-900 dark:text-slate-100">Trending YouTube</h1>
-              <p className="text-xs text-slate-400 dark:text-slate-500">
-                Topik pencarian &amp; video yang sedang naik di YouTube
-              </p>
             </div>
           </div>
 

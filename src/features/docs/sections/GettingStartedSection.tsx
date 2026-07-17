@@ -22,8 +22,8 @@ export default function GettingStartedSection() {
           <li><strong>YouTube, Instagram, Facebook, Twitter/X, TikTok</strong> &mdash; halaman monitoring per platform.</li>
           <li><strong>Berita</strong> &mdash; trending &amp; pencarian berita.</li>
           <li><strong>Bandingkan Platform</strong> &mdash; bandingkan satu topik di banyak platform.</li>
-          <li><strong>Cari Topik AI</strong> &mdash; asisten chat untuk menemukan topik trending.</li>
-          <li><strong>Settings</strong> &mdash; pengaturan akun, AI, dan analisis.</li>
+          <li><strong>Pencarian Topik</strong> &mdash; asisten chat untuk menemukan topik trending.</li>
+          <li><strong>Settings</strong> &mdash; pengaturan akun dan analisis.</li>
         </ul>
       </DocCard>
 

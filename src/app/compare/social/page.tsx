@@ -38,9 +38,6 @@ export default function SocialComparePage() {
       <div className="space-y-6">
         <div>
           <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">{t.compare.title}</h1>
-          <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">
-            {t.compare.subtitle}
-          </p>
         </div>
 
         <SocialComparePanel />

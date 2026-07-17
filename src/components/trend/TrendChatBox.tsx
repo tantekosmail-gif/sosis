@@ -7,7 +7,7 @@
 import { ChatStreamEvent } from "@/app/api/trend-chat/events";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { AlertCircle, Loader2, Send, Sparkles, Wrench } from "lucide-react";
+import { AlertCircle, Loader2, Search, Send, Wrench } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 export function TrendChatBox({ onSubmitted }: { onSubmitted?: () => void } = {}) {
@@ -73,10 +73,10 @@ export function TrendChatBox({ onSubmitted }: { onSubmitted?: () => void } = {})
     <div className="flex h-full flex-col rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm">
       <div className="flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 px-5 py-4">
         <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white shadow shadow-indigo-500/25">
-          <Sparkles size={16} />
+          <Search size={16} />
         </div>
         <div>
-          <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">Cari Topik AI</p>
+          <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">Pencarian Topik</p>
           <p className="text-xs text-slate-400 dark:text-slate-500">Cari &amp; kirim rekomendasi topik trending</p>
         </div>
       </div>
@@ -84,7 +84,7 @@ export function TrendChatBox({ onSubmitted }: { onSubmitted?: () => void } = {})
       <div className="flex-1 space-y-3 overflow-y-auto px-5 py-4">
         {log.length === 0 && (
           <div className="flex h-full min-h-32 flex-col items-center justify-center gap-2 text-center text-slate-300">
-            <Sparkles size={22} />
+            <Search size={22} />
             <p className="text-xs">Mulai dengan mengetik prompt di bawah,
               <br />mis. &quot;cari 10 topik trending soal starbucks hari ini&quot;</p>
           </div>

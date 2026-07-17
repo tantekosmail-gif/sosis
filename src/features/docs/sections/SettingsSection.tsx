@@ -12,27 +12,27 @@ export default function SettingsSection() {
         </DocNote>
       </DocCard>
 
-      <DocCard title="Model AI">
+      <DocCard title="Mesin Analisis">
         <p>
-          Menampilkan provider AI yang aktif (Claude API &middot; claude-haiku-4-5) dan kolom untuk
-          menempelkan Anthropic API key. Key yang dimasukkan di sini hanya tersimpan di browser
-          (localStorage) dan tidak dikirim ke server &mdash; untuk penggunaan production, gunakan
-          environment variable <span className="font-mono text-xs bg-slate-100 dark:bg-slate-800 px-1 rounded">ANTHROPIC_API_KEY</span> di server.
+          Menampilkan mesin analisis yang aktif dan kolom untuk menempelkan API key. Key yang dimasukkan
+          di sini hanya tersimpan di browser (localStorage) dan tidak dikirim ke server &mdash; untuk
+          penggunaan production, gunakan environment variable yang sesuai di server.
         </p>
       </DocCard>
 
       <DocCard title="Analisis">
         <p>
           Pilih platform default yang tampil pertama kali saat membuka dashboard, dan atur parameter
-          scraping (Max Pages, Max Komentar per Video, Max Halaman Komentar). Aplikasi menghitung estimasi
-          jumlah komentar dan waktu scraping secara otomatis berdasarkan angka yang kamu masukkan.
+          pengumpulan data (Max Pages, Max Komentar per Video, Max Halaman Komentar). Aplikasi menghitung
+          estimasi jumlah komentar dan waktu pengumpulan data secara otomatis berdasarkan angka yang kamu
+          masukkan.
         </p>
       </DocCard>
 
       <DocCard title="Notifikasi">
         <p>
-          Tiga sakelar: notifikasi saat analisis selesai, saat ringkasan AI selesai dibuat, dan saat
-          terjadi error.
+          Tiga sakelar: notifikasi saat analisis selesai, saat ringkasan eksekutif selesai dibuat
+          otomatis, dan saat terjadi error.
         </p>
       </DocCard>
 
@@ -41,7 +41,7 @@ export default function SettingsSection() {
       </DocCard>
 
       <DocNote variant="warning">
-        Kecuali API key AI, parameter analisis, dan preferensi notifikasi (yang tersimpan di
+        Kecuali API key, parameter analisis, dan preferensi notifikasi (yang tersimpan di
         localStorage browser), pengaturan lain di halaman ini bersifat tampilan saja dan belum
         tersimpan ke server.
       </DocNote>

@@ -40,9 +40,6 @@ export default function TrendChatPage() {
     <DashboardLayout>
       <div className="flex flex-col">
         <h1 className="text-xl font-bold text-slate-800 dark:text-slate-200">{t.trendChat.title}</h1>
-        <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">
-          {t.trendChat.subtitle}
-        </p>
 
         <div className="mt-6 grid h-[calc(100vh-13rem)] grid-cols-1 gap-6 lg:grid-cols-2">
           <TrendChatBox onSubmitted={recommendations.refetch} />

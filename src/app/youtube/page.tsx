@@ -93,9 +93,6 @@ export default function YoutubePage() {
       <div className="space-y-6">
         <div>
           <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">YouTube</h1>
-          <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">
-            {t.platforms.youtube.subtitle}
-          </p>
         </div>
 
         <form

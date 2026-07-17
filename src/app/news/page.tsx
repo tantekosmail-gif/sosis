@@ -49,9 +49,6 @@ export default function NewsPage() {
       <div className="space-y-6">
         <div>
           <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">{t.news.title}</h1>
-          <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">
-            {t.news.subtitle}
-          </p>
         </div>
 
         <PageTabs tabs={TABS} active={tab} onChange={setTab} />

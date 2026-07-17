@@ -19,12 +19,13 @@ export default function TipsSection() {
             masih berupa placeholder (belum mengarah ke halaman apa pun).
           </li>
           <li>
-            Fitur Cari Topik AI saat ini selalu memakai provider Claude, walau backend juga mendukung
-            OpenAI dan Ollama.
+            Fitur Pencarian Topik saat ini selalu memakai mesin analisis default, walau backend juga
+            mendukung provider lain.
           </li>
           <li>
             Jika pengambilan data langsung dari suatu platform gagal (misalnya API sedang bermasalah),
-            aplikasi akan menampilkan data hasil scraping sebelumnya sebagai gantinya, disertai peringatan.
+            aplikasi akan menampilkan hasil pengumpulan data sebelumnya sebagai gantinya, disertai
+            peringatan.
           </li>
         </ul>
       </DocCard>

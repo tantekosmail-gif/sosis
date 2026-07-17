@@ -64,19 +64,19 @@ export default function NotificationSection({ settings, update, onSave, saved }:
         <div className="px-6">
           <NotifRow
             title={t.settings.notification.analysisDone}
-            description="Tampilkan notifikasi ketika proses scraping dan analisis data selesai"
+            description="Tampilkan notifikasi ketika proses pengumpulan data dan analisis selesai"
             checked={settings.notifyOnAnalysisDone}
             onChange={(v) => update("notifyOnAnalysisDone", v)}
           />
           <NotifRow
             title={t.settings.notification.aiSummaryDone}
-            description="Tampilkan notifikasi ketika AI berhasil menghasilkan ringkasan eksekutif"
+            description="Tampilkan notifikasi ketika ringkasan eksekutif berhasil dibuat otomatis"
             checked={settings.notifyOnAISummaryDone}
             onChange={(v) => update("notifyOnAISummaryDone", v)}
           />
           <NotifRow
             title={t.settings.notification.errorNotif}
-            description="Tampilkan peringatan ketika terjadi kegagalan koneksi atau error scraping"
+            description="Tampilkan peringatan ketika terjadi kegagalan koneksi atau error pengumpulan data"
             checked={settings.notifyOnError}
             onChange={(v) => update("notifyOnError", v)}
           />

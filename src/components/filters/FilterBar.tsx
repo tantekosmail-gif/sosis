@@ -56,7 +56,7 @@ export default function FilterBar({ showSearch = true }: { showSearch?: boolean 
             </div>
           )}
 
-          <div className={`flex shrink-0 items-center gap-2 ${showSearch ? "" : "sm:ml-auto"}`}>
+          <div className="flex shrink-0 items-center gap-2">
             <button
               onClick={() => setShowDate((v) => !v)}
               className={`flex h-10 items-center gap-2 rounded-xl border px-3.5 text-sm font-medium transition-all ${

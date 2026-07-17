@@ -4,7 +4,7 @@ import DocNote from "../components/DocNote";
 export default function AIChatSection() {
   return (
     <div className="space-y-6">
-      <DocCard title="Cari Topik AI" description="Asisten chat untuk menemukan topik trending">
+      <DocCard title="Pencarian Topik" description="Asisten chat untuk menemukan topik trending">
         <p>
           Halaman ini bukan untuk bertanya soal data analitik, melainkan untuk menemukan dan mengajukan
           rekomendasi topik trending (misalnya untuk kebutuhan konten/monitoring). Tampilannya terbagi dua:
@@ -13,7 +13,7 @@ export default function AIChatSection() {
           <li>
             <strong>Kiri: kotak chat</strong> &mdash; ketik permintaan bebas, contoh:
             <span className="font-mono text-xs bg-slate-100 dark:bg-slate-800 px-1 rounded"> &ldquo;cari 10 topik trending soal starbucks hari ini&rdquo;</span>.
-            Jawaban AI muncul secara streaming (bertahap), termasuk status proses dan tool yang dijalankan.
+            Jawaban muncul secara streaming (bertahap), termasuk status proses dan tool yang dijalankan.
           </li>
           <li>
             <strong>Kanan: daftar rekomendasi</strong> &mdash; hasil topik yang sudah diajukan ke sistem,
@@ -24,8 +24,8 @@ export default function AIChatSection() {
       </DocCard>
 
       <DocNote>
-        Secara teknis backend mendukung tiga provider AI (Claude, OpenAI, Ollama), tapi tampilan chat saat
-        ini selalu memakai <strong>Claude</strong> &mdash; belum ada tombol untuk berpindah provider dari UI.
+        Secara teknis backend mendukung beberapa mesin analisis, tapi tampilan chat saat ini selalu memakai
+        mesin default &mdash; belum ada tombol untuk berpindah provider dari UI.
       </DocNote>
     </div>
   );

@@ -76,7 +76,6 @@ export default function DocsPage() {
     <DashboardLayout>
       <div>
         <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">{t.docs.title}</h1>
-        <p className="mt-0.5 text-sm text-slate-400 dark:text-slate-500">{t.docs.subtitle}</p>
       </div>
 
       <div className="mt-6 flex flex-col gap-6 lg:flex-row lg:items-start">

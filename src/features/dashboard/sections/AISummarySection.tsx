@@ -1,6 +1,6 @@
 "use client";
 
-import { Sparkles, Loader2, Lightbulb, Target, CheckCircle2 } from "lucide-react";
+import { Activity, Loader2, Lightbulb, Target, CheckCircle2 } from "lucide-react";
 import { useAISummary } from "@/features/ai/hooks/useAISummary";
 import { useDashboardStore } from "@/store/dashboard.store";
 
@@ -27,11 +27,10 @@ export default function AISummarySection() {
       <div className="flex items-center justify-between border-b border-slate-100 bg-gradient-to-r from-violet-50 to-indigo-50 px-6 py-5 dark:border-slate-800">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 shadow shadow-violet-500/30">
-            <Sparkles size={18} className="text-white" />
+            <Activity size={18} className="text-white" />
           </div>
           <div>
-            <h2 className="font-semibold text-slate-900 dark:text-slate-100">AI Executive Summary</h2>
-            <p className="text-xs text-slate-400 dark:text-slate-500">Powered by Anthropic Claude</p>
+            <h2 className="font-semibold text-slate-900 dark:text-slate-100">Ringkasan Eksekutif</h2>
           </div>
         </div>
 
@@ -41,9 +40,9 @@ export default function AISummarySection() {
           className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow shadow-violet-500/30 transition hover:from-violet-700 hover:to-indigo-700 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50"
         >
           {loading ? (
-            <><Loader2 size={15} className="animate-spin" /> Generating...</>
+            <><Loader2 size={15} className="animate-spin" /> Memproses...</>
           ) : (
-            <><Sparkles size={15} /> Generate Insight</>
+            <>Generate Otomatis</>
           )}
         </button>
       </div>
@@ -53,11 +52,11 @@ export default function AISummarySection() {
         {!loading && !data && (
           <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 py-16 text-center dark:border-slate-700 dark:bg-slate-950/50">
             <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-violet-50 dark:bg-violet-950/40">
-              <Sparkles size={24} className="text-violet-400" />
+              <Activity size={24} className="text-violet-400" />
             </div>
-            <p className="font-semibold text-slate-700 dark:text-slate-300">Belum ada ringkasan AI</p>
+            <p className="font-semibold text-slate-700 dark:text-slate-300">Belum ada ringkasan</p>
             <p className="mt-2 max-w-xs text-sm text-slate-400 dark:text-slate-500">
-              Klik <span className="font-semibold text-violet-600">Generate Insight</span> untuk membuat ringkasan eksekutif dari data analisis.
+              Klik <span className="font-semibold text-violet-600">Generate Otomatis</span> untuk membuat ringkasan eksekutif dari data analisis.
             </p>
           </div>
         )}
@@ -70,7 +69,7 @@ export default function AISummarySection() {
                 <Loader2 size={24} className="animate-spin text-violet-600" />
               </div>
             </div>
-            <p className="font-semibold text-slate-700 dark:text-slate-300">AI sedang menganalisa...</p>
+            <p className="font-semibold text-slate-700 dark:text-slate-300">Sedang menganalisa...</p>
             <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">Memproses komentar dan menghasilkan insight</p>
           </div>
         )}

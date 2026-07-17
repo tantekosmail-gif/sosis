@@ -73,7 +73,7 @@ export default function ScrapingSection({ settings, update, onSave, saved }: Pro
         </div>
       </div>
 
-      {/* Scraping params */}
+      {/* Data collection params */}
       <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
         <div className="border-b border-slate-100 dark:border-slate-800 px-6 py-5">
           <h3 className="font-semibold text-slate-900 dark:text-slate-100">{t.settings.scraping.scrapingParamsTitle}</h3>
@@ -124,7 +124,7 @@ export default function ScrapingSection({ settings, update, onSave, saved }: Pro
                   </span>
                 </p>
                 <p>
-                  Waktu scraping: <span className="font-semibold text-slate-700 dark:text-slate-300">
+                  Waktu pengumpulan data: <span className="font-semibold text-slate-700 dark:text-slate-300">
                     ~{Math.ceil((settings.maxPages * settings.maxCommentsPerVideo) / 60)} menit
                   </span> (tergantung koneksi dan platform)
                 </p>
