@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import {
   getUnreadNotificationCount,
+  isNotificationRecent,
   listNotifications,
   markNotificationRead,
   type TopicNotification,
@@ -17,11 +18,23 @@ export function useTopicNotifications() {
   const [items, setItems] = useState<TopicNotification[]>([]);
   const [loading, setLoading] = useState(false);
 
+  // unread-count dari server itu all-time (termasuk backlog lama yang sudah
+  // tidak ditampilkan di panel), jadi angkanya bisa menggelembung ("99+")
+  // padahal panel cuma nampilin beberapa. Endpoint itu tetap dipakai duluan
+  // sebagai cek murah — kalau 0 selesai di situ — tapi begitu ada yang unread,
+  // ambil daftarnya dan hitung ulang cuma yang masih relevan (isNotificationRecent),
+  // supaya angka badge selalu sama dengan yang benar-benar akan terlihat.
   const refreshUnreadCount = useCallback(async () => {
     try {
-      setUnreadCount(await getUnreadNotificationCount());
+      const rawCount = await getUnreadNotificationCount();
+      if (rawCount === 0) {
+        setUnreadCount(0);
+        return;
+      }
+      const result = await listNotifications({ isRead: false, limit: 50 });
+      setUnreadCount(result.items.filter(isNotificationRecent).length);
     } catch (err) {
-      console.error("getUnreadNotificationCount failed:", err);
+      console.error("refreshUnreadCount failed:", err);
     }
   }, []);
 

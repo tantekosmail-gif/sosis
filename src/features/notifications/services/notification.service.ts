@@ -14,6 +14,21 @@ export interface TopicNotification {
   url: string;
   isRead: boolean;
   createdAt: string;
+  /** Tanggal publish post/video aslinya (belum selalu dikirim backend) — null
+   *  kalau belum tersedia, konsumen fallback ke createdAt. */
+  publishedAt: string | null;
+}
+
+const NOTIFICATION_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
+
+// Notifikasi topik viral dianggap "masih relevan" kalau tanggal publish post
+// aslinya (atau createdAt kalau backend belum kirim publishedAt) masih dalam
+// 7 hari terakhir — post lama yang baru "ketahuan" viral hari ini tidak
+// dihitung/ditampilkan sebagai notifikasi baru. Dipakai bareng oleh badge
+// unread count dan daftar yang ditampilkan supaya angkanya selalu konsisten.
+export function isNotificationRecent(n: Pick<TopicNotification, "createdAt" | "publishedAt">): boolean {
+  const at = n.publishedAt ?? n.createdAt;
+  return Date.now() - new Date(at).getTime() <= NOTIFICATION_WINDOW_MS;
 }
 
 function normalizeNotification(raw: any): TopicNotification {
@@ -31,6 +46,7 @@ function normalizeNotification(raw: any): TopicNotification {
     url: raw.url,
     isRead: raw.is_read,
     createdAt: raw.created_at,
+    publishedAt: raw.published_at ?? null,
   };
 }
 

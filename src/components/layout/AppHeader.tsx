@@ -9,7 +9,7 @@ import { FaFacebook, FaInstagram, FaTiktok, FaXTwitter, FaYoutube } from "react-
 import { getSettings, setThemeSetting, type Theme } from "@/features/settings/hooks/useSettings";
 import { useNotifications, type NotificationType } from "@/features/notifications/hooks/useNotifications";
 import { useTopicNotifications } from "@/features/notifications/hooks/useTopicNotifications";
-import type { TopicNotification } from "@/features/notifications/services/notification.service";
+import { isNotificationRecent, type TopicNotification } from "@/features/notifications/services/notification.service";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { applyTheme } from "@/lib/theme";
 import { formatCompactNumber } from "@/lib/utils";
@@ -83,10 +83,18 @@ export default function AppHeader({ onOpenHistory, historyCount = 0, onOpenSideb
     | { kind: "local"; id: string; createdAt: string; data: (typeof notifications)[number] }
     | { kind: "topic"; id: string; createdAt: string; data: TopicNotification };
 
+  // Panel cuma nampilin notifikasi yang masih relevan (lihat isNotificationRecent —
+  // untuk topik viral itu berarti dievaluasi dari publishedAt post aslinya kalau
+  // ada, bukan createdAt notifikasi, supaya post lama yang baru "ketahuan" viral
+  // hari ini tetap ke-filter keluar) DAN belum dibaca — begitu suatu notifikasi
+  // dibaca, dia hilang dari daftar (bukan cuma dibedakan warnanya).
   const mergedItems: MergedItem[] = [
     ...notifications.map((n) => ({ kind: "local" as const, id: n.id, createdAt: n.createdAt, data: n })),
     ...topicNotif.items.map((n) => ({ kind: "topic" as const, id: n.id, createdAt: n.createdAt, data: n })),
-  ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  ]
+    .filter((item) => (item.kind === "local" ? !item.data.read : !item.data.isRead))
+    .filter((item) => isNotificationRecent(item.kind === "topic" ? item.data : { createdAt: item.createdAt, publishedAt: null }))
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
   function toggleLanguage() {
     setLanguage(language === "id" ? "en" : "id");
@@ -210,9 +218,7 @@ export default function AppHeader({ onOpenHistory, historyCount = 0, onOpenSideb
                     return (
                       <div
                         key={`local-${n.id}`}
-                        className={`flex gap-3 border-b border-slate-50 dark:border-slate-800/60 px-4 py-3 last:border-0 ${
-                          n.read ? "" : "bg-indigo-50/50 dark:bg-indigo-950/20"
-                        }`}
+                        className="flex gap-3 border-b border-slate-50 dark:border-slate-800/60 bg-indigo-50/50 px-4 py-3 last:border-0 dark:bg-indigo-950/20"
                       >
                         <Icon size={16} className={`mt-0.5 shrink-0 ${NOTIFICATION_COLOR[n.type]}`} />
                         <div className="min-w-0 flex-1">
@@ -240,9 +246,7 @@ export default function AppHeader({ onOpenHistory, historyCount = 0, onOpenSideb
                         topicNotif.markRead(n.id);
                         window.open(n.url, "_blank", "noopener,noreferrer");
                       }}
-                      className={`flex w-full gap-3 border-b border-slate-50 dark:border-slate-800/60 px-4 py-3 text-left last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800/60 ${
-                        n.isRead ? "" : "bg-indigo-50/50 dark:bg-indigo-950/20"
-                      }`}
+                      className="flex w-full gap-3 border-b border-slate-50 bg-indigo-50/50 px-4 py-3 text-left last:border-0 hover:bg-indigo-100/60 dark:border-slate-800/60 dark:bg-indigo-950/20 dark:hover:bg-indigo-950/40"
                     >
                       {PlatformIcon && (
                         <PlatformIcon size={16} className={`mt-0.5 shrink-0 ${PLATFORM_COLOR[n.platform] ?? "text-slate-400"}`} />
@@ -250,7 +254,7 @@ export default function AppHeader({ onOpenHistory, historyCount = 0, onOpenSideb
                       <div className="min-w-0 flex-1">
                         <p className="line-clamp-2 text-sm font-medium text-slate-800 dark:text-slate-200">{n.title}</p>
                         <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">
-                          {t.header.byAuthor} {n.author} · {formatCompactNumber(n.metricValue)} {n.metricType} · {t.header.thresholdLabel} {formatCompactNumber(n.threshold)}
+                          {t.header.byAuthor} {n.author} · {formatCompactNumber(n.metricValue)} {n.metricType}
                         </p>
                         <p className="mt-1 text-[11px] text-slate-300 dark:text-slate-600">
                           {formatDistanceToNow(new Date(n.createdAt), {
