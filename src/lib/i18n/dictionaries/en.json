@@ -564,7 +564,18 @@
       "analysisDone": "Analysis Complete",
       "aiSummaryDone": "Automated Summary Complete",
       "errorNotif": "Error Notifications",
-      "saveButton": "Save Settings"
+      "saveButton": "Save Settings",
+      "thresholdsTitle": "Viral Topic Thresholds",
+      "thresholdsDesc": "So you're not flooded with a notification for every new post — only posts that cross this number per platform get sent to you.",
+      "thresholdsEmpty": "Thresholds aren't available from the server yet",
+      "metricLabel": "Metric",
+      "metricViews": "Views",
+      "metricLikes": "Likes",
+      "thresholdCurrentPrefix": "Currently",
+      "thresholdSave": "Save",
+      "thresholdSaveSuccess": "{platform} threshold updated",
+      "thresholdSaveError": "Failed to update threshold",
+      "thresholdInvalidValue": "Threshold value must be a positive number"
     },
     "widgetsPage": {
       "title": "Overview Widgets",

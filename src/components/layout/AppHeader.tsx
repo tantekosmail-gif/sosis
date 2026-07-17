@@ -12,6 +12,7 @@ import { useTopicNotifications } from "@/features/notifications/hooks/useTopicNo
 import type { TopicNotification } from "@/features/notifications/services/notification.service";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { applyTheme } from "@/lib/theme";
+import { formatCompactNumber } from "@/lib/utils";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -47,10 +48,6 @@ const PLATFORM_COLOR: Record<string, string> = {
   twitter: "text-slate-900 dark:text-slate-100",
   tiktok: "text-slate-900 dark:text-slate-100",
 };
-
-function formatNumber(n: number) {
-  return n.toLocaleString("id-ID");
-}
 
 interface User {
   username?: string;
@@ -253,7 +250,7 @@ export default function AppHeader({ onOpenHistory, historyCount = 0, onOpenSideb
                       <div className="min-w-0 flex-1">
                         <p className="line-clamp-2 text-sm font-medium text-slate-800 dark:text-slate-200">{n.title}</p>
                         <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">
-                          {t.header.byAuthor} {n.author} · {formatNumber(n.metricValue)} {n.metricType} · {t.header.thresholdLabel} {formatNumber(n.threshold)}
+                          {t.header.byAuthor} {n.author} · {formatCompactNumber(n.metricValue)} {n.metricType} · {t.header.thresholdLabel} {formatCompactNumber(n.threshold)}
                         </p>
                         <p className="mt-1 text-[11px] text-slate-300 dark:text-slate-600">
                           {formatDistanceToNow(new Date(n.createdAt), {

@@ -564,7 +564,18 @@
       "analysisDone": "Analisis Selesai",
       "aiSummaryDone": "Ringkasan Otomatis Selesai",
       "errorNotif": "Notifikasi Error",
-      "saveButton": "Simpan Pengaturan"
+      "saveButton": "Simpan Pengaturan",
+      "thresholdsTitle": "Ambang Batas Topik Viral",
+      "thresholdsDesc": "Biar kamu nggak kebanjiran notifikasi tiap ada post baru — cuma post yang melewati angka ini per platform yang dikirim ke kamu.",
+      "thresholdsEmpty": "Ambang batas belum tersedia dari server",
+      "metricLabel": "Metrik",
+      "metricViews": "Views",
+      "metricLikes": "Likes",
+      "thresholdCurrentPrefix": "Saat ini",
+      "thresholdSave": "Simpan",
+      "thresholdSaveSuccess": "Ambang batas {platform} diperbarui",
+      "thresholdSaveError": "Gagal memperbarui ambang batas",
+      "thresholdInvalidValue": "Nilai ambang batas harus angka positif"
     },
     "widgetsPage": {
       "title": "Widget Overview",
