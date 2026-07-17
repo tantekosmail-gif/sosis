@@ -32,7 +32,7 @@ export default function AIModelSection({ settings, update, onSave, saved }: Prop
             <div>
               <p className="font-semibold text-slate-900 dark:text-slate-100">Mesin Analisis <span className="ml-2 inline-block rounded-lg bg-violet-100 px-2 py-0.5 text-[11px] font-semibold text-violet-700">{t.common.active}</span></p>
               <p className="mt-1 text-sm text-slate-500 leading-relaxed dark:text-slate-400">
-                Model default sudah dikonfigurasi — cepat dan akurat untuk analisis Bahasa Indonesia.
+                Model default sudah dikonfigurasi untuk analisis Bahasa Indonesia.
               </p>
             </div>
           </div>

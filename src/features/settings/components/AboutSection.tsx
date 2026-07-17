@@ -28,12 +28,6 @@ export default function AboutSection() {
             v0.1.0 · Development
           </div>
         </div>
-
-        <div className="px-6 py-5 text-center">
-          <p className="text-sm text-slate-500 leading-relaxed max-w-md mx-auto dark:text-slate-400">
-            Platform monitoring media sosial & berita untuk memantau, mencari, dan menganalisis tren serta sentimen publik secara real-time di berbagai platform.
-          </p>
-        </div>
       </div>
 
       {/* Platforms */}

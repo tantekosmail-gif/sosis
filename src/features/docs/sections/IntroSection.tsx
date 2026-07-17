@@ -5,10 +5,9 @@ export default function IntroSection() {
     <div className="space-y-6">
       <DocCard title="Apa itu MediaWatch?">
         <p>
-          MediaWatch adalah platform monitoring media sosial &amp; berita. Aplikasi ini
-          mengumpulkan, memantau, dan menganalisis percakapan publik dari berbagai platform, lalu
-          menyajikannya dalam bentuk dashboard yang mudah dibaca: statistik, sentimen, topik trending,
-          hingga ringkasan yang dibuat otomatis.
+          MediaWatch mengumpulkan dan menganalisis percakapan publik dari platform-platform di
+          bawah, lalu menampilkannya sebagai dashboard: statistik, sentimen, topik trending, dan
+          ringkasan yang dibuat otomatis.
         </p>
         <p>Platform yang dipantau saat ini:</p>
         <ul className="list-disc space-y-1 pl-5">
@@ -23,9 +22,9 @@ export default function IntroSection() {
 
       <DocCard title="Untuk siapa aplikasi ini?">
         <p>
-          MediaWatch cocok untuk tim komunikasi, humas, riset pasar, atau siapa pun yang perlu memantau
-          bagaimana sebuah topik, brand, atau tokoh dibicarakan di berbagai platform sekaligus &mdash;
-          termasuk memahami sentimen publik (positif/netral/negatif) dan menemukan topik yang sedang naik.
+          MediaWatch cocok untuk tim komunikasi, humas, atau riset pasar yang perlu memantau bagaimana
+          sebuah topik, brand, atau tokoh dibicarakan di media sosial dan berita, termasuk sentimen
+          publik (positif/netral/negatif) dan topik yang sedang naik.
         </p>
       </DocCard>
 

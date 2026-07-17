@@ -70,7 +70,7 @@ export default function AISummarySection() {
               </div>
             </div>
             <p className="font-semibold text-slate-700 dark:text-slate-300">Sedang menganalisa...</p>
-            <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">Memproses komentar dan menghasilkan insight</p>
+            <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">Memproses komentar dan menyusun ringkasan</p>
           </div>
         )}
 

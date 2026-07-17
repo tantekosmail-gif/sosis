@@ -68,12 +68,12 @@
     },
     "needsAttention": {
       "title": "Butuh Perhatian",
-      "desc": "Akun dengan porsi sentimen negatif tertinggi, digabung dari semua platform yang dipantau.",
+      "desc": "Akun dengan porsi sentimen negatif tertinggi, digabung dari semua platform.",
       "negativeLine": "{pct}% negatif · {count}"
     },
     "topicGrowth": {
       "title": "Topik Naik/Turun",
-      "desc": "Perubahan jumlah mention dibanding periode sebelumnya — menangkap momentum, bukan cuma volume mentah.",
+      "desc": "Perubahan jumlah mention dibanding periode sebelumnya.",
       "empty": "Belum ada data metrik topik untuk ditampilkan.",
       "growthUnavailable": "Data growth belum tersedia dari server — diurutkan berdasarkan jumlah mention saja.",
       "mentionsCount": "{n} mention"
@@ -89,7 +89,7 @@
     },
     "shareOfVoice": {
       "defaultTitle": "Share of Voice — Semua Topik",
-      "defaultDesc": "Porsi mention tiap keyword aktif dibandingkan total mention, lintas semua topik & platform yang dipantau.",
+      "defaultDesc": "Porsi mention tiap keyword aktif dibandingkan total mention, lintas semua topik & platform.",
       "otherKeywords": "Lainnya ({n} keyword)",
       "empty": "Belum ada mention yang tercatat untuk keyword-keyword ini.",
       "totalMentionsLabel": "total mention"
@@ -98,12 +98,12 @@
       "defaultTitle": "Entitas Trending",
       "defaultDesc": "Orang, organisasi, lokasi, atau event yang paling sering disebut di seluruh keyword topik ini.",
       "globalTitle": "Entity Radar — Semua Topik",
-      "globalDesc": "Orang, organisasi, lokasi, atau event yang paling sering disebut di seluruh topik yang dipantau.",
+      "globalDesc": "Orang, organisasi, lokasi, atau event yang paling sering disebut di seluruh topik.",
       "empty": "Belum ada entitas yang terdeteksi — kemungkinan post pada keyword ini belum melalui proses analisis (NER)."
     },
     "overallSentiment": {
       "title": "Sentimen Publik Gabungan",
-      "descLine": "Agregat sentimen dari {n} platform yang dipantau",
+      "descLine": "Agregat sentimen dari {n} platform",
       "empty": "Belum ada data sentimen yang dianalisis",
       "overallLabel": "Sentimen Keseluruhan",
       "itemsAnalyzed": "{n} item dianalisis"
@@ -162,7 +162,7 @@
       "descLine": "Sebaran lokasi mentions · {matched} dari {checked} lokasi cocok",
       "empty": "Belum ada data lokasi",
       "loadingMap": "Memuat peta...",
-      "infoBanner": "Peta ini menunjukkan kota/daerah yang paling sering disebut dalam postingan dan komentar yang dipantau, dari {from} sampai {to}. Semakin besar lingkaran di peta, semakin banyak yang menyebut lokasi tersebut.",
+      "infoBanner": "Peta ini menunjukkan kota/daerah yang paling sering disebut dalam postingan dan komentar, dari {from} sampai {to}.",
       "legendLabel": "Ukuran lingkaran = jumlah mention di lokasi itu",
       "topLocationsTitle": "Lokasi Paling Banyak Disebut",
       "mentionsUnit": "mention",
@@ -390,8 +390,8 @@
     "subtitle": "Chat otomatis untuk mencari & mengirim rekomendasi topik trending"
   },
   "auth": {
-    "welcomeBack": "Selamat datang kembali",
-    "signInDesc": "Masuk ke akun MediaWatch kamu untuk melanjutkan.",
+    "welcomeBack": "Masuk ke MediaWatch",
+    "signInDesc": "Gunakan email dan password akun kamu.",
     "emailLabel": "Email",
     "passwordLabel": "Password",
     "signIn": "Masuk",

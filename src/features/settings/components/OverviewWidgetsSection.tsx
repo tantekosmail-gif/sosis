@@ -107,7 +107,7 @@ const WIDGET_META: Record<OverviewWidgetKey, { title: string; description: strin
   topicGrowth: { title: "Topik Naik/Turun", description: "Topik dengan pertumbuhan mention tercepat dibanding periode sebelumnya" },
   entityRadar: { title: "Entity Radar — Semua Topik", description: "Orang/organisasi/lokasi/event yang paling sering disebut lintas semua topik" },
   needsAttention: { title: "Butuh Perhatian", description: "Akun dengan porsi sentimen negatif tertinggi, digabung dari semua platform" },
-  dataHealth: { title: "Kesehatan Data", description: "Progres analisis sentimen per platform — deteksi data yang masih parsial" },
+  dataHealth: { title: "Kesehatan Data", description: "Progres analisis sentimen per platform, termasuk data yang masih parsial" },
 };
 
 export default function OverviewWidgetsSection({ settings, update, onSave, saved }: Props) {

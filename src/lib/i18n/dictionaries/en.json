@@ -68,12 +68,12 @@
     },
     "needsAttention": {
       "title": "Needs Attention",
-      "desc": "Accounts with the highest share of negative sentiment, combined across all monitored platforms.",
+      "desc": "Accounts with the highest share of negative sentiment, combined across all platforms.",
       "negativeLine": "{pct}% negative · {count}"
     },
     "topicGrowth": {
       "title": "Rising/Falling Topics",
-      "desc": "Change in mention count vs. the previous period — captures momentum, not just raw volume.",
+      "desc": "Change in mention count vs. the previous period.",
       "empty": "No topic metric data to show yet.",
       "growthUnavailable": "Growth data isn't available from the server yet — sorted by mention count only.",
       "mentionsCount": "{n} mentions"
@@ -89,7 +89,7 @@
     },
     "shareOfVoice": {
       "defaultTitle": "Share of Voice — All Topics",
-      "defaultDesc": "Share of mentions per active keyword vs. total mentions, across all monitored topics & platforms.",
+      "defaultDesc": "Share of mentions per active keyword vs. total mentions, across all topics & platforms.",
       "otherKeywords": "Other ({n} keywords)",
       "empty": "No mentions recorded yet for these keywords.",
       "totalMentionsLabel": "total mentions"
@@ -98,12 +98,12 @@
       "defaultTitle": "Trending Entities",
       "defaultDesc": "People, organizations, locations, or events mentioned most often across all monitored keywords.",
       "globalTitle": "Entity Radar — All Topics",
-      "globalDesc": "People, organizations, locations, or events mentioned most often across all monitored topics.",
+      "globalDesc": "People, organizations, locations, or events mentioned most often across all topics.",
       "empty": "No entities detected yet — posts for this keyword may not have gone through NER analysis yet."
     },
     "overallSentiment": {
       "title": "Combined Public Sentiment",
-      "descLine": "Aggregate sentiment from {n} monitored platforms",
+      "descLine": "Aggregate sentiment from {n} platforms",
       "empty": "No sentiment data analyzed yet",
       "overallLabel": "Overall Sentiment",
       "itemsAnalyzed": "{n} items analyzed"
@@ -162,7 +162,7 @@
       "descLine": "Mentions location spread · {matched} of {checked} locations matched",
       "empty": "No location data yet",
       "loadingMap": "Loading map...",
-      "infoBanner": "This map shows the cities/regions mentioned most often in the posts and comments being monitored, from {from} to {to}. The bigger the circle on the map, the more often that location was mentioned.",
+      "infoBanner": "This map shows the cities/regions mentioned most often in posts and comments, from {from} to {to}.",
       "legendLabel": "Circle size = number of mentions at that location",
       "topLocationsTitle": "Most Mentioned Locations",
       "mentionsUnit": "mentions",
@@ -390,8 +390,8 @@
     "subtitle": "Chat automatically to find & send trending topic recommendations"
   },
   "auth": {
-    "welcomeBack": "Welcome back",
-    "signInDesc": "Sign in to your MediaWatch account to continue.",
+    "welcomeBack": "Sign in to MediaWatch",
+    "signInDesc": "Use your account email and password.",
     "emailLabel": "Email",
     "passwordLabel": "Password",
     "signIn": "Sign In",
