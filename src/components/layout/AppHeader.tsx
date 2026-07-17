@@ -5,8 +5,11 @@ import { useRouter } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
 import { Bell, LogOut, ChevronDown, Clock, Menu, Moon, Sun, CheckCircle2, XCircle, Info, Trash2 } from "lucide-react";
+import { FaFacebook, FaInstagram, FaTiktok, FaXTwitter, FaYoutube } from "react-icons/fa6";
 import { getSettings, setThemeSetting, type Theme } from "@/features/settings/hooks/useSettings";
 import { useNotifications, type NotificationType } from "@/features/notifications/hooks/useNotifications";
+import { useTopicNotifications } from "@/features/notifications/hooks/useTopicNotifications";
+import type { TopicNotification } from "@/features/notifications/services/notification.service";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { applyTheme } from "@/lib/theme";
 import {
@@ -28,6 +31,26 @@ const NOTIFICATION_COLOR: Record<NotificationType, string> = {
   error: "text-red-500",
   info: "text-indigo-600",
 };
+
+const PLATFORM_ICON: Record<string, typeof FaYoutube> = {
+  youtube: FaYoutube,
+  instagram: FaInstagram,
+  facebook: FaFacebook,
+  twitter: FaXTwitter,
+  tiktok: FaTiktok,
+};
+
+const PLATFORM_COLOR: Record<string, string> = {
+  youtube: "text-red-500",
+  instagram: "text-pink-500",
+  facebook: "text-blue-600",
+  twitter: "text-slate-900 dark:text-slate-100",
+  tiktok: "text-slate-900 dark:text-slate-100",
+};
+
+function formatNumber(n: number) {
+  return n.toLocaleString("id-ID");
+}
 
 interface User {
   username?: string;
@@ -54,7 +77,19 @@ export default function AppHeader({ onOpenHistory, historyCount = 0, onOpenSideb
   const [user] = useState<User>(readUser);
   const [theme, setTheme] = useState<Theme>(() => getSettings().theme);
   const { items: notifications, unreadCount, markAllRead, clear } = useNotifications();
+  const topicNotif = useTopicNotifications();
   const { language, setLanguage, t } = useTranslation();
+
+  const totalUnread = unreadCount + topicNotif.unreadCount;
+
+  type MergedItem =
+    | { kind: "local"; id: string; createdAt: string; data: (typeof notifications)[number] }
+    | { kind: "topic"; id: string; createdAt: string; data: TopicNotification };
+
+  const mergedItems: MergedItem[] = [
+    ...notifications.map((n) => ({ kind: "local" as const, id: n.id, createdAt: n.createdAt, data: n })),
+    ...topicNotif.items.map((n) => ({ kind: "topic" as const, id: n.id, createdAt: n.createdAt, data: n })),
+  ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
   function toggleLanguage() {
     setLanguage(language === "id" ? "en" : "id");
@@ -131,15 +166,25 @@ export default function AppHeader({ onOpenHistory, historyCount = 0, onOpenSideb
         </button>
 
         {/* Notification */}
-        <DropdownMenu onOpenChange={(open) => !open && unreadCount > 0 && markAllRead()}>
+        <DropdownMenu
+          onOpenChange={(open) => {
+            if (open) {
+              topicNotif.loadList();
+            } else if (unreadCount > 0) {
+              markAllRead();
+            }
+          }}
+        >
           <DropdownMenuTrigger asChild>
             <button
               className="relative h-9 w-9 shrink-0 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
               aria-label={t.header.notifications}
             >
               <Bell size={17} />
-              {unreadCount > 0 && (
-                <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white dark:ring-slate-900" />
+              {totalUnread > 0 && (
+                <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white ring-2 ring-white dark:ring-slate-900">
+                  {totalUnread > 99 ? "99+" : totalUnread}
+                </span>
               )}
             </button>
           </DropdownMenuTrigger>
@@ -158,24 +203,58 @@ export default function AppHeader({ onOpenHistory, historyCount = 0, onOpenSideb
             </div>
 
             <div className="max-h-96 overflow-y-auto">
-              {notifications.length === 0 ? (
+              {mergedItems.length === 0 ? (
                 <p className="px-4 py-8 text-center text-sm text-slate-400 dark:text-slate-500">{t.header.noNotifications}</p>
               ) : (
-                notifications.map((n) => {
-                  const Icon = NOTIFICATION_ICON[n.type];
+                mergedItems.map((item) => {
+                  if (item.kind === "local") {
+                    const n = item.data;
+                    const Icon = NOTIFICATION_ICON[n.type];
+                    return (
+                      <div
+                        key={`local-${n.id}`}
+                        className={`flex gap-3 border-b border-slate-50 dark:border-slate-800/60 px-4 py-3 last:border-0 ${
+                          n.read ? "" : "bg-indigo-50/50 dark:bg-indigo-950/20"
+                        }`}
+                      >
+                        <Icon size={16} className={`mt-0.5 shrink-0 ${NOTIFICATION_COLOR[n.type]}`} />
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-medium text-slate-800 dark:text-slate-200">{n.title}</p>
+                          {n.message && (
+                            <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">{n.message}</p>
+                          )}
+                          <p className="mt-1 text-[11px] text-slate-300 dark:text-slate-600">
+                            {formatDistanceToNow(new Date(n.createdAt), {
+                              addSuffix: true,
+                              locale: language === "id" ? idLocale : undefined,
+                            })}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  const n = item.data;
+                  const PlatformIcon = PLATFORM_ICON[n.platform];
                   return (
-                    <div
-                      key={n.id}
-                      className={`flex gap-3 border-b border-slate-50 dark:border-slate-800/60 px-4 py-3 last:border-0 ${
-                        n.read ? "" : "bg-indigo-50/50 dark:bg-indigo-950/20"
+                    <button
+                      key={`topic-${n.id}`}
+                      onClick={() => {
+                        topicNotif.markRead(n.id);
+                        window.open(n.url, "_blank", "noopener,noreferrer");
+                      }}
+                      className={`flex w-full gap-3 border-b border-slate-50 dark:border-slate-800/60 px-4 py-3 text-left last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800/60 ${
+                        n.isRead ? "" : "bg-indigo-50/50 dark:bg-indigo-950/20"
                       }`}
                     >
-                      <Icon size={16} className={`mt-0.5 shrink-0 ${NOTIFICATION_COLOR[n.type]}`} />
+                      {PlatformIcon && (
+                        <PlatformIcon size={16} className={`mt-0.5 shrink-0 ${PLATFORM_COLOR[n.platform] ?? "text-slate-400"}`} />
+                      )}
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm font-medium text-slate-800 dark:text-slate-200">{n.title}</p>
-                        {n.message && (
-                          <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">{n.message}</p>
-                        )}
+                        <p className="line-clamp-2 text-sm font-medium text-slate-800 dark:text-slate-200">{n.title}</p>
+                        <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">
+                          {t.header.byAuthor} {n.author} · {formatNumber(n.metricValue)} {n.metricType} · {t.header.thresholdLabel} {formatNumber(n.threshold)}
+                        </p>
                         <p className="mt-1 text-[11px] text-slate-300 dark:text-slate-600">
                           {formatDistanceToNow(new Date(n.createdAt), {
                             addSuffix: true,
@@ -183,7 +262,7 @@ export default function AppHeader({ onOpenHistory, historyCount = 0, onOpenSideb
                           })}
                         </p>
                       </div>
-                    </div>
+                    </button>
                   );
                 })
               )}

@@ -33,6 +33,8 @@
     "notifications": "Notifikasi",
     "noNotifications": "Belum ada notifikasi",
     "clearAll": "Hapus semua",
+    "byAuthor": "oleh",
+    "thresholdLabel": "ambang",
     "logout": "Logout",
     "language": "Bahasa",
     "lightMode": "Mode cerah",

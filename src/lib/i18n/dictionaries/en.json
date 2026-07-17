@@ -33,6 +33,8 @@
     "notifications": "Notifications",
     "noNotifications": "No notifications yet",
     "clearAll": "Clear all",
+    "byAuthor": "by",
+    "thresholdLabel": "threshold",
     "logout": "Logout",
     "language": "Language",
     "lightMode": "Light mode",
