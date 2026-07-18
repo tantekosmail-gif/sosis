@@ -43,7 +43,9 @@ export interface DashboardPost {
   views: number;
   likes: number;
   comments: number;
-  sentiment: "positive" | "neutral" | "negative";
+  /** null = belum ada komentar yang dianalisis untuk konten ini — UI tidak
+   *  menampilkan label sentimen, bukan memfallback ke "netral". */
+  sentiment: "positive" | "neutral" | "negative" | null;
   url: string;
 }
 

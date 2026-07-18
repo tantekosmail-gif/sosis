@@ -2,18 +2,24 @@ import { create } from "zustand";
 
 // Local calendar date, not UTC — toISOString() would roll the date back for
 // any visitor east of UTC (e.g. WIB/UTC+7) during the first hours of the day.
-function toLocalDateString(d: Date) {
+export function toLocalDateString(d: Date) {
   const year = d.getFullYear();
   const month = String(d.getMonth() + 1).padStart(2, "0");
   const day = String(d.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 }
 
-function defaultDateRange() {
+// Dipakai baik untuk default state maupun tombol preset cepat (24 Jam/1
+// Minggu/1 Bulan) di FilterBar — satu sumber kebenaran biar konsisten.
+export function dateRangeFromDaysBack(days: number) {
   const to = new Date();
   const from = new Date();
-  from.setDate(from.getDate() - 7);
+  from.setDate(from.getDate() - days);
   return { startDate: toLocalDateString(from), endDate: toLocalDateString(to) };
+}
+
+function defaultDateRange() {
+  return dateRangeFromDaysBack(7);
 }
 
 interface FilterState {

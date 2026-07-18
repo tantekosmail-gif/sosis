@@ -3,6 +3,7 @@
 import { AlertTriangle, ExternalLink, MessageCircle, ThumbsUp } from "lucide-react";
 
 import type { TikTokPostItem } from "@/features/tiktok/types/posts.types";
+import FallbackImage from "@/components/common/FallbackImage";
 
 function findMostNegativePost(items: TikTokPostItem[]): TikTokPostItem | null {
   let best: TikTokPostItem | null = null;
@@ -33,16 +34,9 @@ export default function NegativeHighlightCard({
 
   return (
     <div className="flex gap-4 rounded-2xl border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/30 p-4 shadow-sm">
-      {post.thumbnail && (
-        <a href={post.url} target="_blank" rel="noopener noreferrer" className="h-24 w-16 shrink-0 overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800">
-          <img
-            src={post.thumbnail}
-            alt=""
-            className="h-full w-full object-cover"
-            onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
-          />
-        </a>
-      )}
+      <a href={post.url} target="_blank" rel="noopener noreferrer" className="block h-24 w-16 shrink-0">
+        <FallbackImage src={post.thumbnail} className="h-24 w-16 rounded-xl" illustrationClassName="h-2/5 w-2/5 max-h-10 max-w-10" />
+      </a>
 
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-red-700 dark:text-red-400">

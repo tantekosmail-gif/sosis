@@ -1,23 +1,27 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Search, CalendarDays, X } from "lucide-react";
+import { useEffect } from "react";
+import { Search } from "lucide-react";
 
-import { useFilterStore } from "@/stores/filterStore";
+import { useFilterStore, dateRangeFromDaysBack } from "@/stores/filterStore";
+import { useDashboardStore } from "@/store/dashboard.store";
+import { useAnalyze } from "@/features/analysis/hooks/useAnalyze";
 import AnalyzeButton from "@/components/analysis/AnalyzeButton";
 
-function formatDate(d: string) {
-  if (!d) return "";
-  try {
-    return new Date(d).toLocaleDateString("id-ID", { day: "numeric", month: "short" });
-  } catch {
-    return d;
-  }
-}
+// "24 Jam" pakai 1 hari ke belakang (bukan 0) supaya jendela 24 jam terakhir
+// tetap tercakup penuh walau filter tanggal ini cuma presisi per-hari
+// (misal jam 01:00, sebagian besar 24 jam terakhir jatuh di tanggal kemarin).
+const DATE_PRESETS = [
+  { label: "24 Jam", days: 1 },
+  { label: "1 Minggu", days: 7 },
+  { label: "1 Bulan", days: 30 },
+] as const;
 
 export default function FilterBar({ showSearch = true }: { showSearch?: boolean } = {}) {
-  const { keyword, startDate, endDate, setPlatform, setKeyword, setStartDate, setEndDate } = useFilterStore();
-  const [showDate, setShowDate] = useState(false);
+  const { keyword, startDate, endDate, platform, setPlatform, setKeyword, setStartDate, setEndDate } = useFilterStore();
+  const dashboard = useDashboardStore((s) => s.dashboard);
+  const loading = useDashboardStore((s) => s.loading);
+  const { execute } = useAnalyze();
   const hasDateFilter = !!(startDate && endDate);
 
   // Riset Topik cuma didukung untuk YouTube — endpoint smart-search
@@ -30,7 +34,29 @@ export default function FilterBar({ showSearch = true }: { showSearch?: boolean 
   function clearDate() {
     setStartDate("");
     setEndDate("");
-    setShowDate(false);
+  }
+
+  // Filter tanggal cuma mengubah state — dashboard yang sudah tampil tidak
+  // ikut ter-update kecuali analisis dijalankan ulang. Kalau sudah ada hasil
+  // aktif, langsung re-analisis supaya klik preset/ubah tanggal manual
+  // langsung terasa, bukan diam sampai user menekan Analyze lagi.
+  function reAnalyzeIfActive() {
+    if (dashboard && keyword.trim() && !loading) {
+      void execute(platform, keyword);
+    }
+  }
+
+  function applyPreset(days: number) {
+    const range = dateRangeFromDaysBack(days);
+    setStartDate(range.startDate);
+    setEndDate(range.endDate);
+    reAnalyzeIfActive();
+  }
+
+  function handleManualDate(which: "start" | "end", value: string) {
+    if (which === "start") setStartDate(value);
+    else setEndDate(value);
+    reAnalyzeIfActive();
   }
 
   return (
@@ -56,66 +82,59 @@ export default function FilterBar({ showSearch = true }: { showSearch?: boolean 
             </div>
           )}
 
-          <div className="flex shrink-0 items-center gap-2">
-            <button
-              onClick={() => setShowDate((v) => !v)}
-              className={`flex h-10 items-center gap-2 rounded-xl border px-3.5 text-sm font-medium transition-all ${
-                hasDateFilter || showDate
-                  ? "border-indigo-300 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700"
-                  : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:border-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
-              }`}
-            >
-              <CalendarDays size={15} />
-              <span className="hidden sm:inline">
-                {hasDateFilter ? `${formatDate(startDate)} – ${formatDate(endDate)}` : "Filter Tanggal"}
-              </span>
-              {hasDateFilter && (
-                <span
-                  role="button"
-                  aria-label="Hapus filter tanggal"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    clearDate();
-                  }}
-                  className="-mr-1 rounded-full p-0.5 hover:bg-indigo-100"
-                >
-                  <X size={12} />
-                </span>
-              )}
-            </button>
-
-            {showSearch && <AnalyzeButton />}
-          </div>
+          {showSearch && (
+            <div className="shrink-0">
+              <AnalyzeButton />
+            </div>
+          )}
         </div>
 
-        {/* Date range inputs (collapsible) */}
-        {showDate && (
-          <div className="flex flex-wrap items-center gap-3 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/60 px-4 py-3">
-            <div className="flex items-center gap-2">
-              <label className="shrink-0 text-xs text-slate-500 dark:text-slate-400">Dari</label>
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="h-9 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-sm text-slate-700 dark:text-slate-300 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition"
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <label className="shrink-0 text-xs text-slate-500 dark:text-slate-400">Sampai</label>
-              <input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="h-9 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-sm text-slate-700 dark:text-slate-300 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition"
-              />
-            </div>
-            {hasDateFilter && (
-              <button onClick={clearDate} className="text-xs text-slate-400 dark:text-slate-500 transition-colors hover:text-red-500">
-                Reset
-              </button>
-            )}
+        {/* Date range: preset cepat + input manual, selalu tampil */}
+        <div className="flex flex-wrap items-center gap-3 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/60 px-4 py-3">
+          <div className="flex shrink-0 items-center gap-1.5">
+            {DATE_PRESETS.map((preset) => {
+              const range = dateRangeFromDaysBack(preset.days);
+              const active = startDate === range.startDate && endDate === range.endDate;
+              return (
+                <button
+                  key={preset.label}
+                  type="button"
+                  onClick={() => applyPreset(preset.days)}
+                  className={`h-9 rounded-xl px-3 text-xs font-semibold transition-colors ${
+                    active
+                      ? "bg-indigo-600 text-white"
+                      : "border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:border-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/40"
+                  }`}
+                >
+                  {preset.label}
+                </button>
+              );
+            })}
           </div>
-        )}
+          <div className="flex items-center gap-2">
+            <label className="shrink-0 text-xs text-slate-500 dark:text-slate-400">Dari</label>
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => handleManualDate("start", e.target.value)}
+              className="h-9 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-sm text-slate-700 dark:text-slate-300 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <label className="shrink-0 text-xs text-slate-500 dark:text-slate-400">Sampai</label>
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => handleManualDate("end", e.target.value)}
+              className="h-9 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-sm text-slate-700 dark:text-slate-300 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition"
+            />
+          </div>
+          {hasDateFilter && (
+            <button onClick={clearDate} className="text-xs text-slate-400 dark:text-slate-500 transition-colors hover:text-red-500">
+              Reset
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

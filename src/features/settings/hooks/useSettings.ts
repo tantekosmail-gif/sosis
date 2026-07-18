@@ -132,7 +132,7 @@ const DEFAULTS: AppSettings = {
   trendTopN: 6,
   trendRankingTopN: 15,
   trendRankingDays: 7,
-  newsSummaryTopN: 15,
+  newsSummaryTopN: 50,
   notifyOnAnalysisDone: true,
   notifyOnAISummaryDone: true,
   notifyOnError: true,

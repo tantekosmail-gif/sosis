@@ -1,7 +1,10 @@
 "use client";
 
-import { ExternalLink, Eye, MessageCircle, Calendar } from "lucide-react";
+import { formatDistanceToNow } from "date-fns";
+import { id as idLocale } from "date-fns/locale";
+import { ExternalLink, Eye, Calendar } from "lucide-react";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
+import FallbackImage from "@/components/common/FallbackImage";
 
 interface Post {
   id: string;
@@ -11,16 +14,8 @@ interface Post {
   publishedAt?: string;
   views: number;
   likes: number;
-  comments: number;
-  sentiment: string;
   url: string;
 }
-
-const SENTIMENT_STYLE: Record<string, { pill: string; dot: string }> = {
-  positive: { pill: "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 border-emerald-200", dot: "bg-emerald-500" },
-  negative: { pill: "bg-red-50 dark:bg-red-950/40 text-red-700 border-red-200",            dot: "bg-red-500" },
-  neutral:  { pill: "bg-amber-50 dark:bg-amber-950/40 text-amber-700 border-amber-200",      dot: "bg-amber-400" },
-};
 
 const RANK_STYLE: Record<number, string> = {
   0: "bg-amber-400 text-white",
@@ -28,15 +23,21 @@ const RANK_STYLE: Record<number, string> = {
   2: "bg-orange-400 text-white",
 };
 
-function formatDate(dateStr?: string) {
-  if (!dateStr) return null;
-  try {
-    return new Date(dateStr).toLocaleDateString("id-ID", {
-      day: "numeric", month: "short", year: "numeric",
-    });
-  } catch {
-    return null;
-  }
+// Label tanggal ditampilkan relatif ("1 hari yang lalu" / "1 day ago");
+// tanggal absolutnya tetap tersedia lewat tooltip (atribut title).
+function formatRelativeDate(dateStr: string | undefined, language: string) {
+  const date = dateStr ? new Date(dateStr) : null;
+  if (!date || isNaN(date.getTime())) return null;
+  return formatDistanceToNow(date, {
+    addSuffix: true,
+    locale: language === "id" ? idLocale : undefined,
+  });
+}
+
+function formatAbsoluteDate(dateStr: string | undefined) {
+  const date = dateStr ? new Date(dateStr) : null;
+  if (!date || isNaN(date.getTime())) return undefined;
+  return date.toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
 }
 
 function formatCompact(n: number) {
@@ -46,12 +47,7 @@ function formatCompact(n: number) {
 }
 
 export default function TopPostsTable({ data }: { data: Post[] }) {
-  const { t } = useTranslation();
-  const SENTIMENT_LABEL: Record<string, string> = {
-    positive: t.sentimentPie.positive,
-    negative: t.sentimentPie.negative,
-    neutral: t.sentimentPie.neutral,
-  };
+  const { t, language } = useTranslation();
 
   if (!data || data.length === 0) {
     return (
@@ -76,9 +72,7 @@ export default function TopPostsTable({ data }: { data: Post[] }) {
       {/* List */}
       <ul className="divide-y divide-slate-100 dark:divide-slate-800">
         {data.map((item, idx) => {
-          const sentiment = item.sentiment?.toLowerCase() ?? "neutral";
-          const sentimentCfg = SENTIMENT_STYLE[sentiment] ?? SENTIMENT_STYLE.neutral;
-          const date = formatDate(item.publishedAt);
+          const date = formatRelativeDate(item.publishedAt, language);
 
           return (
             <li key={item.id} className="flex items-center gap-4 px-6 py-4 hover:bg-slate-50/70 dark:hover:bg-slate-800/70 transition-colors">
@@ -88,18 +82,7 @@ export default function TopPostsTable({ data }: { data: Post[] }) {
               </span>
 
               {/* Thumbnail */}
-              <div className="h-16 w-28 shrink-0 overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800">
-                {item.thumbnail ? (
-                  <img
-                    src={item.thumbnail}
-                    alt=""
-                    className="h-full w-full object-cover"
-                    onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
-                  />
-                ) : (
-                  <div className="h-full w-full flex items-center justify-center text-slate-300 text-xs">{t.topPostsTable.noImage}</div>
-                )}
-              </div>
+              <FallbackImage src={item.thumbnail} className="h-16 w-28 shrink-0 rounded-xl" illustrationClassName="h-2/5 w-2/5 max-h-8 max-w-8" />
 
               {/* Main content */}
               <div className="flex-1 min-w-0">
@@ -119,16 +102,15 @@ export default function TopPostsTable({ data }: { data: Post[] }) {
                   <span className="text-xs text-slate-500 dark:text-slate-400 truncate max-w-[160px]">{item.author}</span>
 
                   {date && (
-                    <span className="flex items-center gap-1 text-xs text-slate-400 dark:text-slate-500">
+                    <span
+                      title={formatAbsoluteDate(item.publishedAt)}
+                      className="flex items-center gap-1 text-xs text-slate-400 dark:text-slate-500"
+                    >
                       <Calendar size={10} />
                       {date}
                     </span>
                   )}
 
-                  <span className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[11px] font-semibold ${sentimentCfg.pill}`}>
-                    <span className={`h-1.5 w-1.5 rounded-full ${sentimentCfg.dot}`} />
-                    {SENTIMENT_LABEL[sentiment] ?? sentiment}
-                  </span>
                 </div>
               </div>
 
@@ -137,10 +119,6 @@ export default function TopPostsTable({ data }: { data: Post[] }) {
                 <div className="flex items-center gap-1 text-sm font-semibold text-slate-700 dark:text-slate-300">
                   <Eye size={13} className="text-slate-400 dark:text-slate-500" />
                   {formatCompact(item.views)}
-                </div>
-                <div className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
-                  <MessageCircle size={12} className="text-slate-400 dark:text-slate-500" />
-                  {formatCompact(item.comments)}
                 </div>
               </div>
             </li>

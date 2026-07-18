@@ -2,8 +2,11 @@
 
 import { ExternalLink, Eye, ThumbsUp } from "lucide-react";
 
+import SentimentBar from "@/components/common/SentimentBreakdownBar";
+import FallbackImage from "@/components/common/FallbackImage";
 import type { SearchedVideoItem } from "@/features/youtube/hooks/useVideoSearch";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
+import { decodeHtmlEntities } from "@/lib/decodeHtmlEntities";
 
 function formatRelativeTime(dateStr?: string) {
   if (!dateStr) return null;
@@ -21,25 +24,6 @@ function formatRelativeTime(dateStr?: string) {
 
   const diffDays = Math.round(diffHours / 24);
   return `${diffDays} hari lalu`;
-}
-
-// Titles/channel names from the API come pre-HTML-escaped (e.g. "&amp;"
-// instead of "&"), so decode common entities before rendering as plain text.
-const HTML_ENTITIES: Record<string, string> = {
-  "&amp;": "&",
-  "&lt;": "<",
-  "&gt;": ">",
-  "&quot;": '"',
-  "&#39;": "'",
-  "&apos;": "'",
-  "&#x27;": "'",
-};
-
-function decodeHtmlEntities(text: string) {
-  return text
-    .replace(/&amp;|&lt;|&gt;|&quot;|&#39;|&apos;|&#x27;/g, (entity) => HTML_ENTITIES[entity])
-    .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number(code)))
-    .replace(/&#x([0-9a-f]+);/gi, (_, code) => String.fromCharCode(parseInt(code, 16)));
 }
 
 function formatCompact(n: number) {
@@ -74,19 +58,12 @@ export default function VideoSearchGrid({ items }: { items: SearchedVideoItem[] 
             rel="noopener noreferrer"
             className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md dark:border-slate-700 dark:bg-slate-900"
           >
-            <div className="relative aspect-video w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
-              {item.thumbnail ? (
-                <img
-                  src={item.thumbnail}
-                  alt=""
-                  className="h-full w-full object-cover transition-transform group-hover:scale-105"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).style.display = "none";
-                  }}
-                />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center text-xs text-slate-300">No thumbnail</div>
-              )}
+            <div className="relative aspect-video w-full overflow-hidden">
+              <FallbackImage
+                src={item.thumbnail}
+                className="h-full w-full"
+                imgClassName="h-full w-full object-cover transition-transform group-hover:scale-105"
+              />
               <span className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/50 text-white opacity-0 transition-opacity group-hover:opacity-100">
                 <ExternalLink size={12} />
               </span>
@@ -113,6 +90,8 @@ export default function VideoSearchGrid({ items }: { items: SearchedVideoItem[] 
                 </div>
                 {relativeTime && <span className="text-[11px] text-slate-400 dark:text-slate-500">{relativeTime}</span>}
               </div>
+
+              <SentimentBar summary={item.sentiment_summary} />
             </div>
           </a>
         );

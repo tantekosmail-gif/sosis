@@ -12,9 +12,11 @@ import TwitterSummaryWidget from "@/components/twitter/TwitterSummaryWidget";
 import TwitterDiscoverPanel from "@/components/twitter/TwitterDiscoverPanel";
 import CommentsModal from "@/components/common/CommentsModal";
 import WordCloud from "@/components/dashboard/WordCloud";
+import Pagination from "@/components/common/Pagination";
 import { useTwitterPosts } from "../hooks/useTwitterPosts";
 import { useTwitterSummary } from "../hooks/useTwitterSummary";
 import { useRecentTwitterSearches } from "../hooks/useRecentSearches";
+import { usePagination } from "@/hooks/usePagination";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { buildWordCloud } from "@/lib/wordCloud";
 
@@ -61,6 +63,8 @@ export default function TwitterSentimentTab() {
     return items.sort((a, b) => (b.published_at || "").localeCompare(a.published_at || ""));
   }, [data, sortBy]);
 
+  const { page, totalPages, setPage, paginated } = usePagination(sortedItems, 8);
+
   const commentsWordCloud = useMemo(() => {
     if (!data) return [];
     return buildWordCloud(data.items.flatMap((item) => item.comments.map((c) => c.content)));
@@ -80,17 +84,17 @@ export default function TwitterSentimentTab() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="font-semibold text-slate-900 dark:text-slate-100">{t.accountSentimentTab.title}</h2>
-        <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">
-          {tp.desc}
-        </p>
-      </div>
-
-      <div className="grid gap-6 lg:grid-cols-2">
-        {summary && <TwitterSummaryWidget data={summary} onSelectAccount={handleSelectAccount} />}
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h2 className="font-semibold text-slate-900 dark:text-slate-100">{t.accountSentimentTab.title}</h2>
+          <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">
+            {tp.desc}
+          </p>
+        </div>
         <TwitterDiscoverPanel onSelectAccount={handleSelectAccount} />
       </div>
+
+      {summary && <TwitterSummaryWidget data={summary} onSelectAccount={handleSelectAccount} />}
 
       {/* Search bar */}
       <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
@@ -242,10 +246,11 @@ export default function TwitterSentimentTab() {
           </div>
 
           <TwitterPostGrid
-            data={sortedItems}
+            data={paginated}
             selectedPostId={selectedPostId}
             onSelectPost={(item) => setSelectedPostId(item.post_id)}
           />
+          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
 
           <CommentsModal
             open={!!selectedPost}

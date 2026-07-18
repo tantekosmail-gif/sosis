@@ -19,7 +19,7 @@ export function useViralVideos() {
       setError("");
       setSelectedVideoId(null);
 
-      const result = await getViralVideos({ limit, limitComments: 10, q });
+      const result = await getViralVideos({ limit, limitComments: 20, q });
       setData(result);
     } catch (err: any) {
       setError(err?.message || "Gagal memuat data video viral");

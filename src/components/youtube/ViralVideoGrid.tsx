@@ -1,8 +1,14 @@
 "use client";
 
-import { ExternalLink, Eye, Flame, MessageCircle } from "lucide-react";
+import { formatDistanceToNow } from "date-fns";
+import { id as idLocale } from "date-fns/locale";
+import { ExternalLink, Eye, MessageCircle } from "lucide-react";
 
-import type { ViralSentimentBreakdown, ViralVideoItem } from "@/features/youtube/types/viral.types";
+import SentimentBar from "@/components/common/SentimentBreakdownBar";
+import FallbackImage from "@/components/common/FallbackImage";
+import type { ViralVideoItem } from "@/features/youtube/types/viral.types";
+import { decodeHtmlEntities } from "@/lib/decodeHtmlEntities";
+import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 const RANK_STYLE: Record<number, string> = {
   1: "bg-amber-400 text-white",
@@ -10,21 +16,21 @@ const RANK_STYLE: Record<number, string> = {
   3: "bg-orange-400 text-white",
 };
 
-const SENTIMENT_BAR_COLOR: Record<string, string> = {
-  positif: "bg-emerald-500",
-  netral: "bg-amber-400",
-  negatif: "bg-red-500",
-};
+// Tanggal ditampilkan relatif ("1 hari yang lalu" / "1 day ago") mengikuti
+// bahasa aktif; tanggal absolutnya tetap tersedia lewat tooltip (atribut title).
+function formatRelativeDate(dateStr: string | undefined, language: string) {
+  const date = dateStr ? new Date(dateStr) : null;
+  if (!date || isNaN(date.getTime())) return null;
+  return formatDistanceToNow(date, {
+    addSuffix: true,
+    locale: language === "id" ? idLocale : undefined,
+  });
+}
 
-function formatDate(dateStr?: string) {
-  if (!dateStr) return null;
-  try {
-    return new Date(dateStr).toLocaleDateString("id-ID", {
-      day: "numeric", month: "short", year: "numeric",
-    });
-  } catch {
-    return null;
-  }
+function formatAbsoluteDate(dateStr?: string) {
+  const date = dateStr ? new Date(dateStr) : null;
+  if (!date || isNaN(date.getTime())) return undefined;
+  return date.toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
 }
 
 function formatCompact(n: number) {
@@ -32,23 +38,6 @@ function formatCompact(n: number) {
   if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + "M";
   if (n >= 1_000) return (n / 1_000).toFixed(1) + "K";
   return n?.toString() ?? "0";
-}
-
-function SentimentBar({ summary }: { summary: ViralSentimentBreakdown }) {
-  const total = summary.positif.count + summary.netral.count + summary.negatif.count;
-  if (total === 0) return null;
-
-  return (
-    <div className="mt-2 flex h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
-      {(["positif", "netral", "negatif"] as const).map((key) => (
-        <div
-          key={key}
-          className={SENTIMENT_BAR_COLOR[key]}
-          style={{ width: `${summary[key].percentage}%` }}
-        />
-      ))}
-    </div>
-  );
 }
 
 export default function ViralVideoGrid({
@@ -60,6 +49,8 @@ export default function ViralVideoGrid({
   selectedVideoId?: string | null;
   onSelectVideo?: (item: ViralVideoItem) => void;
 }) {
+  const { language } = useTranslation();
+
   if (!data || data.length === 0) {
     return (
       <div className="rounded-2xl border border-dashed border-slate-300 bg-white py-16 text-center text-sm text-slate-400 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-500">
@@ -71,7 +62,7 @@ export default function ViralVideoGrid({
   return (
     <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {data.map((item) => {
-        const date = formatDate(item.published_at);
+        const date = formatRelativeDate(item.published_at, language);
         const isSelected = item.video_id === selectedVideoId;
 
         return (
@@ -86,18 +77,13 @@ export default function ViralVideoGrid({
               href={item.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="relative block aspect-video w-full overflow-hidden bg-slate-100 dark:bg-slate-800"
+              className="relative block aspect-video w-full overflow-hidden"
             >
-              {item.thumbnail_url ? (
-                <img
-                  src={item.thumbnail_url}
-                  alt=""
-                  className="h-full w-full object-cover transition-transform group-hover:scale-105"
-                  onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
-                />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center text-xs text-slate-300">No thumbnail</div>
-              )}
+              <FallbackImage
+                src={item.thumbnail_url}
+                className="h-full w-full"
+                imgClassName="h-full w-full object-cover transition-transform group-hover:scale-105"
+              />
 
               <span className={`absolute left-2 top-2 flex h-6 min-w-6 items-center justify-center rounded-lg px-1.5 text-xs font-bold shadow ${RANK_STYLE[item.rank] ?? "bg-slate-900/80 text-white"}`}>
                 #{item.rank}
@@ -119,27 +105,24 @@ export default function ViralVideoGrid({
                 className="flex items-start gap-1"
               >
                 <h3 className="line-clamp-2 min-w-0 flex-1 break-words text-sm font-semibold leading-snug text-slate-800 group-hover:text-indigo-600 transition-colors dark:text-slate-200">
-                  {item.title}
+                  {decodeHtmlEntities(item.title)}
                 </h3>
                 <ExternalLink size={11} className="mt-0.5 shrink-0 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity dark:text-slate-500" />
               </a>
 
-              <p className="mt-1.5 truncate text-xs text-slate-500 dark:text-slate-400">{item.channel}</p>
+              <p className="mt-1.5 truncate text-xs text-slate-500 dark:text-slate-400">{decodeHtmlEntities(item.channel)}</p>
 
               <div className="mt-3 flex items-center justify-between">
                 <div className="flex items-center gap-1 text-xs font-semibold text-slate-700 dark:text-slate-300">
                   <Eye size={13} className="text-slate-400 dark:text-slate-500" />
                   {formatCompact(item.view_count)}
                 </div>
-                {date && <span className="text-[11px] text-slate-400 dark:text-slate-500">{date}</span>}
+                {date && (
+                  <span title={formatAbsoluteDate(item.published_at)} className="text-[11px] text-slate-400 dark:text-slate-500">
+                    {date}
+                  </span>
+                )}
               </div>
-
-              {item.keyword && (
-                <span className="mt-3 inline-flex items-center gap-1 rounded-md border border-indigo-200 bg-indigo-50 px-2 py-0.5 text-[11px] font-medium text-indigo-700 dark:bg-indigo-950/40">
-                  <Flame size={10} />
-                  {item.keyword}
-                </span>
-              )}
 
               <SentimentBar summary={item.sentiment_summary} />
 

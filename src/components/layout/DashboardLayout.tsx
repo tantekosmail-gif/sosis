@@ -3,6 +3,7 @@
 import { ReactNode, useState } from "react";
 import AppSidebar from "./AppSidebar";
 import AppHeader from "./AppHeader";
+import { InfoSourceProvider } from "@/components/common/InfoSource";
 
 interface Props {
   children: ReactNode;
@@ -53,7 +54,7 @@ export default function DashboardLayout({ children, onOpenHistory, historyCount 
 
         <main className="flex-1 overflow-y-auto">
           <div className="p-4 sm:p-6 space-y-6 max-w-screen-2xl mx-auto">
-            {children}
+            <InfoSourceProvider>{children}</InfoSourceProvider>
           </div>
         </main>
       </div>

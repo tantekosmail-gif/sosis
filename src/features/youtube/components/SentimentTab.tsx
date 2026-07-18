@@ -8,11 +8,9 @@ import ExposureSection from "@/features/dashboard/sections/ExposureSection";
 import SentimentSection from "@/features/dashboard/sections/SentimentSection";
 import TopPostsSection from "@/features/dashboard/sections/TopPostsSection";
 import WordCloud from "@/components/dashboard/WordCloud";
-import AISummarySection from "@/features/dashboard/sections/AISummarySection";
 import SentimentTimeline from "@/components/dashboard/SentimentTimeline";
 import CommentsTable from "@/components/dashboard/CommentsTable";
 import ComparePanel from "@/features/compare/components/ComparePanel";
-import ExportButton from "@/features/export/components/ExportButton";
 import SearchHistoryPanel from "@/features/history/components/SearchHistoryPanel";
 import { useSearchHistory } from "@/features/history/hooks/useSearchHistory";
 
@@ -119,16 +117,10 @@ export default function YoutubeSentimentTab() {
 
       {!loading && dashboard && (
         <>
-          <div className="flex justify-end">
-            <ExportButton
-              targetId="youtube-dashboard-content"
-              keyword={dashboard.keyword}
-              platform={dashboard.platform}
-            />
-          </div>
-
-          <div id="youtube-dashboard-content" className="space-y-6">
+          <div className="space-y-6">
             <ExposureSection data={dashboard.summary} sentiment={dashboard.sentiment} timeline={dashboard.timeline} />
+
+            <SentimentTimeline data={dashboard.timeline} />
 
             <SentimentSection
               data={[
@@ -139,8 +131,6 @@ export default function YoutubeSentimentTab() {
               platform={dashboard.platformDistribution}
             />
 
-            <SentimentTimeline data={dashboard.timeline} />
-
             <TopPostsSection data={dashboard.topPosts} />
 
             {dashboard.comments?.length > 0 && (
@@ -148,8 +138,6 @@ export default function YoutubeSentimentTab() {
             )}
 
             <WordCloud data={dashboard.wordCloud} />
-
-            <AISummarySection />
           </div>
 
           <ComparePanel platform="youtube" baseKeyword={dashboard.keyword ?? keyword} />

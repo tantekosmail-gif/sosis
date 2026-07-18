@@ -3,6 +3,8 @@
 import { ExternalLink, Eye, Heart, MessageCircle, Play } from "lucide-react";
 
 import type { InstagramPostItem, PostSentimentBreakdown } from "@/features/instagram/types/posts.types";
+import SentimentBar from "@/components/common/SentimentBreakdownBar";
+import FallbackImage from "@/components/common/FallbackImage";
 
 const SENTIMENT_BAR_COLOR: Record<string, string> = {
   positif: "bg-emerald-500",
@@ -40,19 +42,6 @@ function formatCompact(n: number) {
   return n?.toString() ?? "0";
 }
 
-function SentimentBar({ summary }: { summary: PostSentimentBreakdown }) {
-  const total = summary.positif.count + summary.netral.count + summary.negatif.count;
-  if (total === 0) return null;
-
-  return (
-    <div className="mt-2 flex h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
-      {(["positif", "netral", "negatif"] as const).map((key) => (
-        <div key={key} className={SENTIMENT_BAR_COLOR[key]} style={{ width: `${summary[key].percentage}%` }} />
-      ))}
-    </div>
-  );
-}
-
 export default function InstagramPostGrid({
   data,
   selectedPostId,
@@ -86,17 +75,12 @@ export default function InstagramPostGrid({
               isSelected ? "border-indigo-400 ring-2 ring-indigo-500/20" : "border-slate-200 dark:border-slate-700"
             }`}
           >
-            <a href={item.url} target="_blank" rel="noopener noreferrer" className={`relative block ${aspectClass} w-full overflow-hidden bg-slate-100 dark:bg-slate-800`}>
-              {item.thumbnail ? (
-                <img
-                  src={item.thumbnail}
-                  alt=""
-                  className="h-full w-full object-cover transition-transform hover:scale-105"
-                  onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
-                />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center text-xs text-slate-300">No thumbnail</div>
-              )}
+            <a href={item.url} target="_blank" rel="noopener noreferrer" className={`relative block ${aspectClass} w-full overflow-hidden`}>
+              <FallbackImage
+                src={item.thumbnail}
+                className="h-full w-full"
+                imgClassName="h-full w-full object-cover transition-transform hover:scale-105"
+              />
 
               {dominant && (
                 <span

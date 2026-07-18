@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Camera, ChevronLeft, ChevronRight, ExternalLink, Images } from "lucide-react";
 
 import type { TrendVisualsData } from "@/features/trends/types/visuals.types";
+import FallbackImage from "@/components/common/FallbackImage";
 import { getPlatformIcon } from "@/lib/platformIcons";
 import { CATEGORICAL_PALETTE, OTHER_COLOR } from "@/lib/chartColors";
 import { formatRelativeTime } from "@/lib/formatRelativeTime";
@@ -111,17 +112,11 @@ export default function TrendVisualsChart({ keywords, selectedKeyword, onSelectK
             rel="noopener noreferrer"
             className="group relative block aspect-[16/10] w-full overflow-hidden rounded-2xl bg-slate-900 shadow-inner"
           >
-            {active.thumbnail ? (
-              <img
-                src={active.thumbnail}
-                alt=""
-                className="h-full w-full object-cover opacity-95 transition-transform duration-500 group-hover:scale-105"
-              />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center">
-                <Camera size={32} className="text-slate-600" />
-              </div>
-            )}
+            <FallbackImage
+              src={active.thumbnail}
+              className="absolute inset-0 h-full w-full"
+              imgClassName="h-full w-full object-cover opacity-95 transition-transform duration-500 group-hover:scale-105"
+            />
 
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/10 to-transparent" />
 
@@ -182,17 +177,12 @@ export default function TrendVisualsChart({ keywords, selectedKeyword, onSelectK
                       : "opacity-70 ring-1 ring-slate-200 hover:opacity-100 hover:ring-slate-300 dark:ring-slate-700"
                   }`}
                 >
-                  {item.thumbnail ? (
-                    <img
-                      src={item.thumbnail}
-                      alt=""
-                      className="h-full w-full object-cover transition-transform group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center">
-                      <Camera size={16} className="text-slate-300" />
-                    </div>
-                  )}
+                  <FallbackImage
+                    src={item.thumbnail}
+                    className="h-full w-full"
+                    imgClassName="h-full w-full object-cover transition-transform group-hover:scale-105"
+                    illustrationClassName="h-2/5 w-2/5 max-h-8 max-w-8"
+                  />
                   <span
                     className="absolute bottom-1 left-1 flex h-4 w-4 items-center justify-center rounded-full ring-1 ring-white/70"
                     style={{ backgroundColor: platformColor(item.platform) }}

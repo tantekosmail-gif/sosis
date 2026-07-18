@@ -5,6 +5,7 @@ import { BadgeCheck, Grid3x3, Info, MessageSquare, Percent, PieChart, TrendingUp
 
 import type { FacebookPageInfo, FacebookPostItem, FacebookPostSentimentOverview, FacebookPostsStats } from "@/features/facebook/types/posts.types";
 import { formatRelativeTime } from "@/lib/formatRelativeTime";
+import FallbackImage from "@/components/common/FallbackImage";
 
 const SENTIMENT_LABEL: Record<string, string> = {
   positif: "Positif",
@@ -78,20 +79,11 @@ export default function FacebookProfileCard({
     <div className="space-y-4">
       {hasProfile ? (
         <div className="flex items-center gap-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-sm">
-          <div className="h-16 w-16 shrink-0 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
-            {pageInfo.profile_pic_url ? (
-              <img
-                src={pageInfo.profile_pic_url}
-                alt=""
-                className="h-full w-full object-cover"
-                onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
-              />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center text-slate-300">
-                <Grid3x3 size={28} />
-              </div>
-            )}
-          </div>
+          <FallbackImage
+            src={pageInfo.profile_pic_url}
+            variant="avatar"
+            className="h-16 w-16 shrink-0 rounded-full"
+          />
 
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5">

@@ -19,20 +19,31 @@ const PLATFORM_META: Record<ComparablePlatform, { label: string; color: string }
 
 const PLATFORM_ORDER: ComparablePlatform[] = ["facebook", "instagram", "twitter", "tiktok"];
 
-function CompareTooltip({ active, payload, label }: any) {
+// totals (opsional): total pembanding per dataKey (per platform) — kalau
+// diisi, tiap baris juga menampilkan persentase nilai terhadap total tersebut.
+function CompareTooltip({ active, payload, label, totals }: any) {
   if (!active || !payload?.length) return null;
   return (
     <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-3 shadow-lg text-xs">
       <p className="mb-1 font-semibold text-slate-700 dark:text-slate-300">{label}</p>
-      {payload.map((p: any) => (
-        <div key={p.dataKey} className="flex items-center gap-2 py-0.5">
-          <span className="h-2 w-2 rounded-full" style={{ background: p.fill }} />
-          <span className="text-slate-500 dark:text-slate-400">{p.name}:</span>
-          <span className="font-semibold" style={{ color: p.fill }}>{p.value?.toLocaleString("id-ID")}</span>
-        </div>
-      ))}
+      {payload.map((p: any) => {
+        const total = totals?.[p.dataKey];
+        const pct = total > 0 ? Math.round(((Number(p.value) || 0) / total) * 100) : null;
+        return (
+          <div key={p.dataKey} className="flex items-center gap-2 py-0.5">
+            <span className="h-2 w-2 rounded-full" style={{ background: p.fill }} />
+            <span className="text-slate-500 dark:text-slate-400">{p.name}:</span>
+            <span className="font-semibold" style={{ color: p.fill }}>{p.value?.toLocaleString("id-ID")}</span>
+            {pct !== null && <span className="text-slate-400 dark:text-slate-500">({pct}%)</span>}
+          </div>
+        );
+      })}
     </div>
   );
+}
+
+function pctOf(part: number, total: number) {
+  return total > 0 ? Math.round((part / total) * 100) : 0;
 }
 
 export default function SocialComparePanel() {
@@ -64,6 +75,15 @@ export default function SocialComparePanel() {
         ...Object.fromEntries(activePlatforms.map((p) => [p, results[p]!.sentiment[s]])),
       }))
     : [];
+
+  // Total komentar ber-sentimen per platform — pembagi persentase pada kartu
+  // "Sentimen +/-" dan tooltip chart Distribusi Sentimen.
+  const sentimentTotals = Object.fromEntries(
+    activePlatforms.map((p) => {
+      const s = results[p]!.sentiment;
+      return [p, s.positif + s.netral + s.negatif];
+    })
+  ) as Record<ComparablePlatform, number>;
 
   const radarData = hasMultiple
     ? [
@@ -155,17 +175,22 @@ export default function SocialComparePanel() {
                   <div className="mt-2 flex flex-wrap items-end gap-3">
                     {activePlatforms.map((p) => {
                       const result = results[p]!;
+                      const isSentiment = key === "sentiment.positif" || key === "sentiment.negatif";
                       const value = key === "sentiment.positif"
                         ? result.sentiment.positif
                         : key === "sentiment.negatif"
                           ? result.sentiment.negatif
                           : result[key];
+                      const pct = isSentiment ? pctOf(value, sentimentTotals[p]) : null;
                       return (
                         <div key={p}>
                           <span className="text-[10px] font-semibold" style={{ color: PLATFORM_META[p].color }}>
                             {PLATFORM_META[p].label.slice(0, 2).toUpperCase()}
                           </span>
-                          <p className="text-lg font-bold text-slate-900 dark:text-slate-100">{value?.toLocaleString("id-ID")}</p>
+                          <p className="text-lg font-bold text-slate-900 dark:text-slate-100">
+                            {value?.toLocaleString("id-ID")}
+                            {pct !== null && <span className="ml-1 text-xs font-semibold text-slate-400 dark:text-slate-500">({pct}%)</span>}
+                          </p>
                         </div>
                       );
                     })}
@@ -197,7 +222,7 @@ export default function SocialComparePanel() {
                     <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                     <XAxis dataKey="label" tick={{ fontSize: 11, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
                     <YAxis tick={{ fontSize: 11, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
-                    <Tooltip content={<CompareTooltip />} />
+                    <Tooltip content={<CompareTooltip totals={sentimentTotals} />} />
                     {activePlatforms.map((p) => (
                       <Bar key={p} dataKey={p} name={PLATFORM_META[p].label} fill={PLATFORM_META[p].color} radius={[6, 6, 0, 0]} />
                     ))}

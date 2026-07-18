@@ -2,18 +2,13 @@
 
 import { Eye, ExternalLink, Hash, MessageCircle, Repeat2, ThumbsUp } from "lucide-react";
 
-import type { TwitterTrendingPost, TwitterTrendingSentimentBreakdown, TwitterTrendingTopic } from "@/features/twitter/types/trending.types";
+import type { TwitterTrendingPost, TwitterTrendingTopic } from "@/features/twitter/types/trending.types";
+import SentimentBar from "@/components/common/SentimentBreakdownBar";
 
 const RANK_STYLE: Record<number, string> = {
   1: "bg-amber-400 text-white",
   2: "bg-slate-400 text-white",
   3: "bg-orange-400 text-white",
-};
-
-const SENTIMENT_BAR_COLOR: Record<string, string> = {
-  positif: "bg-emerald-500",
-  netral: "bg-amber-400",
-  negatif: "bg-red-500",
 };
 
 const STATUS_STYLE: Record<string, string> = {
@@ -40,19 +35,6 @@ function formatDate(dateStr?: string | null) {
   } catch {
     return null;
   }
-}
-
-function SentimentBar({ sentiment }: { sentiment: TwitterTrendingSentimentBreakdown }) {
-  const total = sentiment.positif.count + sentiment.netral.count + sentiment.negatif.count;
-  if (total === 0) return null;
-
-  return (
-    <div className="flex h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
-      {(["positif", "netral", "negatif"] as const).map((key) => (
-        <div key={key} className={SENTIMENT_BAR_COLOR[key]} style={{ width: `${sentiment[key].percentage}%` }} />
-      ))}
-    </div>
-  );
 }
 
 function MetricPill({ label, value }: { label: string; value: string }) {
@@ -165,7 +147,7 @@ export default function TrendingTopicCard({
       </div>
 
       <div className="px-5 pb-4">
-        <SentimentBar sentiment={topic.sentiment} />
+        <SentimentBar summary={topic.sentiment} />
       </div>
 
       <div className="border-t border-slate-100 dark:border-slate-800 px-5 py-4">

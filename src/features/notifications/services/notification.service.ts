@@ -31,7 +31,25 @@ export function isNotificationRecent(n: Pick<TopicNotification, "createdAt" | "p
   return Date.now() - new Date(at).getTime() <= NOTIFICATION_WINDOW_MS;
 }
 
-function normalizeNotification(raw: any): TopicNotification {
+// Bentuk snake_case persis seperti yang dikirim backend.
+interface RawTopicNotification {
+  id: string;
+  topic_id: string;
+  platform: string;
+  post_id: string;
+  keyword_text: string;
+  metric_type: string;
+  metric_value: number;
+  threshold: number;
+  title: string;
+  author: string;
+  url: string;
+  is_read: boolean;
+  created_at: string;
+  published_at?: string | null;
+}
+
+function normalizeNotification(raw: RawTopicNotification): TopicNotification {
   return {
     id: raw.id,
     topicId: raw.topic_id,
@@ -88,12 +106,32 @@ export async function listNotifications(params: ListNotificationsParams = {}): P
   });
   const body = data?.data ?? {};
   return {
-    items: (body.items ?? []).map(normalizeNotification),
+    items: ((body.items ?? []) as RawTopicNotification[]).map(normalizeNotification),
     page: body.pagination?.page ?? 1,
     limit: body.pagination?.limit ?? 20,
     total: body.pagination?.total ?? 0,
     totalPages: body.pagination?.total_pages ?? 1,
   };
+}
+
+// Kumpulkan SEMUA notifikasi unread yang masih relevan dengan menyusuri
+// pagination — satu halaman saja bisa undercount saat backlog menumpuk.
+// Server mengurutkan terbaru dulu, jadi begitu item tertua di sebuah halaman
+// sudah keluar window 7 hari (berdasarkan createdAt; publishedAt selalu lebih
+// tua lagi), halaman berikutnya pasti lebih lama — berhenti di situ.
+// MAX_UNREAD_PAGES jaring pengaman kalau asumsi urutan itu meleset.
+const MAX_UNREAD_PAGES = 5;
+
+export async function listRecentUnreadNotifications(): Promise<TopicNotification[]> {
+  const recent: TopicNotification[] = [];
+  for (let page = 1; page <= MAX_UNREAD_PAGES; page++) {
+    const { items, totalPages } = await listNotifications({ isRead: false, limit: 50, page });
+    recent.push(...items.filter(isNotificationRecent));
+    const oldest = items[items.length - 1];
+    if (!oldest || page >= totalPages) break;
+    if (!isNotificationRecent({ createdAt: oldest.createdAt, publishedAt: null })) break;
+  }
+  return recent;
 }
 
 // POST /api/v1/search/notifications/{id}/read — tandai satu notifikasi sudah dibaca.

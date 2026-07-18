@@ -34,20 +34,31 @@ interface Props {
 const COLOR_A = "#6366f1";
 const COLOR_B = "#f43f5e";
 
-function CompareTooltip({ active, payload, label }: any) {
+// totals (opsional): total pembanding per dataKey — kalau diisi, tiap baris
+// juga menampilkan persentase nilai terhadap total tersebut.
+function CompareTooltip({ active, payload, label, totals }: any) {
   if (!active || !payload?.length) return null;
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-lg text-xs dark:border-slate-700 dark:bg-slate-900">
       <p className="mb-1 font-semibold text-slate-700 dark:text-slate-300">{label}</p>
-      {payload.map((p: any) => (
-        <div key={p.dataKey} className="flex items-center gap-2 py-0.5">
-          <span className="h-2 w-2 rounded-full" style={{ background: p.fill }} />
-          <span className="text-slate-500 dark:text-slate-400">{p.name}:</span>
-          <span className="font-semibold" style={{ color: p.fill }}>{p.value?.toLocaleString("id-ID")}</span>
-        </div>
-      ))}
+      {payload.map((p: any) => {
+        const total = totals?.[p.dataKey];
+        const pct = total > 0 ? Math.round(((Number(p.value) || 0) / total) * 100) : null;
+        return (
+          <div key={p.dataKey} className="flex items-center gap-2 py-0.5">
+            <span className="h-2 w-2 rounded-full" style={{ background: p.fill }} />
+            <span className="text-slate-500 dark:text-slate-400">{p.name}:</span>
+            <span className="font-semibold" style={{ color: p.fill }}>{p.value?.toLocaleString("id-ID")}</span>
+            {pct !== null && <span className="text-slate-400 dark:text-slate-500">({pct}%)</span>}
+          </div>
+        );
+      })}
     </div>
   );
+}
+
+function pctOf(part: number, total: number) {
+  return total > 0 ? Math.round((part / total) * 100) : 0;
 }
 
 export default function ComparePanel({ platform, baseKeyword }: Props) {
@@ -94,6 +105,11 @@ export default function ComparePanel({ platform, baseKeyword }: Props) {
     { label: "Netral",   a: dataA.sentiment.neutral,   b: dataB.sentiment.neutral   },
     { label: "Negatif",  a: dataA.sentiment.negative,  b: dataB.sentiment.negative  },
   ] : [];
+
+  // Total komentar ber-sentimen per keyword — pembagi persentase supaya kedua
+  // keyword bisa dibandingkan secara proporsional, bukan cuma jumlah mentah.
+  const sentTotalA = dataA ? dataA.sentiment.positive + dataA.sentiment.neutral + dataA.sentiment.negative : 0;
+  const sentTotalB = dataB ? dataB.sentiment.positive + dataB.sentiment.neutral + dataB.sentiment.negative : 0;
 
   const statsData = dataA && dataB ? [
     { label: "Post", a: dataA.summary.totalPosts,    b: dataB.summary.totalPosts    },
@@ -191,19 +207,25 @@ export default function ComparePanel({ platform, baseKeyword }: Props) {
               {[
                 { label: "Total Post",    a: dataA.summary.totalPosts,    b: dataB.summary.totalPosts },
                 { label: "Komentar",      a: dataA.summary.totalComments, b: dataB.summary.totalComments },
-                { label: "Sentimen +",    a: dataA.sentiment.positive,    b: dataB.sentiment.positive },
-                { label: "Sentimen -",    a: dataA.sentiment.negative,    b: dataB.sentiment.negative },
-              ].map(({ label, a, b }) => (
+                { label: "Sentimen +",    a: dataA.sentiment.positive,    b: dataB.sentiment.positive,    pctA: pctOf(dataA.sentiment.positive, sentTotalA), pctB: pctOf(dataB.sentiment.positive, sentTotalB) },
+                { label: "Sentimen -",    a: dataA.sentiment.negative,    b: dataB.sentiment.negative,    pctA: pctOf(dataA.sentiment.negative, sentTotalA), pctB: pctOf(dataB.sentiment.negative, sentTotalB) },
+              ].map(({ label, a, b, pctA, pctB }) => (
                 <div key={label} className="rounded-2xl border border-slate-100 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950">
                   <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">{label}</p>
                   <div className="mt-2 flex items-end gap-3">
                     <div>
                       <span className="text-[10px] text-indigo-500 font-semibold">A</span>
-                      <p className="text-lg font-bold text-slate-900 dark:text-slate-100">{a?.toLocaleString("id-ID")}</p>
+                      <p className="text-lg font-bold text-slate-900 dark:text-slate-100">
+                        {a?.toLocaleString("id-ID")}
+                        {pctA !== undefined && <span className="ml-1 text-xs font-semibold text-slate-400 dark:text-slate-500">({pctA}%)</span>}
+                      </p>
                     </div>
                     <div>
                       <span className="text-[10px] text-rose-500 font-semibold">B</span>
-                      <p className="text-lg font-bold text-slate-900 dark:text-slate-100">{b?.toLocaleString("id-ID")}</p>
+                      <p className="text-lg font-bold text-slate-900 dark:text-slate-100">
+                        {b?.toLocaleString("id-ID")}
+                        {pctB !== undefined && <span className="ml-1 text-xs font-semibold text-slate-400 dark:text-slate-500">({pctB}%)</span>}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -220,7 +242,7 @@ export default function ComparePanel({ platform, baseKeyword }: Props) {
                     <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                     <XAxis dataKey="label" tick={{ fontSize: 11, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
                     <YAxis tick={{ fontSize: 11, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
-                    <Tooltip content={<CompareTooltip />} />
+                    <Tooltip content={<CompareTooltip totals={{ a: sentTotalA, b: sentTotalB }} />} />
                     <Bar dataKey="a" name={dataA.keyword} fill={COLOR_A} radius={[6, 6, 0, 0]} />
                     <Bar dataKey="b" name={dataB.keyword} fill={COLOR_B} radius={[6, 6, 0, 0]} />
                   </BarChart>

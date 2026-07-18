@@ -27,7 +27,7 @@ export default function YoutubePage() {
   const router = useRouter();
   const { t } = useTranslation();
   const [checkingAuth, setCheckingAuth] = useState(true);
-  const [tab, setTab] = useState<TabKey>("sentiment");
+  const [tab, setTab] = useState<TabKey>("trending");
   const [query, setQuery] = useState("");
 
   const trendingRef = useRef<TrendingTabHandle>(null);

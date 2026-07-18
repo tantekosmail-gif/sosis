@@ -6,6 +6,7 @@ import { DashboardComment } from "@/types/dashboard.type";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
+import { INFO_HINT, useInfoSource, type SentimentKind } from "@/components/common/InfoSource";
 
 interface Props {
   comments: DashboardComment[];
@@ -17,6 +18,7 @@ const PAGE_SIZE = 10;
 
 export default function CommentsTable({ comments }: Props) {
   const { t } = useTranslation();
+  const { explain } = useInfoSource();
   const SENTIMENT_STYLE: Record<string, { bg: string; text: string; dot: string; label: string }> = {
     positive: { bg: "bg-emerald-50 dark:bg-emerald-950/40",  text: "text-emerald-700",  dot: "bg-emerald-400",  label: t.sentimentPie.positive },
     neutral:  { bg: "bg-slate-100 dark:bg-slate-800",   text: "text-slate-600 dark:text-slate-400",    dot: "bg-slate-400",    label: t.sentimentPie.neutral },
@@ -100,6 +102,7 @@ export default function CommentsTable({ comments }: Props) {
               {f === "all" ? t.commentsTable.all : s!.label}
               <span className={`ml-0.5 rounded-md px-1.5 py-0.5 text-[10px] font-semibold ${active ? "bg-white/20" : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400"}`}>
                 {counts[f]}
+                {f !== "all" && counts.all > 0 && ` (${Math.round((counts[f] / counts.all) * 100)}%)`}
               </span>
             </button>
           );
@@ -131,11 +134,39 @@ export default function CommentsTable({ comments }: Props) {
 
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-sm font-semibold text-slate-800 dark:text-slate-200">{comment.author}</span>
+                    {/* Author berformat handle YouTube ("@user") ditautkan ke
+                        channel-nya; nama tampilan biasa tetap teks statis
+                        karena URL channel-nya tidak bisa ditebak dari nama. */}
+                    {comment.author.startsWith("@") ? (
+                      <a
+                        href={`https://www.youtube.com/@${encodeURIComponent(comment.author.slice(1))}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm font-semibold text-slate-800 dark:text-slate-200 hover:text-indigo-600 hover:underline transition-colors"
+                      >
+                        {comment.author}
+                      </a>
+                    ) : (
+                      <span className="text-sm font-semibold text-slate-800 dark:text-slate-200">{comment.author}</span>
+                    )}
                     {dateStr && <span className="text-xs text-slate-400 dark:text-slate-500">{dateStr}</span>}
-                    <span className={`rounded-lg px-2 py-0.5 text-[10px] font-semibold ${s.bg} ${s.text}`}>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        explain({
+                          title: `Sentimen Komentar — ${s.label}`,
+                          sentiment: (["positive", "neutral", "negative"].includes(comment.sentiment)
+                            ? comment.sentiment
+                            : "neutral") as SentimentKind,
+                          meaning: `Komentar ini dinilai bernada ${s.label.toLowerCase()} oleh sistem analisis sentimen berdasarkan isi teksnya.`,
+                          source: "Komentar publik yang dikumpulkan langsung dari platform saat analisis keyword dijalankan.",
+                        })
+                      }
+                      title={INFO_HINT}
+                      className={`cursor-pointer rounded-lg px-2 py-0.5 text-[10px] font-semibold ${s.bg} ${s.text}`}
+                    >
                       {s.label}
-                    </span>
+                    </button>
                   </div>
                   <p className="mt-1 break-words text-sm leading-relaxed text-slate-600 dark:text-slate-400 line-clamp-2">{comment.content}</p>
                   {comment.likes !== undefined && comment.likes > 0 && (

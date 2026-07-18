@@ -27,12 +27,12 @@
     "brandTagline": "Pemantauan Media"
   },
   "header": {
-    "dashboardTitle": "MediaWatch Dashboard",
-    "dashboardSubtitle": "Pemantauan Media Sosial & Berita",
+    "liveStatus": "Live Monitoring",
     "history": "Riwayat",
     "notifications": "Notifikasi",
     "noNotifications": "Belum ada notifikasi",
     "clearAll": "Hapus semua",
+    "markAllRead": "Tandai semua dibaca",
     "byAuthor": "oleh",
     "logout": "Logout",
     "language": "Bahasa",
@@ -190,6 +190,62 @@
     "subtitle": "Trending & pencarian berita terkini dari berbagai sumber media",
     "searchTab": "Cari"
   },
+  "newsTrendingTab": {
+    "title": "Artikel Trending Hari Ini",
+    "subtitle": "{count} artikel • {date}",
+    "loading": "Memuat artikel trending...",
+    "empty": "Belum ada artikel trending hari ini",
+    "noSentimentMatch": "Tidak ada artikel dengan sentimen ini",
+    "filterAll": "Semua",
+    "sortLabel": "Urutkan:",
+    "sortNewest": "Terbaru",
+    "sortMostPositive": "Paling Positif",
+    "sortMostNegative": "Paling Negatif"
+  },
+  "newsSearchTab": {
+    "placeholder": "Cari berita, mis. jokowi, pemilu, ekonomi...",
+    "searchButton": "Cari",
+    "recentSearches": "Pencarian Terakhir",
+    "loading": "Mencari berita...",
+    "resultsPrefix": "hasil untuk",
+    "updated": "Diperbarui {time}",
+    "noResults": "Tidak ada berita ditemukan untuk pencarian ini",
+    "sortLabel": "Urutkan:",
+    "sortNewest": "Terbaru",
+    "sortMostNegative": "Paling Negatif",
+    "emptyTitle": "Mulai cari berita",
+    "emptyDesc": "Masukkan kata kunci di atas untuk memulai pencarian"
+  },
+  "newsSummary": {
+    "articleSummaryTitle": "Ringkasan Artikel",
+    "articleSummarySubtitle": "Statistik dasar dari artikel yang terkumpul",
+    "totalArticles": "Total Artikel",
+    "analyzed": "Dianalisis",
+    "analyzedTooltip": "Jumlah artikel yang sudah diproses oleh mesin analisis sentimen",
+    "entities": "Entitas",
+    "entitiesTooltip": "Jumlah nama orang, organisasi, lokasi, atau event yang paling sering disebut di artikel",
+    "sources": "Sumber",
+    "sourcesTooltip": "Jumlah media/situs berita berbeda yang menjadi sumber artikel",
+    "sentimentTitle": "Sentimen Berita",
+    "sentimentSubtitle": "Distribusi nada pemberitaan dari artikel yang dianalisis",
+    "articlesAnalyzed": "{count} artikel dianalisis",
+    "entitiesTitle": "Entitas Trending",
+    "entitiesSubtitle": "Nama, organisasi, lokasi, dan event yang paling sering disebut",
+    "noEntities": "Belum ada entitas yang terdeteksi",
+    "mentionsUnit": "sebutan",
+    "sourcesTitle": "Sumber Media",
+    "sourcesSubtitle": "Media/situs berita yang menjadi sumber artikel",
+    "noSources": "Belum ada sumber tercatat"
+  },
+  "newsResultCard": {
+    "open": "Buka",
+    "openArticle": "Buka artikel"
+  },
+  "newsNegativeHighlight": {
+    "title": "Artikel Paling Disorot Negatif",
+    "negativePercent": "{percent}% negatif",
+    "openArticle": "Buka artikel"
+  },
   "compare": {
     "title": "Bandingkan Platform",
     "subtitle": "Bandingkan topik/keyword yang sama antara Facebook, Instagram, Twitter/X & TikTok"
@@ -285,7 +341,9 @@
   },
   "platformChart": {
     "title": "Distribusi Channel",
-    "subtitle": "Jumlah video per channel untuk keyword ini"
+    "subtitle": "Jumlah video per channel untuk keyword ini",
+    "videosUnit": "video",
+    "shareOfTotal": "dari total video"
   },
   "sentimentPie": {
     "title": "Analisis Sentimen",
@@ -332,8 +390,9 @@
     "countLabel": "Jumlah",
     "countUnit": "video",
     "sortLabel": "Urutkan",
-    "sortRank": "Paling Populer",
-    "sortNewest": "Paling Baru",
+    "sortNewest": "Terbaru",
+    "sortViews": "Paling Banyak View",
+    "sortNegatif": "Sentimen Negatif",
     "loadingTitle": "Memuat video viral...",
     "showingPrefix": "Menampilkan",
     "showingMiddle": "dari",
@@ -349,6 +408,9 @@
     "sortRelevance": "Paling Relevan",
     "sortNewest": "Paling Baru",
     "sortPopular": "Paling Populer",
+    "windowLabel": "Periode",
+    "window1Day": "24 Jam",
+    "window1Week": "1 Minggu",
     "loadingTitle": "Mencari video...",
     "loadingDesc": "Mengambil video dalam 24 jam terakhir yang cocok dengan kata kunci",
     "emptyTitle": "Masukkan kata kunci untuk mencari video YouTube",
@@ -356,6 +418,21 @@
     "showingPrefix": "Menampilkan",
     "showingMiddle": "dari",
     "showingSuffix": "video untuk"
+  },
+  "videoFilterBar": {
+    "searchPlaceholder": "Cari judul video...",
+    "allChannels": "Semua Channel",
+    "allTopics": "Semua Keyword",
+    "allAges": "Semua Umur",
+    "ageToday": "Hari Ini",
+    "ageWeek": "Minggu Ini",
+    "ageMonth": "Bulan Ini",
+    "dateFromLabel": "Dari tanggal",
+    "dateToLabel": "Sampai tanggal",
+    "dateFromPlaceholder": "dari",
+    "dateToPlaceholder": "sampai",
+    "dateRangeSeparator": "s/d",
+    "noMatch": "Tidak ada video yang cocok dengan filter"
   },
   "youtubeSentimentTab": {
     "desc": "Cari keyword untuk menganalisis sentimen video & komentar YouTube",

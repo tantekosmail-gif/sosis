@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { CheckCircle2, ExternalLink, Loader2, Radar, XCircle } from "lucide-react";
 
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useTwitterDiscover } from "@/features/twitter/hooks/useTwitterDiscover";
 
 function SubmissionBadge({ keyword, submitted }: { keyword: string; submitted: { created: string[]; updated: string[]; rejected: string[] } }) {
@@ -34,6 +35,7 @@ function SubmissionBadge({ keyword, submitted }: { keyword: string; submitted: {
 }
 
 export default function TwitterDiscoverPanel({ onSelectAccount }: { onSelectAccount?: (username: string) => void }) {
+  const [open, setOpen] = useState(false);
   const [keywordInput, setKeywordInput] = useState("");
   const { data, loading, error, discover } = useTwitterDiscover();
 
@@ -42,106 +44,126 @@ export default function TwitterDiscoverPanel({ onSelectAccount }: { onSelectAcco
     discover(keywordInput);
   }
 
+  function handleSelectAccount(username: string) {
+    onSelectAccount?.(username);
+    setOpen(false);
+  }
+
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm">
-      <div className="flex items-center gap-3 border-b border-slate-100 dark:border-slate-800 px-6 py-4">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-50 dark:bg-violet-950/40">
-          <Radar size={17} className="text-violet-600" />
-        </div>
-        <div>
-          <h2 className="font-semibold text-slate-900 dark:text-slate-100">Cari Topik & Akun</h2>
-          <p className="text-xs text-slate-400 dark:text-slate-500">Temukan akun yang membahas sebuah topik &amp; tambahkan ke pemantauan</p>
-        </div>
-      </div>
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="flex h-10 shrink-0 items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 text-sm font-semibold text-violet-600 shadow-sm transition hover:bg-violet-50 dark:hover:bg-violet-950/40"
+      >
+        <Radar size={15} />
+        Cari Topik & Akun
+      </button>
 
-      <div className="space-y-5 p-6">
-        <form onSubmit={handleSubmit} className="flex items-center gap-3">
-          <input
-            placeholder="Keyword atau topik, mis. jokowi"
-            value={keywordInput}
-            onChange={(e) => setKeywordInput(e.target.value)}
-            className="h-10 flex-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-3.5 text-sm text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-violet-400 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-violet-500/20 transition"
-          />
-          <button
-            type="submit"
-            disabled={loading || !keywordInput.trim()}
-            className="flex h-10 shrink-0 items-center gap-2 rounded-xl bg-violet-600 px-4 text-sm font-semibold text-white hover:bg-violet-700 disabled:opacity-50 transition"
-          >
-            {loading ? <Loader2 size={14} className="animate-spin" /> : <Radar size={14} />}
-            Cari
-          </button>
-        </form>
-
-        {error && <p className="rounded-xl bg-red-50 dark:bg-red-950/40 px-4 py-3 text-sm text-red-500">{error}</p>}
-
-        {loading && (
-          <div className="flex flex-col items-center justify-center py-10">
-            <Loader2 size={24} className="mb-2 animate-spin text-violet-400" />
-            <p className="text-sm text-slate-500 dark:text-slate-400">Mencari akun & tweet terkait...</p>
-          </div>
-        )}
-
-        {!loading && data && (
-          <div className="space-y-5">
-            <div className="flex flex-wrap items-center gap-3">
-              <p className="text-sm text-slate-500 dark:text-slate-400">
-                <span className="font-semibold text-slate-700 dark:text-slate-300">{data.posts_found}</span> tweet ·{" "}
-                <span className="font-semibold text-slate-700 dark:text-slate-300">{data.accounts_found.length}</span> akun ditemukan untuk{" "}
-                <span className="font-semibold text-violet-600">&quot;{data.keyword}&quot;</span>
-              </p>
-              <SubmissionBadge keyword={data.keyword} submitted={data.submitted} />
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-xl">
+          <DialogHeader>
+            <div className="flex items-center gap-3">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-violet-50 dark:bg-violet-950/40">
+                <Radar size={17} className="text-violet-600" />
+              </div>
+              <div className="min-w-0">
+                <DialogTitle>Cari Topik & Akun</DialogTitle>
+                <p className="text-xs text-slate-400 dark:text-slate-500">Temukan akun yang membahas sebuah topik &amp; tambahkan ke pemantauan</p>
+              </div>
             </div>
+          </DialogHeader>
 
-            {data.accounts_found.length > 0 && (
-              <div>
-                <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Akun Ditemukan</p>
-                <div className="flex flex-wrap gap-2">
-                  {data.accounts_found.map((account) => (
-                    <button
-                      key={account.username}
-                      type="button"
-                      onClick={() => onSelectAccount?.(account.username)}
-                      className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-2.5 py-1 text-xs font-medium text-slate-600 dark:text-slate-400 transition hover:border-violet-300 hover:bg-violet-50 dark:hover:bg-violet-950/40 hover:text-violet-700"
-                    >
-                      @{account.username}
-                    </button>
-                  ))}
-                </div>
+          <div className="space-y-5">
+            <form onSubmit={handleSubmit} className="flex items-center gap-3">
+              <input
+                placeholder="Keyword atau topik, mis. jokowi"
+                value={keywordInput}
+                onChange={(e) => setKeywordInput(e.target.value)}
+                className="h-10 flex-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-3.5 text-sm text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-violet-400 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-violet-500/20 transition"
+              />
+              <button
+                type="submit"
+                disabled={loading || !keywordInput.trim()}
+                className="flex h-10 shrink-0 items-center gap-2 rounded-xl bg-violet-600 px-4 text-sm font-semibold text-white hover:bg-violet-700 disabled:opacity-50 transition"
+              >
+                {loading ? <Loader2 size={14} className="animate-spin" /> : <Radar size={14} />}
+                Cari
+              </button>
+            </form>
+
+            {error && <p className="rounded-xl bg-red-50 dark:bg-red-950/40 px-4 py-3 text-sm text-red-500">{error}</p>}
+
+            {loading && (
+              <div className="flex flex-col items-center justify-center py-10">
+                <Loader2 size={24} className="mb-2 animate-spin text-violet-400" />
+                <p className="text-sm text-slate-500 dark:text-slate-400">Mencari akun & tweet terkait...</p>
               </div>
             )}
 
-            {data.sample_posts.length > 0 && (
-              <div>
-                <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Contoh Tweet</p>
-                <ul className="space-y-2">
-                  {data.sample_posts.map((post, idx) => (
-                    <li key={`${post.identifier_extracted}-${idx}`} className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-3">
-                      <p className="line-clamp-2 text-xs leading-snug text-slate-600 dark:text-slate-400">{post.text}</p>
-                      <div className="mt-1.5 flex items-center justify-between gap-2 text-[11px] text-slate-400 dark:text-slate-500">
-                        <span>{post.author} · @{post.identifier_extracted}</span>
-                        <a
-                          href={post.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex shrink-0 items-center gap-1 text-violet-500 hover:text-violet-700"
+            {!loading && data && (
+              <div className="space-y-5">
+                <div className="flex flex-wrap items-center gap-3">
+                  <p className="text-sm text-slate-500 dark:text-slate-400">
+                    <span className="font-semibold text-slate-700 dark:text-slate-300">{data.posts_found}</span> tweet ·{" "}
+                    <span className="font-semibold text-slate-700 dark:text-slate-300">{data.accounts_found.length}</span> akun ditemukan untuk{" "}
+                    <span className="font-semibold text-violet-600">&quot;{data.keyword}&quot;</span>
+                  </p>
+                  <SubmissionBadge keyword={data.keyword} submitted={data.submitted} />
+                </div>
+
+                {data.accounts_found.length > 0 && (
+                  <div>
+                    <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Akun Ditemukan</p>
+                    <div className="flex flex-wrap gap-2">
+                      {data.accounts_found.map((account) => (
+                        <button
+                          key={account.username}
+                          type="button"
+                          onClick={() => handleSelectAccount(account.username)}
+                          className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-2.5 py-1 text-xs font-medium text-slate-600 dark:text-slate-400 transition hover:border-violet-300 hover:bg-violet-50 dark:hover:bg-violet-950/40 hover:text-violet-700"
                         >
-                          Lihat <ExternalLink size={10} />
-                        </a>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
+                          @{account.username}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {data.sample_posts.length > 0 && (
+                  <div>
+                    <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Contoh Tweet</p>
+                    <ul className="space-y-2">
+                      {data.sample_posts.map((post, idx) => (
+                        <li key={`${post.identifier_extracted}-${idx}`} className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-3">
+                          <p className="line-clamp-2 text-xs leading-snug text-slate-600 dark:text-slate-400">{post.text}</p>
+                          <div className="mt-1.5 flex items-center justify-between gap-2 text-[11px] text-slate-400 dark:text-slate-500">
+                            <span>{post.author} · @{post.identifier_extracted}</span>
+                            <a
+                              href={post.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex shrink-0 items-center gap-1 text-violet-500 hover:text-violet-700"
+                            >
+                              Lihat <ExternalLink size={10} />
+                            </a>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
+            )}
+
+            {!loading && !error && !data && (
+              <p className="py-6 text-center text-sm text-slate-400 dark:text-slate-500">
+                Masukkan keyword untuk menemukan akun yang membahasnya
+              </p>
             )}
           </div>
-        )}
-
-        {!loading && !error && !data && (
-          <p className="py-6 text-center text-sm text-slate-400 dark:text-slate-500">
-            Masukkan keyword untuk menemukan akun yang membahasnya
-          </p>
-        )}
-      </div>
-    </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

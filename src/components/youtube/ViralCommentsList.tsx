@@ -1,6 +1,7 @@
 "use client";
 
 import type { ViralComment } from "@/features/youtube/types/viral.types";
+import { decodeHtmlEntities } from "@/lib/decodeHtmlEntities";
 
 const SENTIMENT_STYLE: Record<string, { pill: string; dot: string }> = {
   positif: { pill: "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40", dot: "bg-emerald-500" },
@@ -33,7 +34,7 @@ export default function ViralCommentsList({ data }: { data: ViralComment[] }) {
               </span>
             </div>
 
-            <p className="mt-1.5 break-words text-sm leading-snug text-slate-600 dark:text-slate-400">{comment.content}</p>
+            <p className="mt-1.5 break-words text-sm leading-snug text-slate-600 dark:text-slate-400">{decodeHtmlEntities(comment.content)}</p>
           </li>
         );
       })}

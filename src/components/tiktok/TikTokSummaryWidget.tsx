@@ -4,6 +4,7 @@ import type { LucideIcon } from "lucide-react";
 import { BarChart3, MessageSquare, Music2, PieChart } from "lucide-react";
 
 import type { TikTokAnalysisSummary } from "@/features/tiktok/types/summary.types";
+import MiniSentimentBar from "@/components/common/MiniSentimentBar";
 
 const SENTIMENT_LABEL: Record<string, string> = {
   positif: "Positif",
@@ -25,21 +26,6 @@ function StatCard({ icon: Icon, label, value }: { icon: LucideIcon; label: strin
         <span className="text-[10px] font-semibold uppercase tracking-wider">{label}</span>
       </div>
       <p className="mt-1 text-lg font-bold text-slate-900 dark:text-slate-100">{value}</p>
-    </div>
-  );
-}
-
-function MiniSentimentBar({ positif, negatif, netral }: { positif: number; negatif: number; netral: number }) {
-  const total = positif + negatif + netral;
-  if (total === 0) {
-    return <div className="h-1.5 w-full rounded-full bg-slate-100 dark:bg-slate-800" />;
-  }
-
-  return (
-    <div className="flex h-1.5 w-24 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
-      <div className={SENTIMENT_COLOR.positif.bar} style={{ width: `${(positif / total) * 100}%` }} />
-      <div className={SENTIMENT_COLOR.netral.bar} style={{ width: `${(netral / total) * 100}%` }} />
-      <div className={SENTIMENT_COLOR.negatif.bar} style={{ width: `${(negatif / total) * 100}%` }} />
     </div>
   );
 }

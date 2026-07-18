@@ -2,7 +2,6 @@
 
 import { Clock, Trash2, X, RotateCcw } from "lucide-react";
 import { HistoryItem } from "../hooks/useSearchHistory";
-import { useFilterStore } from "@/stores/filterStore";
 
 const PLATFORM_STYLE: Record<string, { dot: string; label: string }> = {
   youtube:   { dot: "bg-red-500",   label: "YouTube"   },
@@ -113,30 +112,38 @@ export default function SearchHistoryPanel({ history, onRemove, onClear, onReloa
                         </p>
                         <p className="mt-0.5 text-[11px] text-slate-400 dark:text-slate-500">{relativeTime(item.analyzedAt)}</p>
 
-                        {/* Mini sentiment bar */}
-                        <div className="mt-2.5 flex h-1.5 w-full overflow-hidden rounded-full">
-                          <div className="bg-emerald-400 transition-all" style={{ width: `${pos}%` }} />
-                          <div className="bg-slate-300 transition-all" style={{ width: `${neu}%` }} />
-                          <div className="bg-red-400 transition-all" style={{ width: `${neg}%` }} />
-                        </div>
-                        <div className="mt-1.5 flex gap-3 text-[10px] text-slate-400 dark:text-slate-500">
-                          <span className="text-emerald-600">{item.stats.sentiment.positive} pos</span>
-                          <span>{item.stats.sentiment.neutral} net</span>
-                          <span className="text-red-500">{item.stats.sentiment.negative} neg</span>
-                        </div>
+                        {/* Mini sentiment bar — disembunyikan kalau belum ada
+                            komentar dianalisis; bar penuh abu-abu dengan angka
+                            serba nol cuma membingungkan. */}
+                        {item.stats.sentiment.positive + item.stats.sentiment.neutral + item.stats.sentiment.negative > 0 ? (
+                          <>
+                            <div className="mt-2.5 flex h-1.5 w-full overflow-hidden rounded-full">
+                              <div className="bg-emerald-400 transition-all" style={{ width: `${pos}%` }} />
+                              <div className="bg-slate-300 transition-all" style={{ width: `${neu}%` }} />
+                              <div className="bg-red-400 transition-all" style={{ width: `${neg}%` }} />
+                            </div>
+                            <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-0.5 text-[10px] text-slate-400 dark:text-slate-500">
+                              <span className="text-emerald-600">Positif {item.stats.sentiment.positive} ({Math.round(pos)}%)</span>
+                              <span>Netral {item.stats.sentiment.neutral} ({Math.round(neu)}%)</span>
+                              <span className="text-red-500">Negatif {item.stats.sentiment.negative} ({Math.round(neg)}%)</span>
+                            </div>
+                          </>
+                        ) : (
+                          <p className="mt-2 text-[10px] italic text-slate-400 dark:text-slate-500">Belum ada komentar dianalisis</p>
+                        )}
                       </div>
 
                       <div className="flex shrink-0 flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
                           onClick={() => { onReload(item); onClose(); }}
-                          title="Load ulang"
+                          title="Jalankan ulang analisis"
                           className="rounded-lg p-1.5 text-indigo-500 hover:bg-indigo-50 transition-colors dark:hover:bg-indigo-950/40"
                         >
                           <RotateCcw size={13} />
                         </button>
                         <button
                           onClick={() => onRemove(item.id)}
-                          title="Hapus"
+                          title="Hapus dari riwayat"
                           className="rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-500 transition-colors dark:hover:bg-red-950/40"
                         >
                           <X size={13} />

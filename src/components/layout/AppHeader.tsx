@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
-import { Bell, LogOut, ChevronDown, Clock, Menu, Moon, Sun, CheckCircle2, XCircle, Info, Trash2 } from "lucide-react";
+import { Bell, LogOut, ChevronDown, Clock, Menu, Moon, Sun, CheckCheck, CheckCircle2, XCircle, Info, Trash2 } from "lucide-react";
 import { FaFacebook, FaInstagram, FaTiktok, FaXTwitter, FaYoutube } from "react-icons/fa6";
 import { getSettings, setThemeSetting, type Theme } from "@/features/settings/hooks/useSettings";
 import { useNotifications, type NotificationType } from "@/features/notifications/hooks/useNotifications";
@@ -127,9 +127,14 @@ export default function AppHeader({ onOpenHistory, historyCount = 0, onOpenSideb
           <Menu size={17} />
         </button>
 
-        <div className="min-w-0">
-          <h2 className="truncate font-semibold text-slate-900 dark:text-slate-100">{t.header.dashboardTitle}</h2>
-          <p className="hidden truncate text-xs text-slate-400 dark:text-slate-500 sm:block">{t.header.dashboardSubtitle}</p>
+        <div className="hidden h-6 w-px bg-slate-200 dark:bg-slate-700 sm:block" />
+
+        <div className="flex min-w-0 items-center gap-2">
+          <span className="relative flex h-2 w-2 shrink-0">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+          </span>
+          <span className="truncate text-sm font-medium text-slate-600 dark:text-slate-300">{t.header.liveStatus}</span>
         </div>
       </div>
 
@@ -197,14 +202,24 @@ export default function AppHeader({ onOpenHistory, historyCount = 0, onOpenSideb
           <DropdownMenuContent align="end" className="w-80 p-0">
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 px-4 py-3">
               <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{t.header.notifications}</p>
-              {notifications.length > 0 && (
-                <button
-                  onClick={clear}
-                  className="flex items-center gap-1 text-xs text-slate-400 dark:text-slate-500 hover:text-red-500 transition-colors"
-                >
-                  <Trash2 size={12} /> {t.header.clearAll}
-                </button>
-              )}
+              <div className="flex items-center gap-3">
+                {topicNotif.unreadCount > 0 && (
+                  <button
+                    onClick={() => topicNotif.markAllRead()}
+                    className="flex items-center gap-1 text-xs text-slate-400 dark:text-slate-500 hover:text-indigo-600 transition-colors"
+                  >
+                    <CheckCheck size={12} /> {t.header.markAllRead}
+                  </button>
+                )}
+                {notifications.length > 0 && (
+                  <button
+                    onClick={clear}
+                    className="flex items-center gap-1 text-xs text-slate-400 dark:text-slate-500 hover:text-red-500 transition-colors"
+                  >
+                    <Trash2 size={12} /> {t.header.clearAll}
+                  </button>
+                )}
+              </div>
             </div>
 
             <div className="max-h-96 overflow-y-auto">
@@ -252,6 +267,11 @@ export default function AppHeader({ onOpenHistory, historyCount = 0, onOpenSideb
                         <PlatformIcon size={16} className={`mt-0.5 shrink-0 ${PLATFORM_COLOR[n.platform] ?? "text-slate-400"}`} />
                       )}
                       <div className="min-w-0 flex-1">
+                        {n.keyword && (
+                          <span className="mb-1 inline-flex items-center rounded-md bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold text-slate-500 dark:bg-slate-800 dark:text-slate-400">
+                            {n.keyword}
+                          </span>
+                        )}
                         <p className="line-clamp-2 text-sm font-medium text-slate-800 dark:text-slate-200">{n.title}</p>
                         <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">
                           {t.header.byAuthor} {n.author} · {formatCompactNumber(n.metricValue)} {n.metricType}

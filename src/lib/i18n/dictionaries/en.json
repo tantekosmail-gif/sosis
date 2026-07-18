@@ -27,12 +27,12 @@
     "brandTagline": "Media Monitoring"
   },
   "header": {
-    "dashboardTitle": "MediaWatch Dashboard",
-    "dashboardSubtitle": "Social Media & News Monitoring",
+    "liveStatus": "Live Monitoring",
     "history": "History",
     "notifications": "Notifications",
     "noNotifications": "No notifications yet",
     "clearAll": "Clear all",
+    "markAllRead": "Mark all read",
     "byAuthor": "by",
     "logout": "Logout",
     "language": "Language",
@@ -190,6 +190,62 @@
     "subtitle": "Trending topics & search for the latest news across sources",
     "searchTab": "Search"
   },
+  "newsTrendingTab": {
+    "title": "Trending Articles Today",
+    "subtitle": "{count} articles • {date}",
+    "loading": "Loading trending articles...",
+    "empty": "No trending articles today yet",
+    "noSentimentMatch": "No articles with this sentiment",
+    "filterAll": "All",
+    "sortLabel": "Sort:",
+    "sortNewest": "Newest",
+    "sortMostPositive": "Most Positive",
+    "sortMostNegative": "Most Negative"
+  },
+  "newsSearchTab": {
+    "placeholder": "Search news, e.g. jokowi, election, economy...",
+    "searchButton": "Search",
+    "recentSearches": "Recent Searches",
+    "loading": "Searching news...",
+    "resultsPrefix": "results for",
+    "updated": "Updated {time}",
+    "noResults": "No news found for this search",
+    "sortLabel": "Sort:",
+    "sortNewest": "Newest",
+    "sortMostNegative": "Most Negative",
+    "emptyTitle": "Start searching news",
+    "emptyDesc": "Enter a keyword above to start searching"
+  },
+  "newsSummary": {
+    "articleSummaryTitle": "Article Summary",
+    "articleSummarySubtitle": "Basic statistics from collected articles",
+    "totalArticles": "Total Articles",
+    "analyzed": "Analyzed",
+    "analyzedTooltip": "Number of articles already processed by the sentiment analysis engine",
+    "entities": "Entities",
+    "entitiesTooltip": "Number of people, organizations, locations, or events most frequently mentioned in articles",
+    "sources": "Sources",
+    "sourcesTooltip": "Number of different media/news sites that are article sources",
+    "sentimentTitle": "News Sentiment",
+    "sentimentSubtitle": "Tone distribution of the analyzed articles",
+    "articlesAnalyzed": "{count} articles analyzed",
+    "entitiesTitle": "Trending Entities",
+    "entitiesSubtitle": "Names, organizations, locations, and events mentioned most often",
+    "noEntities": "No entities detected yet",
+    "mentionsUnit": "mentions",
+    "sourcesTitle": "Media Sources",
+    "sourcesSubtitle": "Media/news sites that are the source of articles",
+    "noSources": "No sources recorded yet"
+  },
+  "newsResultCard": {
+    "open": "Open",
+    "openArticle": "Open article"
+  },
+  "newsNegativeHighlight": {
+    "title": "Most Negatively Highlighted Article",
+    "negativePercent": "{percent}% negative",
+    "openArticle": "Open article"
+  },
   "compare": {
     "title": "Compare Platforms",
     "subtitle": "Compare the same topic/keyword across Facebook, Instagram, Twitter/X & TikTok"
@@ -285,7 +341,9 @@
   },
   "platformChart": {
     "title": "Channel Distribution",
-    "subtitle": "Number of videos per channel for this keyword"
+    "subtitle": "Number of videos per channel for this keyword",
+    "videosUnit": "videos",
+    "shareOfTotal": "of all videos"
   },
   "sentimentPie": {
     "title": "Sentiment Analysis",
@@ -332,8 +390,9 @@
     "countLabel": "Count",
     "countUnit": "videos",
     "sortLabel": "Sort by",
-    "sortRank": "Most Popular",
     "sortNewest": "Newest",
+    "sortViews": "Most Views",
+    "sortNegatif": "Negative Sentiment",
     "loadingTitle": "Loading viral videos...",
     "showingPrefix": "Showing",
     "showingMiddle": "of",
@@ -349,6 +408,9 @@
     "sortRelevance": "Most Relevant",
     "sortNewest": "Newest",
     "sortPopular": "Most Popular",
+    "windowLabel": "Period",
+    "window1Day": "24 Hours",
+    "window1Week": "1 Week",
     "loadingTitle": "Searching videos...",
     "loadingDesc": "Fetching videos from the last 24 hours matching your keyword",
     "emptyTitle": "Enter a keyword to search YouTube videos",
@@ -356,6 +418,21 @@
     "showingPrefix": "Showing",
     "showingMiddle": "of",
     "showingSuffix": "videos for"
+  },
+  "videoFilterBar": {
+    "searchPlaceholder": "Search video title...",
+    "allChannels": "All Channels",
+    "allTopics": "All Keywords",
+    "allAges": "All Ages",
+    "ageToday": "Today",
+    "ageWeek": "This Week",
+    "ageMonth": "This Month",
+    "dateFromLabel": "From date",
+    "dateToLabel": "To date",
+    "dateFromPlaceholder": "from",
+    "dateToPlaceholder": "until",
+    "dateRangeSeparator": "to",
+    "noMatch": "No videos match this filter"
   },
   "youtubeSentimentTab": {
     "desc": "Search a keyword to analyze YouTube video & comment sentiment",

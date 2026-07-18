@@ -1,7 +1,10 @@
 import type { NewsArticleBase } from "./article.types";
+import type { NewsSentimentScore } from "./trending.types";
 
 export interface NewsSearchItem extends NewsArticleBase {
-  sentiment: string | null;
+  // Sebagian sumber cuma kirim label string, sebagian objek {label, score} —
+  // NewsResultCard menangani keduanya, tampilkan skor persentase kalau ada.
+  sentiment: NewsSentimentScore | string | null;
 }
 
 export interface NewsSearchData {

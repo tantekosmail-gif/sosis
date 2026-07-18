@@ -2,18 +2,14 @@
 
 import { ExternalLink, Hash, MessageCircle, ThumbsUp } from "lucide-react";
 
-import type { FacebookTrendingPost, FacebookSentimentBreakdown, FacebookTrendingTopic } from "@/features/facebook/types/trending.types";
+import type { FacebookTrendingPost, FacebookTrendingTopic } from "@/features/facebook/types/trending.types";
+import SentimentBar from "@/components/common/SentimentBreakdownBar";
+import FallbackImage from "@/components/common/FallbackImage";
 
 const RANK_STYLE: Record<number, string> = {
   1: "bg-amber-400 text-white",
   2: "bg-slate-400 text-white",
   3: "bg-orange-400 text-white",
-};
-
-const SENTIMENT_BAR_COLOR: Record<string, string> = {
-  positif: "bg-emerald-500",
-  netral: "bg-amber-400",
-  negatif: "bg-red-500",
 };
 
 const STATUS_STYLE: Record<string, string> = {
@@ -43,19 +39,6 @@ function formatDate(dateStr?: string | null) {
   }
 }
 
-function SentimentBar({ sentiment }: { sentiment: FacebookSentimentBreakdown }) {
-  const total = sentiment.positif.count + sentiment.netral.count + sentiment.negatif.count;
-  if (total === 0) return null;
-
-  return (
-    <div className="flex h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
-      {(["positif", "netral", "negatif"] as const).map((key) => (
-        <div key={key} className={SENTIMENT_BAR_COLOR[key]} style={{ width: `${sentiment[key].percentage}%` }} />
-      ))}
-    </div>
-  );
-}
-
 function MetricPill({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 px-3 py-2">
@@ -82,21 +65,9 @@ function PostMiniCard({
         isSelected ? "border-blue-400 bg-blue-50/40" : "border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900"
       }`}
     >
-      {post.thumbnail && (
-        <a
-          href={post.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-slate-100 dark:bg-slate-800"
-        >
-          <img
-            src={post.thumbnail}
-            alt=""
-            className="h-full w-full object-cover"
-            onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
-          />
-        </a>
-      )}
+      <a href={post.url} target="_blank" rel="noopener noreferrer" className="block h-20 w-20 shrink-0">
+        <FallbackImage src={post.thumbnail} className="h-20 w-20 rounded-lg" />
+      </a>
 
       <div className="min-w-0 flex-1">
         <a
@@ -174,7 +145,7 @@ export default function TrendingTopicCard({
       </div>
 
       <div className="px-5 pb-4">
-        <SentimentBar sentiment={topic.sentiment} />
+        <SentimentBar summary={topic.sentiment} />
       </div>
 
       <div className="border-t border-slate-100 dark:border-slate-800 px-5 py-4">

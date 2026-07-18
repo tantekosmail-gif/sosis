@@ -12,9 +12,11 @@ import CommentsModal from "@/components/common/CommentsModal";
 import FacebookSummaryWidget from "@/components/facebook/FacebookSummaryWidget";
 import FacebookDiscoverPanel from "@/components/facebook/FacebookDiscoverPanel";
 import WordCloud from "@/components/dashboard/WordCloud";
+import Pagination from "@/components/common/Pagination";
 import { useFacebookPosts } from "../hooks/useFacebookPosts";
 import { useFacebookSummary } from "../hooks/useFacebookSummary";
 import { useRecentFacebookSearches } from "../hooks/useRecentSearches";
+import { usePagination } from "@/hooks/usePagination";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { buildWordCloud } from "@/lib/wordCloud";
 
@@ -61,6 +63,8 @@ export default function FacebookSentimentTab() {
     return items.sort((a, b) => (b.published_at || "").localeCompare(a.published_at || ""));
   }, [data, sortBy]);
 
+  const { page, totalPages, setPage, paginated } = usePagination(sortedItems, 8);
+
   const commentsWordCloud = useMemo(() => {
     if (!data) return [];
     return buildWordCloud(data.items.flatMap((item) => item.comments.map((c) => c.content)));
@@ -80,17 +84,17 @@ export default function FacebookSentimentTab() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="font-semibold text-slate-900 dark:text-slate-100">{t.accountSentimentTab.title}</h2>
-        <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">
-          {tp.desc}
-        </p>
-      </div>
-
-      <div className="grid gap-6 lg:grid-cols-2">
-        {summary && <FacebookSummaryWidget data={summary} onSelectAccount={handleSelectAccount} />}
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h2 className="font-semibold text-slate-900 dark:text-slate-100">{t.accountSentimentTab.title}</h2>
+          <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">
+            {tp.desc}
+          </p>
+        </div>
         <FacebookDiscoverPanel onSelectAccount={handleSelectAccount} />
       </div>
+
+      {summary && <FacebookSummaryWidget data={summary} onSelectAccount={handleSelectAccount} />}
 
       {/* Search bar */}
       <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900">
@@ -242,10 +246,11 @@ export default function FacebookSentimentTab() {
           </div>
 
           <FacebookPostGrid
-            data={sortedItems}
+            data={paginated}
             selectedPostId={selectedPostId}
             onSelectPost={(item) => setSelectedPostId(item.post_id)}
           />
+          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
 
           <CommentsModal
             open={!!selectedPost}

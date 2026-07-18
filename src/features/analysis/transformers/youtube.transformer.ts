@@ -1,5 +1,59 @@
 import { DashboardData, DashboardComment } from "@/types/dashboard.type";
 
+function normalizeSentiment(raw: unknown): "positive" | "negative" | "neutral" {
+  const s = String(raw ?? "").toLowerCase();
+  if (s === "positif" || s === "positive") return "positive";
+  if (s === "negatif" || s === "negative") return "negative";
+  return "neutral";
+}
+
+// Terapkan filter rentang tanggal di sisi client pada response smart-search
+// YouTube (endpoint date-search tidak dipakai untuk YouTube — lihat
+// analysis.service). Video di luar rentang dibuang beserta komentarnya supaya
+// seluruh dashboard (summary, sentimen, channel distribution) konsisten dengan
+// filter. dateFrom/dateTo berformat YYYY-MM-DD; batas akhir inklusif sampai
+// akhir hari.
+type RawSmartSearchResponse = {
+  data?: {
+    videos?: Array<Record<string, unknown> & { published_at?: string; url?: string }>;
+    comments?: Array<Record<string, unknown> & { video_url?: string }>;
+    stats?: Record<string, unknown>;
+  };
+} & Record<string, unknown>;
+
+export function filterYoutubeResponseByDate(
+  response: RawSmartSearchResponse,
+  dateFrom: string,
+  dateTo: string,
+): RawSmartSearchResponse {
+  const videos = response?.data?.videos ?? [];
+  const comments = response?.data?.comments ?? [];
+  const from = new Date(dateFrom).getTime();
+  const to = new Date(dateTo).getTime() + 24 * 60 * 60 * 1000 - 1;
+  if (isNaN(from) || isNaN(to)) return response;
+
+  const keptVideos = videos.filter((v) => {
+    const ts = new Date(String(v.published_at ?? "")).getTime();
+    return !isNaN(ts) && ts >= from && ts <= to;
+  });
+  const keptUrls = new Set(keptVideos.map((v) => v.url));
+  const keptComments = comments.filter((c) => keptUrls.has(c.video_url));
+
+  return {
+    ...response,
+    data: {
+      ...response?.data,
+      videos: keptVideos,
+      comments: keptComments,
+      stats: {
+        ...response?.data?.stats,
+        total_videos: keptVideos.length,
+        total_comments: keptComments.length,
+      },
+    },
+  };
+}
+
 export function transformYoutube(response: any, keyword = ""): DashboardData {
   const videos = response?.data?.videos ?? [];
   const comments = response?.data?.comments ?? [];
@@ -31,22 +85,8 @@ export function transformYoutube(response: any, keyword = ""): DashboardData {
     negative: 0,
   };
 
-  // TODO: Belum ambil data sentiment, tapi comment
   comments.forEach((item: any) => {
-    switch (String(item.sentiment).toLowerCase()) {
-      case "positif":
-      case "positive":
-        sentiment.positive++;
-        break;
-
-      case "negatif":
-      case "negative":
-        sentiment.negative++;
-        break;
-
-      default:
-        sentiment.neutral++;
-    }
+    sentiment[normalizeSentiment(item.sentiment)]++;
   });
 
   // CHANNEL DISTRIBUTION — jumlah video per channel (top 8)
@@ -69,9 +109,19 @@ export function transformYoutube(response: any, keyword = ""): DashboardData {
     .sort((a: any, b: any) => b.view_count - a.view_count)
     .slice(0, 10)
     .map((video: any) => {
-      const totalComments = comments.filter(
+      const videoComments = comments.filter(
         (comment: any) => comment.video_url === video.url,
-      ).length;
+      );
+
+      const videoSentiment = { positive: 0, neutral: 0, negative: 0 };
+      videoComments.forEach((comment: any) => {
+        videoSentiment[normalizeSentiment(comment.sentiment)]++;
+      });
+      const dominantSentiment = videoComments.length === 0
+        ? null
+        : (["positive", "negative", "neutral"] as const).reduce((a, b) =>
+            videoSentiment[b] > videoSentiment[a] ? b : a
+          );
 
       return {
         id: video.id,
@@ -81,8 +131,8 @@ export function transformYoutube(response: any, keyword = ""): DashboardData {
         thumbnail: video.thumbnail_url,
         views: video.view_count,
         likes: 0,
-        comments: totalComments,
-        sentiment: "neutral",
+        comments: videoComments.length,
+        sentiment: dominantSentiment,
         url: video.url,
       };
     });
@@ -138,21 +188,15 @@ export function transformYoutube(response: any, keyword = ""): DashboardData {
     .slice(0, 50);
 
   // COMMENTS
-  const dashboardComments: DashboardComment[] = comments.map((c: any) => {
-    const s = String(c.sentiment ?? "").toLowerCase();
-    const sentiment =
-      s === "positif" || s === "positive" ? "positive" :
-      s === "negatif" || s === "negative" ? "negative" : "neutral";
-    return {
-      id: c.id ?? crypto.randomUUID(),
-      author: c.author ?? "Anonim",
-      content: c.content ?? "",
-      sentiment,
-      publishedAt: c.published_at ?? "",
-      videoUrl: c.video_url ?? "",
-      likes: Number(c.like_count) || 0,
-    };
-  });
+  const dashboardComments: DashboardComment[] = comments.map((c: any) => ({
+    id: c.id ?? crypto.randomUUID(),
+    author: c.author ?? "Anonim",
+    content: c.content ?? "",
+    sentiment: normalizeSentiment(c.sentiment),
+    publishedAt: c.published_at ?? "",
+    videoUrl: c.video_url ?? "",
+    likes: Number(c.like_count) || 0,
+  }));
 
   return {
     platform: "youtube",

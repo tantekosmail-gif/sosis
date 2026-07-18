@@ -7,6 +7,7 @@ import { analyze } from "../services/analysis.service";
 import { transformDashboard } from "../transformers";
 import { mergeGlobalDashboard } from "../transformers/global.transformer";
 import { transformDateSearch } from "../transformers/dateSearch.transformer";
+import { filterYoutubeResponseByDate } from "../transformers/youtube.transformer";
 
 import { collect } from "@/features/search/services/collection.service";
 import { useDashboardStore } from "@/store/dashboard.store";
@@ -21,13 +22,20 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 export function useAnalyze() {
   const setDashboard = useDashboardStore((s) => s.setDashboard);
   const setLoading = useDashboardStore((s) => s.setLoading);
-  const startDate = useFilterStore((s) => s.startDate);
-  const endDate = useFilterStore((s) => s.endDate);
 
   const [error, setError] = useState("");
 
   async function executeSingle(platform: string, keyword: string) {
-    const usingDateSearch = !!(startDate && endDate);
+    // Baca langsung dari store (bukan via hook reaktif) supaya selalu dapat
+    // nilai terbaru — termasuk saat execute() dipanggil tepat setelah
+    // setStartDate/setEndDate pada render yang sama (mis. klik preset tanggal
+    // yang langsung memicu re-analisis), yang mana snapshot dari hook masih
+    // membawa nilai lama sampai re-render berikutnya.
+    const { startDate, endDate } = useFilterStore.getState();
+
+    // YouTube tidak pernah lewat date-search — selalu smart-search, filter
+    // tanggalnya diterapkan di client (lihat analysis.service).
+    const usingDateSearch = !!(startDate && endDate) && platform !== "youtube";
 
     let response = await analyze({
       platform,
@@ -57,6 +65,9 @@ export function useAnalyze() {
     // Pakai transformer yang sesuai dengan format response
     if (usingDateSearch) {
       return transformDateSearch(response, platform, keyword);
+    }
+    if (platform === "youtube" && startDate && endDate) {
+      response = filterYoutubeResponseByDate(response, startDate, endDate);
     }
     return transformDashboard(platform, response, keyword);
   }

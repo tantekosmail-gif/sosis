@@ -1,10 +1,11 @@
 "use client";
 
 import type { LucideIcon } from "lucide-react";
-import { BadgeCheck, Grid3x3, Info, Lock, MessageSquare, Percent, PieChart, TrendingUp, UserRound } from "lucide-react";
+import { BadgeCheck, Grid3x3, Info, Lock, MessageSquare, Percent, PieChart, TrendingUp } from "lucide-react";
 
 import type { InstagramPostItem, InstagramPostsStats, InstagramUserInfo, PostSentimentOverview } from "@/features/instagram/types/posts.types";
 import { formatRelativeTime } from "@/lib/formatRelativeTime";
+import FallbackImage from "@/components/common/FallbackImage";
 
 const SENTIMENT_LABEL: Record<string, string> = {
   positif: "Positif",
@@ -78,20 +79,11 @@ export default function InstagramProfileCard({
     <div className="space-y-4">
       {hasProfile ? (
         <div className="flex items-center gap-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-sm">
-          <div className="h-16 w-16 shrink-0 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
-            {userInfo.profile_pic_url ? (
-              <img
-                src={userInfo.profile_pic_url}
-                alt=""
-                className="h-full w-full object-cover"
-                onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
-              />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center text-slate-300">
-                <UserRound size={28} />
-              </div>
-            )}
-          </div>
+          <FallbackImage
+            src={userInfo.profile_pic_url}
+            variant="avatar"
+            className="h-16 w-16 shrink-0 rounded-full"
+          />
 
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5">

@@ -38,24 +38,29 @@ function TooltipCard({ children }: { children: React.ReactNode }) {
   );
 }
 
-function VolumeTooltip({ active, payload, label, locale }: any) {
+function VolumeTooltip({ active, payload, label, locale, withShare }: any) {
   if (!active || !payload?.length) return null;
+  const dayTotal = payload.reduce((sum: number, p: any) => sum + (Number(p.value) || 0), 0);
   return (
     <TooltipCard>
       <p className="mb-1.5 font-semibold text-slate-700 dark:text-slate-300">{formatDay(label, locale)}</p>
       {payload
         .filter((p: any) => p.value > 0)
-        .map((p: any) => (
-          <div key={p.dataKey} className="flex items-center justify-between gap-4 py-0.5">
-            <span className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
-              <span className="h-2 w-2 rounded-full" style={{ backgroundColor: p.color }} />
-              {p.name}
-            </span>
-            <span className="font-semibold" style={{ color: p.color }}>
-              {p.value}
-            </span>
-          </div>
-        ))}
+        .map((p: any) => {
+          const pct = dayTotal > 0 ? Math.round(((Number(p.value) || 0) / dayTotal) * 100) : 0;
+          return (
+            <div key={p.dataKey} className="flex items-center justify-between gap-4 py-0.5">
+              <span className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+                <span className="h-2 w-2 rounded-full" style={{ backgroundColor: p.color }} />
+                {p.name}
+              </span>
+              <span className="font-semibold" style={{ color: p.color }}>
+                {p.value}
+                {withShare && <span className="ml-1 font-normal text-slate-400 dark:text-slate-500">({pct}%)</span>}
+              </span>
+            </div>
+          );
+        })}
     </TooltipCard>
   );
 }
@@ -154,7 +159,7 @@ export default function TopicTrendGraphChart({ data, days, onDaysChange }: Props
                     minTickGap={16}
                   />
                   <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
-                  <Tooltip content={<VolumeTooltip locale={locale} />} cursor={{ fill: "#f8fafc" }} />
+                  <Tooltip content={<VolumeTooltip locale={locale} withShare />} cursor={{ fill: "#f8fafc" }} />
                   <Legend wrapperStyle={{ fontSize: 12, paddingTop: 12 }} iconType="circle" iconSize={8} />
                   {SENTIMENT_SERIES.map((s, i) => (
                     <Bar

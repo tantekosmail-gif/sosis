@@ -3,6 +3,8 @@
 import { ExternalLink, Eye, MessageCircle, Share2, ThumbsUp } from "lucide-react";
 
 import type { TikTokPostItem, TikTokSentimentBreakdown } from "@/features/tiktok/types/posts.types";
+import SentimentBar from "@/components/common/SentimentBreakdownBar";
+import FallbackImage from "@/components/common/FallbackImage";
 
 const SENTIMENT_BAR_COLOR: Record<string, string> = {
   positif: "bg-emerald-500",
@@ -41,19 +43,6 @@ function formatCompact(n?: number) {
   return n.toString();
 }
 
-function SentimentBar({ summary }: { summary: TikTokSentimentBreakdown }) {
-  const total = summary.positif.count + summary.netral.count + summary.negatif.count;
-  if (total === 0) return null;
-
-  return (
-    <div className="mt-2 flex h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
-      {(["positif", "netral", "negatif"] as const).map((key) => (
-        <div key={key} className={SENTIMENT_BAR_COLOR[key]} style={{ width: `${summary[key].percentage}%` }} />
-      ))}
-    </div>
-  );
-}
-
 export default function TikTokPostGrid({
   data,
   selectedPostId,
@@ -85,23 +74,20 @@ export default function TikTokPostGrid({
               isSelected ? "border-rose-400 ring-2 ring-rose-500/20" : "border-slate-200 dark:border-slate-700"
             }`}
           >
-            {item.thumbnail && (
-              <a href={item.url} target="_blank" rel="noopener noreferrer" className="relative block aspect-[9/16] w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
-                <img
-                  src={item.thumbnail}
-                  alt=""
-                  className="h-full w-full object-cover transition-transform hover:scale-105"
-                  onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
-                />
+            <a href={item.url} target="_blank" rel="noopener noreferrer" className="relative block aspect-[9/16] w-full overflow-hidden">
+              <FallbackImage
+                src={item.thumbnail}
+                className="h-full w-full"
+                imgClassName="h-full w-full object-cover transition-transform hover:scale-105"
+              />
 
-                {dominant && (
-                  <span
-                    title={`Dominan: ${SENTIMENT_LABEL[dominant]}`}
-                    className={`absolute left-2 top-2 h-3 w-3 rounded-full ring-2 ring-white dark:ring-slate-900 ${SENTIMENT_BAR_COLOR[dominant]}`}
-                  />
-                )}
-              </a>
-            )}
+              {dominant && (
+                <span
+                  title={`Dominan: ${SENTIMENT_LABEL[dominant]}`}
+                  className={`absolute left-2 top-2 h-3 w-3 rounded-full ring-2 ring-white dark:ring-slate-900 ${SENTIMENT_BAR_COLOR[dominant]}`}
+                />
+              )}
+            </a>
 
             <div className="p-4">
               <a href={item.url} target="_blank" rel="noopener noreferrer" className="flex items-start gap-1">

@@ -11,7 +11,7 @@ export function useNewsSearch() {
   const [error, setError] = useState("");
   const [hasSearched, setHasSearched] = useState(false);
 
-  const search = useCallback(async (query: string, limit = 10): Promise<NewsSearchData | null> => {
+  const search = useCallback(async (query: string, limit = 50): Promise<NewsSearchData | null> => {
     const trimmed = query.trim();
     if (!trimmed) return null;
 

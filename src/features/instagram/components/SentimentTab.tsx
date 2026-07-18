@@ -11,9 +11,11 @@ import TrendingCommentsList from "@/components/instagram/TrendingCommentsList";
 import CommentsModal from "@/components/common/CommentsModal";
 import InstagramSummaryWidget from "@/components/instagram/InstagramSummaryWidget";
 import WordCloud from "@/components/dashboard/WordCloud";
+import Pagination from "@/components/common/Pagination";
 import { useInstagramPosts } from "../hooks/useInstagramPosts";
 import { useInstagramSummary } from "../hooks/useInstagramSummary";
 import { useRecentInstagramSearches } from "../hooks/useRecentSearches";
+import { usePagination } from "@/hooks/usePagination";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { buildWordCloud } from "@/lib/wordCloud";
 
@@ -59,6 +61,8 @@ export default function InstagramSentimentTab() {
     }
     return items.sort((a, b) => (b.published_at || "").localeCompare(a.published_at || ""));
   }, [data, sortBy]);
+
+  const { page, totalPages, setPage, paginated } = usePagination(sortedItems, 8);
 
   const commentsWordCloud = useMemo(() => {
     if (!data) return [];
@@ -238,10 +242,11 @@ export default function InstagramSentimentTab() {
           </div>
 
           <InstagramPostGrid
-            data={sortedItems}
+            data={paginated}
             selectedPostId={selectedPostId}
             onSelectPost={(item) => setSelectedPostId(item.post_id)}
           />
+          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
 
           <CommentsModal
             open={!!selectedPost}

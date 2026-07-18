@@ -6,19 +6,34 @@ import { Loader2, Newspaper, Search } from "lucide-react";
 import NewsResultCard from "@/components/news/NewsResultCard";
 import NegativeHighlightCard from "@/components/news/NegativeHighlightCard";
 import WordCloud from "@/components/dashboard/WordCloud";
+import Pagination from "@/components/common/Pagination";
 import { useNewsSearch } from "../hooks/useNewsSearch";
 import { useRecentNewsSearches } from "../hooks/useRecentSearches";
+import type { NewsSearchItem } from "../types/search.types";
+import { usePagination } from "@/hooks/usePagination";
 import { formatRelativeTime } from "@/lib/formatRelativeTime";
 import { buildWordCloud } from "@/lib/wordCloud";
+import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
-const SORT_OPTIONS = [
-  { key: "terbaru", label: "Terbaru" },
-  { key: "negatif", label: "Paling Negatif" },
-] as const;
+type SortKey = "terbaru" | "negatif";
 
-type SortKey = (typeof SORT_OPTIONS)[number]["key"];
+// sentiment bisa berupa label string polos atau objek {label, score}
+// tergantung sumbernya — dua helper ini menyamakan cara membacanya.
+function getSentimentLabel(sentiment: NewsSearchItem["sentiment"]) {
+  if (!sentiment) return null;
+  return typeof sentiment === "string" ? sentiment : sentiment.label;
+}
+
+function getSentimentScore(sentiment: NewsSearchItem["sentiment"]) {
+  return typeof sentiment === "object" && sentiment ? sentiment.score : 1;
+}
 
 export default function NewsSearchTab() {
+  const { t, language } = useTranslation();
+  const SORT_OPTIONS = [
+    { key: "terbaru" as const, label: t.newsSearchTab.sortNewest },
+    { key: "negatif" as const, label: t.newsSearchTab.sortMostNegative },
+  ];
   const [query, setQuery] = useState("");
   const { data, loading, error, hasSearched, search } = useNewsSearch();
   const { recent, addRecentSearch } = useRecentNewsSearches();
@@ -29,13 +44,15 @@ export default function NewsSearchTab() {
     const items = [...data.items];
     if (sortBy === "negatif") {
       return items.sort((a, b) => {
-        const aNeg = a.sentiment === "negatif" ? 1 : 0;
-        const bNeg = b.sentiment === "negatif" ? 1 : 0;
-        return bNeg - aNeg;
+        const aScore = getSentimentLabel(a.sentiment) === "negatif" ? getSentimentScore(a.sentiment) : -1;
+        const bScore = getSentimentLabel(b.sentiment) === "negatif" ? getSentimentScore(b.sentiment) : -1;
+        return bScore - aScore;
       });
     }
     return items.sort((a, b) => (b.published_at ?? b.collected_at).localeCompare(a.published_at ?? a.collected_at));
   }, [data, sortBy]);
+
+  const { page, totalPages, setPage, paginated } = usePagination(sortedItems, 8);
 
   const lastCollectedAt = useMemo(() => {
     if (!data) return undefined;
@@ -70,7 +87,7 @@ export default function NewsSearchTab() {
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Cari berita, mis. jokowi, pemilu, ekonomi..."
+            placeholder={t.newsSearchTab.placeholder}
             className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 text-sm text-slate-900 placeholder:text-slate-400 transition-colors focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:bg-slate-900"
           />
         </div>
@@ -80,14 +97,14 @@ export default function NewsSearchTab() {
           className="flex h-11 shrink-0 items-center gap-2 rounded-xl bg-indigo-600 px-5 text-sm font-medium text-white shadow-lg shadow-indigo-500/30 transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {loading ? <Loader2 size={16} className="animate-spin" /> : <Search size={16} />}
-          Cari
+          {t.newsSearchTab.searchButton}
         </button>
       </form>
 
       {recent.length > 0 && (
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-            Pencarian Terakhir
+            {t.newsSearchTab.recentSearches}
           </span>
           {recent.map((term) => (
             <button
@@ -111,7 +128,7 @@ export default function NewsSearchTab() {
       {loading && (
         <div className="flex flex-col items-center justify-center rounded-2xl border bg-white py-24 shadow-sm dark:bg-slate-900">
           <Loader2 className="mb-4 h-10 w-10 animate-spin text-indigo-600" />
-          <p className="font-semibold text-slate-700 dark:text-slate-300">Mencari berita...</p>
+          <p className="font-semibold text-slate-700 dark:text-slate-300">{t.newsSearchTab.loading}</p>
         </div>
       )}
 
@@ -119,26 +136,26 @@ export default function NewsSearchTab() {
         <>
           <div className="flex items-center justify-between gap-3">
             <p className="text-sm text-slate-500 dark:text-slate-400">
-              <span className="font-semibold text-slate-700 dark:text-slate-300">{data.total}</span> hasil untuk{" "}
+              <span className="font-semibold text-slate-700 dark:text-slate-300">{data.total}</span> {t.newsSearchTab.resultsPrefix}{" "}
               <span className="font-semibold text-slate-700 dark:text-slate-300">&ldquo;{data.query}&rdquo;</span>
             </p>
             {lastCollectedAt && (
-              <p className="text-xs text-slate-400 dark:text-slate-500">Diperbarui {formatRelativeTime(lastCollectedAt)}</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500">
+                {t.newsSearchTab.updated.replace("{time}", formatRelativeTime(lastCollectedAt, language))}
+              </p>
             )}
           </div>
 
           {data.items.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-slate-300 bg-white py-16 text-center text-sm text-slate-400 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-500">
-              Tidak ada berita ditemukan untuk pencarian ini
+              {t.newsSearchTab.noResults}
             </div>
           ) : (
             <>
               <NegativeHighlightCard items={data.items} />
 
-              {contentWordCloud.length > 0 && <WordCloud data={contentWordCloud} />}
-
               <div className="flex items-center justify-end gap-2">
-                <span className="text-xs font-medium text-slate-400 dark:text-slate-500">Urutkan:</span>
+                <span className="text-xs font-medium text-slate-400 dark:text-slate-500">{t.newsSearchTab.sortLabel}</span>
                 <div className="inline-flex rounded-xl border border-slate-200 bg-slate-50 p-1 dark:border-slate-700 dark:bg-slate-800">
                   {SORT_OPTIONS.map((opt) => (
                     <button
@@ -155,11 +172,14 @@ export default function NewsSearchTab() {
                 </div>
               </div>
 
-              <div className="space-y-4">
-                {sortedItems.map((item) => (
-                  <NewsResultCard key={item.post_id} item={item} sentiment={item.sentiment} />
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {paginated.map((item) => (
+                  <NewsResultCard key={item.post_id} item={item} sentiment={item.sentiment} variant="grid" />
                 ))}
               </div>
+              <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+
+              {contentWordCloud.length > 0 && <WordCloud data={contentWordCloud} />}
             </>
           )}
         </>
@@ -168,8 +188,8 @@ export default function NewsSearchTab() {
       {!hasSearched && !loading && (
         <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-white py-24 text-center dark:border-slate-600 dark:bg-slate-900">
           <Newspaper className="mb-4 h-10 w-10 text-slate-300" />
-          <p className="font-semibold text-slate-700 dark:text-slate-300">Mulai cari berita</p>
-          <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">Masukkan kata kunci di atas untuk memulai pencarian</p>
+          <p className="font-semibold text-slate-700 dark:text-slate-300">{t.newsSearchTab.emptyTitle}</p>
+          <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">{t.newsSearchTab.emptyDesc}</p>
         </div>
       )}
     </div>

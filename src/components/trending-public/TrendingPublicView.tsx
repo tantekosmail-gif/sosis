@@ -5,21 +5,14 @@ import { AlertTriangle, Eye, Flame, Loader2, RefreshCw, ThumbsUp, TrendingUp } f
 
 import { useTrendingPublic } from "@/features/trending-public/useTrendingPublic";
 import { formatRelativeTime } from "@/lib/formatRelativeTime";
+import { decodeHtmlEntities } from "@/lib/decodeHtmlEntities";
+import FallbackImage from "@/components/common/FallbackImage";
 
 const RANK_STYLE: Record<number, string> = {
   1: "bg-gradient-to-br from-amber-400 to-amber-600 text-white shadow-sm shadow-amber-500/40",
   2: "bg-gradient-to-br from-slate-300 to-slate-500 text-white",
   3: "bg-gradient-to-br from-orange-300 to-orange-500 text-white",
 };
-
-// Topic/video text from the API comes HTML-entity-encoded (e.g. "Messi&#39;s") —
-// decode it before rendering, since React text nodes render entities literally.
-function decodeHtmlEntities(str: string) {
-  if (!str || typeof document === "undefined") return str;
-  const el = document.createElement("textarea");
-  el.innerHTML = str;
-  return el.value;
-}
 
 function formatCompact(n: number) {
   if (!n) return "0";
@@ -167,16 +160,11 @@ export default function TrendingPublicView({ geo }: { geo: string }) {
                             rel="noopener noreferrer"
                             className="group w-40 shrink-0"
                           >
-                            <div className="relative aspect-video overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800">
-                              {video.thumbnail ? (
-                                <img
-                                  src={video.thumbnail}
-                                  alt=""
-                                  loading="lazy"
-                                  className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                                />
-                              ) : null}
-                            </div>
+                            <FallbackImage
+                              src={video.thumbnail}
+                              className="aspect-video overflow-hidden rounded-xl"
+                              imgClassName="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                            />
                             <p className="mt-1.5 line-clamp-2 text-xs font-medium leading-snug text-slate-700 dark:text-slate-300">
                               {decodeHtmlEntities(video.title)}
                             </p>

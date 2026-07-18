@@ -3,20 +3,21 @@
 import { use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { format } from "date-fns";
+import { formatDistanceToNow } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
-import { ArrowLeft, Eye, ImageOff, Loader2, Tag, ThumbsUp } from "lucide-react";
+import { ArrowLeft, Eye, Loader2, Tag, ThumbsUp } from "lucide-react";
 
 import DashboardLayout from "@/components/layout/DashboardLayout";
-import { getTopicDetail, getShareOfVoice, getTopEntities, getTopicTrendGraph } from "@/features/topic/services/topic.service";
+import { getTopicDetail, getShareOfVoice, getTopicTrendGraph } from "@/features/topic/services/topic.service";
 import { normalizeTopicDetail, platformMeta, type TopicDetail, type TopicPost } from "@/features/topic/lib/topicDetail";
 import { normalizeTopicTrendGraph, type TopicTrendGraph } from "@/features/topic/lib/topicTrendGraph";
 import ShareOfVoiceCard, { type ShareOfVoiceItem } from "@/components/topic/ShareOfVoiceCard";
-import TopicEntitiesCard, { type TopicEntity } from "@/components/topic/TopicEntitiesCard";
 import TopicTrendGraphChart from "@/components/topic/TopicTrendGraphChart";
-import { normalizeEntities, mergeEntities } from "@/lib/entities";
+import Pagination from "@/components/common/Pagination";
+import { usePagination } from "@/hooks/usePagination";
 import { normalizeShareOfVoice } from "@/lib/shareOfVoice";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
+import FallbackImage from "@/components/common/FallbackImage";
 
 function groupByPlatform(posts: TopicPost[]): [string, TopicPost[]][] {
   const map = new Map<string, TopicPost[]>();
@@ -45,7 +46,7 @@ function PostCard({ post }: { post: TopicPost }) {
   let dateStr = "";
   if (post.published_at) {
     try {
-      dateStr = format(new Date(post.published_at), "d MMM yyyy", { locale: idLocale });
+      dateStr = formatDistanceToNow(new Date(post.published_at), { addSuffix: true, locale: idLocale });
     } catch {}
   }
 
@@ -56,22 +57,11 @@ function PostCard({ post }: { post: TopicPost }) {
       rel="noopener noreferrer"
       className="group flex flex-col overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm transition hover:border-indigo-300 hover:shadow-md"
     >
-      <div className="aspect-video w-full shrink-0 overflow-hidden bg-slate-100 dark:bg-slate-800">
-        {post.thumbnail_url ? (
-          <img
-            src={post.thumbnail_url}
-            alt=""
-            className="h-full w-full object-cover transition duration-200 group-hover:scale-105"
-            onError={(e) => {
-              (e.target as HTMLImageElement).style.display = "none";
-            }}
-          />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center text-slate-300 dark:text-slate-600">
-            <ImageOff size={22} />
-          </div>
-        )}
-      </div>
+      <FallbackImage
+        src={post.thumbnail_url}
+        className="aspect-video w-full shrink-0"
+        imgClassName="h-full w-full object-cover transition duration-200 group-hover:scale-105"
+      />
 
       <div className="flex flex-1 flex-col gap-2 p-3.5">
         <p className="line-clamp-3 text-sm font-medium leading-snug text-slate-800 dark:text-slate-200 transition-colors group-hover:text-indigo-600">
@@ -103,6 +93,21 @@ function PostCard({ post }: { post: TopicPost }) {
   );
 }
 
+function PlatformPostsGrid({ posts }: { posts: TopicPost[] }) {
+  const { page, totalPages, setPage, paginated } = usePagination(posts, 8);
+
+  return (
+    <>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {paginated.map((post) => (
+          <PostCard key={post.id} post={post} />
+        ))}
+      </div>
+      <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+    </>
+  );
+}
+
 export default function TopicDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
@@ -112,7 +117,6 @@ export default function TopicDetailPage({ params }: { params: Promise<{ id: stri
   const [error, setError] = useState("");
   const [topic, setTopic] = useState<TopicDetail | null>(null);
   const [shareOfVoice, setShareOfVoice] = useState<ShareOfVoiceItem[]>([]);
-  const [entities, setEntities] = useState<TopicEntity[]>([]);
   const [trendDays, setTrendDays] = useState(7);
   const [trendGraph, setTrendGraph] = useState<TopicTrendGraph | null>(null);
 
@@ -148,7 +152,7 @@ export default function TopicDetailPage({ params }: { params: Promise<{ id: stri
     };
   }, [authChecked, id, t]);
 
-  // Share of Voice & entitas dihitung dari keyword_id tiap keyword dalam topik —
+  // Share of Voice dihitung dari keyword_id tiap keyword dalam topik —
   // dijalankan setelah detail topik siap, gagal diam-diam (tidak menimpa error
   // utama halaman) supaya widget tambahan ini tidak memblokir konten inti.
   useEffect(() => {
@@ -164,13 +168,6 @@ export default function TopicDetailPage({ params }: { params: Promise<{ id: stri
       } catch (err) {
         console.error("getShareOfVoice failed:", err);
       }
-
-      const entityResults = await Promise.allSettled(keywordIds.map((kid) => getTopEntities(kid)));
-      if (cancelled) return;
-      const entityLists = entityResults
-        .filter((r): r is PromiseFulfilledResult<any> => r.status === "fulfilled")
-        .map((r) => normalizeEntities(r.value));
-      setEntities(mergeEntities(entityLists));
     })();
 
     return () => {
@@ -179,7 +176,7 @@ export default function TopicDetailPage({ params }: { params: Promise<{ id: stri
   }, [topic]);
 
   // Grafik tren dipisah dari effect detail topik supaya ganti rentang hari
-  // tidak perlu refetch ulang detail/SOV/entities.
+  // tidak perlu refetch ulang detail/SOV.
   useEffect(() => {
     if (!authChecked) return;
     let cancelled = false;
@@ -245,8 +242,6 @@ export default function TopicDetailPage({ params }: { params: Promise<{ id: stri
 
           {shareOfVoice.length > 1 && <ShareOfVoiceCard items={shareOfVoice} />}
 
-          <TopicEntitiesCard entities={entities} />
-
           {/* Results per keyword, separated per platform */}
           {topic.keywordGroups.length === 0 ? (
             <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm py-14 text-center text-sm text-slate-400 dark:text-slate-500">
@@ -280,11 +275,7 @@ export default function TopicDetailPage({ params }: { params: Promise<{ id: stri
                             <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">{meta.label}</h3>
                             <span className="text-xs text-slate-400 dark:text-slate-500">({posts.length})</span>
                           </div>
-                          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                            {posts.map((post) => (
-                              <PostCard key={post.id} post={post} />
-                            ))}
-                          </div>
+                          <PlatformPostsGrid posts={posts} />
                         </div>
                       );
                     })}
