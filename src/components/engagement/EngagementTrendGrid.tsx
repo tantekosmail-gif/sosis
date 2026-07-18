@@ -11,6 +11,9 @@ import type { EngagementPlatform, EngagementTrend } from "@/features/engagement/
 import { PLATFORM_COLOR, PLATFORM_LABEL } from "@/features/engagement/lib/colors";
 import { fillDailySeries } from "@/features/engagement/lib/format";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
+import { useMetricSource } from "./MetricSource";
+
+const SOURCE_HINT = "Klik untuk lihat sumber data";
 
 const PLATFORM_ICON: Record<EngagementPlatform, IconType> = {
   youtube: FaYoutube,
@@ -50,10 +53,18 @@ function TrendPanel({ platform, trend, dateFrom, dateTo }: PanelProps) {
   const color = PLATFORM_COLOR[platform];
   const data = fillDailySeries(trend?.series ?? [], dateFrom, dateTo);
   const totalMentions = data.reduce((sum, d) => sum + d.mentions, 0);
+  const { show } = useMetricSource();
+  const showTrendSource = () =>
+    show({ metric: "trend", platform, value: `${totalMentions.toLocaleString("id-ID")} mentions` });
 
   return (
     <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 shadow-sm">
-      <div className="mb-3 flex items-center gap-2">
+      <button
+        type="button"
+        onClick={showTrendSource}
+        title={SOURCE_HINT}
+        className="mb-3 flex w-full items-center gap-2 text-left"
+      >
         <span
           className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full"
           style={{ backgroundColor: `${color}1a`, color }}
@@ -61,14 +72,31 @@ function TrendPanel({ platform, trend, dateFrom, dateTo }: PanelProps) {
           <Icon size={11} />
         </span>
         <span className="text-sm font-semibold text-slate-800 dark:text-slate-200">{PLATFORM_LABEL[platform]}</span>
-        <span className="ml-auto text-xs text-slate-400 dark:text-slate-500">
+        <span className="ml-auto text-xs text-slate-400 underline decoration-dotted underline-offset-2 hover:text-indigo-500 dark:text-slate-500">
           {totalMentions.toLocaleString("id-ID")} mentions
         </span>
-      </div>
+      </button>
 
-      <div className="h-36">
+      <div className="h-36 cursor-pointer" title={SOURCE_HINT}>
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 4, right: 4, left: -28, bottom: 0 }}>
+          <AreaChart
+            data={data}
+            margin={{ top: 4, right: 4, left: -28, bottom: 0 }}
+            onClick={(state) => {
+              const withPayload = state as { activeLabel?: string; activePayload?: { payload?: { date?: string; mentions?: number } }[] };
+              const date = withPayload?.activeLabel;
+              if (!date) return;
+              const pointMentions = withPayload?.activePayload?.[0]?.payload?.mentions ?? 0;
+              show({
+                metric: "trend",
+                platform,
+                value: `${pointMentions.toLocaleString("id-ID")} mentions`,
+                dateFrom: date,
+                dateTo: date,
+                dateLabel: formatTick(date),
+              });
+            }}
+          >
             <defs>
               <linearGradient id={`engagement-trend-${platform}`} x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor={color} stopOpacity={0.1} />
@@ -115,6 +143,7 @@ interface TableProps {
 function TrendTable({ trends, dateFrom, dateTo }: TableProps) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
+  const { show } = useMetricSource();
 
   const seriesByPlatform = ENGAGEMENT_PLATFORMS.map((platform) => ({
     platform,
@@ -145,7 +174,14 @@ function TrendTable({ trends, dateFrom, dateTo }: TableProps) {
                 <th className="px-4 py-3 text-left">{t.engagementTable.date}</th>
                 {ENGAGEMENT_PLATFORMS.map((platform) => (
                   <th key={platform} className="px-4 py-3 text-right">
-                    {PLATFORM_LABEL[platform]}
+                    <button
+                      type="button"
+                      onClick={() => show({ metric: "trend", platform })}
+                      title={SOURCE_HINT}
+                      className="uppercase tracking-wider hover:text-indigo-500"
+                    >
+                      {PLATFORM_LABEL[platform]}
+                    </button>
                   </th>
                 ))}
               </tr>
@@ -176,12 +212,26 @@ interface Props {
 }
 
 export default function EngagementTrendGrid({ trends, dateFrom, dateTo }: Props) {
+  const { show } = useMetricSource();
+
   return (
     <div>
-      <h2 className="mb-1 font-semibold text-slate-900 dark:text-slate-100">Tren Mention Harian</h2>
-      <p className="mb-4 text-xs text-slate-400 dark:text-slate-500">
+      <button
+        type="button"
+        onClick={() => show({ metric: "trend" })}
+        title={SOURCE_HINT}
+        className="mb-1 block text-left font-semibold text-slate-900 underline decoration-slate-200 decoration-dotted underline-offset-4 transition hover:decoration-indigo-400 dark:text-slate-100 dark:decoration-slate-700"
+      >
+        Tren Mention Harian
+      </button>
+      <button
+        type="button"
+        onClick={() => show({ metric: "trend" })}
+        title={SOURCE_HINT}
+        className="mb-4 block text-left text-xs text-slate-400 hover:text-indigo-500 dark:text-slate-500"
+      >
         Panel terpisah per platform, sumbu-Y masing-masing sendiri — skala tiap platform bisa beda jauh.
-      </p>
+      </button>
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {ENGAGEMENT_PLATFORMS.map((platform) => (
           <TrendPanel key={platform} platform={platform} trend={trends[platform]} dateFrom={dateFrom} dateTo={dateTo} />

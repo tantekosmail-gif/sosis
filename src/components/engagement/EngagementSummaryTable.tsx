@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import type { IconType } from "react-icons";
 import { FaFacebook, FaInstagram, FaTiktok, FaXTwitter, FaYoutube } from "react-icons/fa6";
 
@@ -7,6 +8,9 @@ import type { EngagementPlatform, EngagementSummary } from "@/features/engagemen
 import { PLATFORM_COLOR, PLATFORM_LABEL } from "@/features/engagement/lib/colors";
 import { formatCompact } from "@/features/engagement/lib/format";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
+import { useMetricSource, type MetricKey } from "./MetricSource";
+
+const SOURCE_HINT = "Klik untuk lihat sumber data";
 
 const PLATFORM_ICON: Record<EngagementPlatform, IconType> = {
   youtube: FaYoutube,
@@ -29,11 +33,12 @@ function SentimentBadge({ value }: { value: number }) {
       ? "text-emerald-600 dark:text-emerald-400"
       : "text-red-600 dark:text-red-400";
   const glyph = neutral ? "•" : positive ? "▲" : "▼";
+  const label = neutral ? "Netral" : positive ? "Positif" : "Negatif";
 
   return (
     <span className={`inline-flex items-center gap-1 text-xs font-semibold tabular-nums ${color}`}>
       <span aria-hidden="true">{glyph}</span>
-      {positive && !neutral ? "+" : ""}
+      {label} {positive && !neutral ? "+" : ""}
       {value.toFixed(1)}%
     </span>
   );
@@ -67,6 +72,20 @@ interface Props {
 
 export default function EngagementSummaryTable({ summaries, errors, platforms }: Props) {
   const { t } = useTranslation();
+  const { show } = useMetricSource();
+
+  function sourceCell(metric: MetricKey, platform: EngagementPlatform, value: string, children: ReactNode) {
+    return (
+      <button
+        type="button"
+        onClick={() => show({ metric, platform, value })}
+        title={SOURCE_HINT}
+        className="w-full cursor-pointer text-inherit hover:text-indigo-600 dark:hover:text-indigo-400 text-right"
+      >
+        {children}
+      </button>
+    );
+  }
 
   return (
     <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900">
@@ -111,24 +130,55 @@ export default function EngagementSummaryTable({ summaries, errors, platforms }:
                   ) : (
                     <>
                       <td className="px-4 py-3 text-right tabular-nums text-slate-700 dark:text-slate-300">
-                        {summary.mentions.toLocaleString("id-ID")}
+                        {sourceCell("mentions", platform, summary.mentions.toLocaleString("id-ID"), summary.mentions.toLocaleString("id-ID"))}
                       </td>
                       <td className="px-4 py-3 text-right tabular-nums text-slate-700 dark:text-slate-300">
-                        {formatCompact(summary.reach)}
+                        {sourceCell("reach", platform, formatCompact(summary.reach), formatCompact(summary.reach))}
                       </td>
                       <td className="px-4 py-3 text-right tabular-nums text-slate-700 dark:text-slate-300">
-                        {EXPOSURE_UNAVAILABLE.includes(platform) && summary.exposure === 0
-                          ? t.engagementTable.notAvailable
-                          : formatCompact(summary.exposure)}
+                        {(() => {
+                          const value =
+                            EXPOSURE_UNAVAILABLE.includes(platform) && summary.exposure === 0
+                              ? t.engagementTable.notAvailable
+                              : formatCompact(summary.exposure);
+                          return sourceCell("exposure", platform, value, value);
+                        })()}
                       </td>
                       <td className="px-4 py-3 text-right font-semibold tabular-nums text-slate-900 dark:text-slate-100">
-                        {formatCompact(summary.engagement)}
+                        <button
+                          type="button"
+                          onClick={() =>
+                            show({
+                              metric: "engagement",
+                              platform,
+                              value: formatCompact(summary.engagement),
+                              breakdown: summary.breakdown,
+                              rawTotal: summary.engagement,
+                            })
+                          }
+                          title={SOURCE_HINT}
+                          className="w-full cursor-pointer text-right text-inherit hover:text-indigo-600 dark:hover:text-indigo-400"
+                        >
+                          {formatCompact(summary.engagement)}
+                        </button>
                       </td>
                       <td className="px-4 py-3 text-right">
-                        <MentionGrowthBadge value={summary.mentionGrowth} />
+                        {sourceCell(
+                          "mentionGrowth",
+                          platform,
+                          summary.mentionGrowth === null ? "—" : `${summary.mentionGrowth.toFixed(1)}%`,
+                          <MentionGrowthBadge value={summary.mentionGrowth} />
+                        )}
                       </td>
                       <td className="px-4 py-3">
-                        <SentimentBadge value={summary.sentimentScore} />
+                        <button
+                          type="button"
+                          onClick={() => show({ metric: "sentiment", platform, value: `${summary.sentimentScore.toFixed(1)}%` })}
+                          title={SOURCE_HINT}
+                          className="cursor-pointer"
+                        >
+                          <SentimentBadge value={summary.sentimentScore} />
+                        </button>
                       </td>
                     </>
                   )}

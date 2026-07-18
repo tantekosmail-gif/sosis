@@ -6,6 +6,9 @@ import { FaFacebook, FaInstagram, FaTiktok, FaXTwitter, FaYoutube } from "react-
 import type { EngagementPlatform, EngagementSummary } from "@/features/engagement/types/engagement.types";
 import { BREAKDOWN_COLOR, BREAKDOWN_KEYS, PLATFORM_COLOR, PLATFORM_LABEL } from "@/features/engagement/lib/colors";
 import { formatCompact } from "@/features/engagement/lib/format";
+import { useMetricSource, type MetricKey } from "./MetricSource";
+
+const SOURCE_HINT = "Klik untuk lihat sumber data";
 
 const PLATFORM_ICON: Record<EngagementPlatform, IconType> = {
   youtube: FaYoutube,
@@ -28,11 +31,12 @@ function SentimentBadge({ value }: { value: number }) {
       ? "text-emerald-600 dark:text-emerald-400"
       : "text-red-600 dark:text-red-400";
   const glyph = neutral ? "•" : positive ? "▲" : "▼";
+  const label = neutral ? "Netral" : positive ? "Positif" : "Negatif";
 
   return (
     <span className={`inline-flex items-center gap-1 text-xs font-semibold tabular-nums ${color}`}>
       <span aria-hidden="true">{glyph}</span>
-      {positive && !neutral ? "+" : ""}
+      {label} {positive && !neutral ? "+" : ""}
       {value.toFixed(1)}%
     </span>
   );
@@ -46,6 +50,19 @@ interface Props {
 
 export default function EngagementSummaryCard({ summary, error, loading }: Props) {
   const platform = summary?.platform;
+  const { show } = useMetricSource();
+
+  function showSource(metric: MetricKey, value: string) {
+    if (!platform || !summary) return;
+    const withBreakdown = metric === "engagement" || metric === "breakdown";
+    show({
+      metric,
+      platform,
+      value,
+      breakdown: withBreakdown ? summary.breakdown : undefined,
+      rawTotal: withBreakdown ? summary.engagement : undefined,
+    });
+  }
 
   if (loading) {
     return (
@@ -88,53 +105,73 @@ export default function EngagementSummaryCard({ summary, error, loading }: Props
         <span className="text-sm font-semibold text-slate-800 dark:text-slate-200">{PLATFORM_LABEL[summary.platform]}</span>
       </div>
 
-      <p className="mt-4 text-3xl font-bold tabular-nums text-slate-900 dark:text-slate-100">
-        {formatCompact(summary.engagement)}
-      </p>
-      <p className="text-xs text-slate-400 dark:text-slate-500">Total Engagement</p>
+      <button
+        type="button"
+        onClick={() => showSource("engagement", formatCompact(summary.engagement))}
+        title={SOURCE_HINT}
+        className="mt-4 block text-left"
+      >
+        <p className="text-3xl font-bold tabular-nums text-slate-900 underline decoration-slate-200 decoration-dotted underline-offset-4 transition hover:decoration-indigo-400 dark:text-slate-100 dark:decoration-slate-700">
+          {formatCompact(summary.engagement)}
+        </p>
+        <p className="text-xs text-slate-400 dark:text-slate-500">Total Engagement</p>
+      </button>
 
-      <div className="mt-3 flex h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+      <button
+        type="button"
+        onClick={() => showSource("breakdown", formatCompact(summary.engagement))}
+        title={SOURCE_HINT}
+        className="mt-3 flex h-1.5 w-full cursor-pointer overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800"
+      >
         {BREAKDOWN_KEYS.map((key) => {
           const pct = (summary.breakdown[key] / total) * 100;
           if (pct <= 0) return null;
           return (
-            <div
+            <span
               key={key}
               style={{ width: `${pct}%`, backgroundColor: BREAKDOWN_COLOR[key] }}
               title={`${key}: ${summary.breakdown[key].toLocaleString("id-ID")}`}
             />
           );
         })}
-      </div>
+      </button>
 
-      <dl className="mt-4 space-y-1.5 text-xs">
-        <div className="flex items-center justify-between">
-          <dt className="text-slate-400 dark:text-slate-500">Mentions</dt>
-          <dd className="font-semibold tabular-nums text-slate-700 dark:text-slate-300">
-            {summary.mentions.toLocaleString("id-ID")}
-          </dd>
-        </div>
-        <div className="flex items-center justify-between">
-          <dt className="text-slate-400 dark:text-slate-500">Reach</dt>
-          <dd className="font-semibold tabular-nums text-slate-700 dark:text-slate-300">
-            {summary.reach.toLocaleString("id-ID")}
-          </dd>
-        </div>
-        <div className="flex items-center justify-between">
-          <dt className="text-slate-400 dark:text-slate-500">Exposure</dt>
-          <dd className="font-semibold tabular-nums text-slate-700 dark:text-slate-300">
-            {platform && EXPOSURE_UNAVAILABLE.includes(platform) && summary.exposure === 0
-              ? "Tidak tersedia"
-              : formatCompact(summary.exposure)}
-          </dd>
-        </div>
-        <div className="flex items-center justify-between">
-          <dt className="text-slate-400 dark:text-slate-500">Sentimen</dt>
-          <dd>
-            <SentimentBadge value={summary.sentimentScore} />
-          </dd>
-        </div>
-      </dl>
+      <div className="mt-4 space-y-1.5 text-xs">
+        {(
+          [
+            { metric: "mentions" as const, label: "Mentions", value: summary.mentions.toLocaleString("id-ID") },
+            { metric: "reach" as const, label: "Reach", value: summary.reach.toLocaleString("id-ID") },
+            {
+              metric: "exposure" as const,
+              label: "Exposure",
+              value:
+                platform && EXPOSURE_UNAVAILABLE.includes(platform) && summary.exposure === 0
+                  ? "Tidak tersedia"
+                  : formatCompact(summary.exposure),
+            },
+          ]
+        ).map(({ metric, label, value }) => (
+          <button
+            key={metric}
+            type="button"
+            onClick={() => showSource(metric, value)}
+            title={SOURCE_HINT}
+            className="group flex w-full items-center justify-between rounded-md text-left"
+          >
+            <span className="text-slate-400 group-hover:text-indigo-500 dark:text-slate-500">{label}</span>
+            <span className="font-semibold tabular-nums text-slate-700 dark:text-slate-300">{value}</span>
+          </button>
+        ))}
+        <button
+          type="button"
+          onClick={() => showSource("sentiment", `${summary.sentimentScore.toFixed(1)}%`)}
+          title={SOURCE_HINT}
+          className="group flex w-full items-center justify-between rounded-md text-left"
+        >
+          <span className="text-slate-400 group-hover:text-indigo-500 dark:text-slate-500">Sentimen</span>
+          <SentimentBadge value={summary.sentimentScore} />
+        </button>
+      </div>
     </div>
   );
 }

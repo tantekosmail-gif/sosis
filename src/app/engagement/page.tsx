@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { AlertTriangle, LayoutGrid, Loader2, Table2 } from "lucide-react";
+import { AlertTriangle, LayoutGrid, Loader2, RefreshCw, Table2 } from "lucide-react";
 
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import PeriodSelect from "@/components/dashboard/PeriodSelect";
@@ -10,6 +10,7 @@ import EngagementSummaryCard from "@/components/engagement/EngagementSummaryCard
 import EngagementSummaryTable from "@/components/engagement/EngagementSummaryTable";
 import EngagementCompositionChart from "@/components/engagement/EngagementCompositionChart";
 import EngagementTrendGrid from "@/components/engagement/EngagementTrendGrid";
+import { MetricSourceProvider } from "@/components/engagement/MetricSource";
 import { ENGAGEMENT_PLATFORMS, useEngagementDashboard } from "@/features/engagement/hooks/useEngagementDashboard";
 import { PLATFORM_LABEL } from "@/features/engagement/lib/colors";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
@@ -21,7 +22,7 @@ export default function EngagementPage() {
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [period, setPeriod] = useState<PeriodPreset>("30d");
   const [view, setView] = useState<"cards" | "table">("cards");
-  const { summaries, trends, errors, loading, range } = useEngagementDashboard(period);
+  const { summaries, trends, errors, loading, range, fetchedAt, refresh } = useEngagementDashboard(period);
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
@@ -47,12 +48,28 @@ export default function EngagementPage() {
 
   return (
     <DashboardLayout>
+      <MetricSourceProvider dateFrom={range.date_from} dateTo={range.date_to} fetchedAt={fetchedAt}>
       <div className="space-y-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">{t.engagement.title}</h1>
+            {fetchedAt && !loading && (
+              <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
+                Diperbarui {fetchedAt.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })} — klik angka, grafik, atau keterangan untuk melihat sumber datanya
+              </p>
+            )}
           </div>
           <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={refresh}
+              disabled={loading}
+              title="Ambil ulang data dari API"
+              className="flex h-8 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 text-[11px] font-medium text-slate-600 transition hover:bg-slate-50 disabled:opacity-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400 dark:hover:bg-slate-800"
+            >
+              <RefreshCw size={12} className={loading ? "animate-spin" : ""} />
+              Refresh
+            </button>
             <div className="flex items-center gap-0.5 rounded-lg border border-slate-200 bg-slate-50 p-0.5 dark:border-slate-700 dark:bg-slate-800">
               <button
                 type="button"
@@ -125,6 +142,7 @@ export default function EngagementPage() {
           </div>
         )}
       </div>
+      </MetricSourceProvider>
     </DashboardLayout>
   );
 }

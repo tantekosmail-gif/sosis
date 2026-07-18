@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { fetchEngagementSummary, fetchEngagementTrend } from "../services/engagement.service";
 import type { EngagementPlatform, EngagementSummary, EngagementTrend } from "../types/engagement.types";
@@ -20,6 +20,10 @@ export function useEngagementDashboard(period: PeriodPreset) {
   const [errors, setErrors] = useState<Partial<Record<EngagementPlatform, string>>>({});
   const [loading, setLoading] = useState(true);
   const [range, setRange] = useState(() => periodToRange(period));
+  const [fetchedAt, setFetchedAt] = useState<Date | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const refresh = useCallback(() => setRefreshKey((k) => k + 1), []);
 
   useEffect(() => {
     let cancelled = false;
@@ -66,13 +70,14 @@ export function useEngagementDashboard(period: PeriodPreset) {
       setSummaries(nextSummaries);
       setTrends(nextTrends);
       setErrors(nextErrors);
+      setFetchedAt(new Date());
       setLoading(false);
     })();
 
     return () => {
       cancelled = true;
     };
-  }, [period]);
+  }, [period, refreshKey]);
 
-  return { summaries, trends, errors, loading, range };
+  return { summaries, trends, errors, loading, range, fetchedAt, refresh };
 }

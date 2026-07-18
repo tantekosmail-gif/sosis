@@ -15,7 +15,9 @@ export const PLATFORM_LABEL: Record<EngagementPlatform, string> = {
   instagram: "Instagram",
 };
 
-export const BREAKDOWN_KEYS = ["likes", "comments", "shares", "saves"] as const;
+// Semua komponen penyusun Total Engagement — harus lengkap supaya bar komposisi
+// selalu menjumlah ke angka total yang ditampilkan (jangan ada komponen tersembunyi).
+export const BREAKDOWN_KEYS = ["likes", "comments", "shares", "saves", "replies", "clicks"] as const;
 export type BreakdownKey = (typeof BREAKDOWN_KEYS)[number];
 
 export const BREAKDOWN_LABEL: Record<BreakdownKey, string> = {
@@ -23,6 +25,8 @@ export const BREAKDOWN_LABEL: Record<BreakdownKey, string> = {
   comments: "Komentar",
   shares: "Share",
   saves: "Save",
+  replies: "Balasan",
+  clicks: "Klik",
 };
 
 export const BREAKDOWN_COLOR: Record<BreakdownKey, string> = {
@@ -30,4 +34,6 @@ export const BREAKDOWN_COLOR: Record<BreakdownKey, string> = {
   comments: CATEGORICAL_PALETTE[1],
   shares: CATEGORICAL_PALETTE[2],
   saves: CATEGORICAL_PALETTE[3],
+  replies: CATEGORICAL_PALETTE[4],
+  clicks: CATEGORICAL_PALETTE[5],
 };
