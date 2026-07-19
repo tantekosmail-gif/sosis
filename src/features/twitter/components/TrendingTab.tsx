@@ -113,7 +113,7 @@ export default function TwitterTrendingTab() {
               <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 xl:grid-cols-3">
                 {visibleTopics.map((topic, idx) => (
                   <TrendingTopicCard
-                    key={topic.topic}
+                    key={`${topic.topic}-${idx}`}
                     topic={topic}
                     rank={idx + 1}
                     selectedPostId={selectedPostId}
