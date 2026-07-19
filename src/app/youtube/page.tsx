@@ -10,15 +10,19 @@ import PageTabs from "@/components/common/PageTabs";
 import YoutubeTrendingTab, { type TrendingTabHandle } from "@/features/youtube/components/TrendingTab";
 import YoutubeSentimentTab from "@/features/youtube/components/SentimentTab";
 import VideoSearchTab, { type VideoSearchTabHandle } from "@/features/youtube/components/VideoSearchTab";
+import ComparePanel from "@/features/compare/components/ComparePanel";
 import { useAnalyze } from "@/features/analysis/hooks/useAnalyze";
 import { useDashboardStore } from "@/store/dashboard.store";
 import { useFilterStore } from "@/stores/filterStore";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
+const SHOW_COMPARE_TAB = false;
+
 const TABS = [
   { key: "trending", label: "Trending" },
   { key: "terkini", label: "Terkini" },
   { key: "sentiment", label: "Sentiment" },
+  { key: "compare", label: "Bandingkan" },
 ] as const;
 
 type TabKey = (typeof TABS)[number]["key"];
@@ -50,6 +54,7 @@ export default function YoutubePage() {
     trending: { placeholder: t.youtubeTrendingTab.searchPlaceholder, buttonLabel: t.youtubeSearchTab.searchButton },
     terkini: { placeholder: t.youtubeSearchTab.keywordPlaceholder, buttonLabel: t.youtubeSearchTab.searchButton },
     sentiment: { placeholder: "Masukkan keyword pencarian YouTube...", buttonLabel: "Analyze" },
+    compare: { placeholder: "", buttonLabel: "" },
   };
   const { placeholder, buttonLabel } = SEARCH_CONFIG[tab];
 
@@ -95,6 +100,7 @@ export default function YoutubePage() {
           <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">YouTube</h1>
         </div>
 
+        {tab !== "compare" && (
         <form
           onSubmit={handleSubmit}
           className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900"
@@ -125,12 +131,14 @@ export default function YoutubePage() {
             </button>
           </div>
         </form>
+        )}
 
-        <PageTabs tabs={TABS} active={tab} onChange={setTab} />
+        <PageTabs tabs={SHOW_COMPARE_TAB ? TABS : TABS.filter((t) => t.key !== "compare")} active={tab} onChange={setTab} />
 
         {tab === "trending" && <YoutubeTrendingTab ref={trendingRef} />}
         {tab === "terkini" && <VideoSearchTab ref={terkiniRef} />}
         {tab === "sentiment" && <YoutubeSentimentTab />}
+        {tab === "compare" && <ComparePanel platform="youtube" />}
       </div>
     </DashboardLayout>
   );

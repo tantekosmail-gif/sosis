@@ -6,10 +6,8 @@ import { Loader2, TrendingUp } from "lucide-react";
 import NewsResultCard from "@/components/news/NewsResultCard";
 import NewsSummaryWidget from "@/components/news/NewsSummaryWidget";
 import NegativeHighlightCard from "@/components/news/NegativeHighlightCard";
-import WordCloud from "@/components/dashboard/WordCloud";
 import { useNewsSummary } from "../hooks/useNewsSummary";
 import { useNewsTrending } from "../hooks/useNewsTrending";
-import { buildWordCloud } from "@/lib/wordCloud";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 type SortKey = "terbaru" | "positif" | "negatif";
@@ -76,11 +74,6 @@ export default function NewsTrendingTab() {
     if (sentimentFilter === "all") return sortedItems;
     return sortedItems.filter((item) => item.sentiment?.label === sentimentFilter);
   }, [sortedItems, sentimentFilter]);
-
-  const contentWordCloud = useMemo(() => {
-    if (!trending) return [];
-    return buildWordCloud(trending.items.map((item) => `${item.title} ${item.content}`));
-  }, [trending]);
 
   return (
     <div className="space-y-6">
@@ -199,8 +192,6 @@ export default function NewsTrendingTab() {
                   <NewsResultCard key={item.post_id} item={item} sentiment={item.sentiment} rank={idx + 1} dateMode="relative" />
                 ))
               )}
-
-              {contentWordCloud.length > 0 && <WordCloud data={contentWordCloud} />}
             </div>
           )
         )}

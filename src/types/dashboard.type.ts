@@ -34,6 +34,12 @@ export interface DashboardWord {
   total: number;
 }
 
+export interface DashboardSentimentBreakdown {
+  positif?: { count?: number; percentage?: number } | null;
+  netral?: { count?: number; percentage?: number } | null;
+  negatif?: { count?: number; percentage?: number } | null;
+}
+
 export interface DashboardPost {
   id: string;
   title: string;
@@ -46,6 +52,9 @@ export interface DashboardPost {
   /** null = belum ada komentar yang dianalisis untuk konten ini — UI tidak
    *  menampilkan label sentimen, bukan memfallback ke "netral". */
   sentiment: "positive" | "neutral" | "negative" | null;
+  /** Opsional — breakdown lengkap per kelas sentimen untuk konten ini (dipakai
+   *  komponen yang menampilkan proporsi, mis. SentimentBreakdownBar). */
+  sentimentBreakdown?: DashboardSentimentBreakdown;
   url: string;
 }
 

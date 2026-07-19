@@ -10,7 +10,7 @@ export function useViralVideos() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [q, setQ] = useState("");
-  const [limit, setLimit] = useState(20);
+  const [limit, setLimit] = useState(100);
   const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {

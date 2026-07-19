@@ -191,11 +191,36 @@
       "Bash(node geomap.js)",
       "Bash(node -e \"const icons = require\\('lucide-react'\\); console.log\\(['Youtube','Instagram','Newspaper','Facebook','Twitter','ExternalLink','Info','Play','Camera','LayoutGrid'].filter\\(n => icons[n]\\).join\\(', '\\)\\)\")",
       "Bash(node -e \"const icons = require\\('lucide-react'\\); const names = Object.keys\\(icons\\); console.log\\(names.filter\\(n => /you?tube|insta|face|twit|social/i.test\\(n\\)\\)\\);\")",
-      "Bash(node -e \"const icons = require\\('lucide-react'\\); console.log\\(['Images','Camera','ExternalLink','Feather','Flame','LayoutGrid','Music2','Newspaper','SquareUser','AtSign'].filter\\(n => !icons[n]\\)\\)\")"
+      "Bash(node -e \"const icons = require\\('lucide-react'\\); console.log\\(['Images','Camera','ExternalLink','Feather','Flame','LayoutGrid','Music2','Newspaper','SquareUser','AtSign'].filter\\(n => !icons[n]\\)\\)\")",
+      "Bash(NODE_PATH=\"/Users/yusufyacobonaola/.npm/_npx/705bc6b22212b352/node_modules\" node /private/tmp/claude-501/-Users-yusufyacobonaola-Documents-dev-admin-dashboard/0f22d607-89f6-4c1f-9c87-a772c9640032/scratchpad/check_news_filter.cjs)",
+      "Bash(rm -f /private/tmp/claude-501/-Users-yusufyacobonaola-Documents-dev-admin-dashboard/0f22d607-89f6-4c1f-9c87-a772c9640032/scratchpad/*.png /private/tmp/claude-501/-Users-yusufyacobonaola-Documents-dev-admin-dashboard/0f22d607-89f6-4c1f-9c87-a772c9640032/scratchpad/*.cjs)",
+      "Bash(NODE_PATH=\"/Users/yusufyacobonaola/.npm/_npx/705bc6b22212b352/node_modules\" node /private/tmp/claude-501/-Users-yusufyacobonaola-Documents-dev-admin-dashboard/0f22d607-89f6-4c1f-9c87-a772c9640032/scratchpad/check_news_search_grid.cjs)",
+      "Bash(NODE_PATH=\"/Users/yusufyacobonaola/.npm/_npx/705bc6b22212b352/node_modules\" node /private/tmp/claude-501/-Users-yusufyacobonaola-Documents-dev-admin-dashboard/0f22d607-89f6-4c1f-9c87-a772c9640032/scratchpad/check_news_scroll.cjs)",
+      "Bash(NODE_PATH=\"/Users/yusufyacobonaola/.npm/_npx/705bc6b22212b352/node_modules\" node /private/tmp/claude-501/-Users-yusufyacobonaola-Documents-dev-admin-dashboard/0f22d607-89f6-4c1f-9c87-a772c9640032/scratchpad/check_fallback.cjs)",
+      "Bash(curl -sI http://localhost:3000/this-image-does-not-exist-404.jpg)",
+      "Bash(NODE_PATH=\"/Users/yusufyacobonaola/.npm/_npx/705bc6b22212b352/node_modules\" node /private/tmp/claude-501/-Users-yusufyacobonaola-Documents-dev-admin-dashboard/0f22d607-89f6-4c1f-9c87-a772c9640032/scratchpad/check_fallback_debug.cjs)",
+      "Bash(NODE_PATH=\"/Users/yusufyacobonaola/.npm/_npx/705bc6b22212b352/node_modules\" node /private/tmp/claude-501/-Users-yusufyacobonaola-Documents-dev-admin-dashboard/0f22d607-89f6-4c1f-9c87-a772c9640032/scratchpad/check_click.cjs)",
+      "Bash(rm -rf /Users/yusufyacobonaola/Documents/dev/admin-dashboard/src/app/tmp-fallback-test *)",
+      "Bash(NODE_PATH=\"/Users/yusufyacobonaola/.npm/_npx/705bc6b22212b352/node_modules\" node /private/tmp/claude-501/-Users-yusufyacobonaola-Documents-dev-admin-dashboard/0f22d607-89f6-4c1f-9c87-a772c9640032/scratchpad/check_smoke.cjs)",
+      "Bash(NODE_PATH=\"/Users/yusufyacobonaola/.npm/_npx/705bc6b22212b352/node_modules\" node /private/tmp/claude-501/-Users-yusufyacobonaola-Documents-dev-admin-dashboard/0f22d607-89f6-4c1f-9c87-a772c9640032/scratchpad/check_entities.cjs)",
+      "Bash(NODE_PATH=\"/Users/yusufyacobonaola/.npm/_npx/705bc6b22212b352/node_modules\" node /private/tmp/claude-501/-Users-yusufyacobonaola-Documents-dev-admin-dashboard/0f22d607-89f6-4c1f-9c87-a772c9640032/scratchpad/check_entities_dark.cjs)",
+      "Bash(NODE_PATH=\"/Users/yusufyacobonaola/.npm/_npx/705bc6b22212b352/node_modules\" node /private/tmp/claude-501/-Users-yusufyacobonaola-Documents-dev-admin-dashboard/0f22d607-89f6-4c1f-9c87-a772c9640032/scratchpad/check_split_cards.cjs)",
+      "Bash(NODE_PATH=\"/Users/yusufyacobonaola/.npm/_npx/705bc6b22212b352/node_modules\" node /private/tmp/claude-501/-Users-yusufyacobonaola-Documents-dev-admin-dashboard/0f22d607-89f6-4c1f-9c87-a772c9640032/scratchpad/check_wordcloud_pos.cjs)",
+      "Bash(NODE_PATH=\"/Users/yusufyacobonaola/.npm/_npx/705bc6b22212b352/node_modules\" node /private/tmp/claude-501/-Users-yusufyacobonaola-Documents-dev-admin-dashboard/0f22d607-89f6-4c1f-9c87-a772c9640032/scratchpad/check_2rows.cjs)",
+      "Bash(sed -i '' 's/width: 1200, height: 1200/width: 1400, height: 900/' /private/tmp/claude-501/-Users-yusufyacobonaola-Documents-dev-admin-dashboard/0f22d607-89f6-4c1f-9c87-a772c9640032/scratchpad/check_2rows.cjs)",
+      "Bash(NODE_PATH=\"/Users/yusufyacobonaola/.npm/_npx/705bc6b22212b352/node_modules\" node /private/tmp/claude-501/-Users-yusufyacobonaola-Documents-dev-admin-dashboard/0f22d607-89f6-4c1f-9c87-a772c9640032/scratchpad/check_score.cjs)",
+      "Bash(NODE_PATH=\"/Users/yusufyacobonaola/.npm/_npx/705bc6b22212b352/node_modules\" node /private/tmp/claude-501/-Users-yusufyacobonaola-Documents-dev-admin-dashboard/0f22d607-89f6-4c1f-9c87-a772c9640032/scratchpad/check_topn.cjs)",
+      "Bash(rm -f /private/tmp/claude-501/-Users-yusufyacobonaola-Documents-dev-admin-dashboard/0f22d607-89f6-4c1f-9c87-a772c9640032/scratchpad/*.cjs)",
+      "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('/Users/yusufyacobonaola/Documents/dev/admin-dashboard/src/lib/i18n/dictionaries/id.json', 'utf8'\\)\\); console.log\\('id.json OK'\\)\")",
+      "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('/Users/yusufyacobonaola/Documents/dev/admin-dashboard/src/lib/i18n/dictionaries/en.json', 'utf8'\\)\\); console.log\\('en.json OK'\\)\")",
+      "Bash(NODE_PATH=\"/Users/yusufyacobonaola/.npm/_npx/705bc6b22212b352/node_modules\" node /private/tmp/claude-501/-Users-yusufyacobonaola-Documents-dev-admin-dashboard/0f22d607-89f6-4c1f-9c87-a772c9640032/scratchpad/check_i18n.cjs)",
+      "Bash(NODE_PATH=\"/Users/yusufyacobonaola/.npm/_npx/705bc6b22212b352/node_modules\" node /private/tmp/claude-501/-Users-yusufyacobonaola-Documents-dev-admin-dashboard/0f22d607-89f6-4c1f-9c87-a772c9640032/scratchpad/check_search_i18n.cjs)",
+      "Bash(export NODE_PATH=\"$HOME/.npm/_npx/705bc6b22212b352/node_modules\")"
     ],
     "additionalDirectories": [
       "/private/tmp/claude-501/-Users-yusufyacobonaola-Documents-dev-admin-dashboard/3e0a509c-9d3a-4fa3-ae16-a23b1c716b45/scratchpad",
-      "/private/tmp/claude-501/-Users-yusufyacobonaola-Documents-dev-admin-dashboard/6341bb9f-dcaa-4972-a27d-481f9c32df46/scratchpad"
+      "/private/tmp/claude-501/-Users-yusufyacobonaola-Documents-dev-admin-dashboard/6341bb9f-dcaa-4972-a27d-481f9c32df46/scratchpad",
+      "/private/tmp/claude-501/-Users-yusufyacobonaola-Documents-dev-admin-dashboard/0f22d607-89f6-4c1f-9c87-a772c9640032/scratchpad"
     ]
   }
 }

@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from "react";
 
-import { searchRecentVideos } from "../services/search.service";
+import { getSentimentDistribution, searchRecentVideos, type SentimentDistributionResponse } from "../services/search.service";
 import type { ViralSentimentBreakdown } from "../types/viral.types";
 
 export interface SearchedVideoItem {
@@ -50,8 +50,8 @@ function toSentimentSummary(entry?: RawSentimentEntry): ViralSentimentBreakdown 
 // Keyword search surfaces only recently published videos (last N hours)
 // rather than searching all-time, so results stay relevant to "what's
 // happening now" for a given keyword. The window is user-selectable:
-// 24 jam (1 hari, default) atau 168 jam (1 minggu).
-const DEFAULT_HOURS_BACK = 24;
+// 24 jam (1 hari) atau 168 jam (1 minggu, default).
+const DEFAULT_HOURS_BACK = 168;
 
 export function useVideoSearch() {
   const [keyword, setKeyword] = useState("");
@@ -60,10 +60,13 @@ export function useVideoSearch() {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [sentimentDistribution, setSentimentDistribution] = useState<SentimentDistributionResponse | null>(null);
+  const [distributionLoading, setDistributionLoading] = useState(false);
 
   const search = useCallback(async (q: string, hoursOverride?: number) => {
     const trimmed = q.trim();
     setKeyword(trimmed);
+    setSentimentDistribution(null);
 
     if (!trimmed) {
       setItems(null);
@@ -71,6 +74,8 @@ export function useVideoSearch() {
       setError("");
       return;
     }
+
+    let keywordId: string | undefined;
 
     try {
       setLoading(true);
@@ -81,6 +86,7 @@ export function useVideoSearch() {
         maxResults: 50,
       });
       const data = raw?.data ?? raw ?? {};
+      keywordId = data.keyword_id;
       const videos = data.videos ?? data.items ?? [];
       const sentimentByVideoId = new Map<string, RawSentimentEntry>(
         (data.sentiment ?? []).map((entry: RawSentimentEntry) => [entry.video_id, entry])
@@ -98,6 +104,21 @@ export function useVideoSearch() {
     } finally {
       setLoading(false);
     }
+
+    // Widget tambahan, tidak boleh memblokir/menggagalkan hasil pencarian utama
+    // di atas kalau keyword_id-nya tidak ada atau fetch-nya gagal. search-recent
+    // sendiri sudah mengembalikan keyword_id keyword yang dicari -- tidak perlu
+    // cari-cocokkan lagi ke daftar topik tersimpan.
+    if (!keywordId) return;
+    try {
+      setDistributionLoading(true);
+      setSentimentDistribution(await getSentimentDistribution(keywordId));
+    } catch (err) {
+      console.error("getSentimentDistribution failed:", err);
+      setSentimentDistribution(null);
+    } finally {
+      setDistributionLoading(false);
+    }
   }, [hoursBack]);
 
   // Ganti periode pencarian; kalau sudah ada keyword aktif, langsung cari
@@ -110,5 +131,16 @@ export function useVideoSearch() {
     [keyword, search],
   );
 
-  return { keyword, items, total, loading, error, search, hoursBack, changeHoursBack };
+  return {
+    keyword,
+    items,
+    total,
+    loading,
+    error,
+    search,
+    hoursBack,
+    changeHoursBack,
+    sentimentDistribution,
+    distributionLoading,
+  };
 }

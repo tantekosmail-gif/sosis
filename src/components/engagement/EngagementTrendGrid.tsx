@@ -83,10 +83,12 @@ function TrendPanel({ platform, trend, dateFrom, dateTo }: PanelProps) {
             data={data}
             margin={{ top: 4, right: 4, left: -28, bottom: 0 }}
             onClick={(state) => {
-              const withPayload = state as { activeLabel?: string; activePayload?: { payload?: { date?: string; mentions?: number } }[] };
-              const date = withPayload?.activeLabel;
+              // Recharts v3: onClick di level chart tidak lagi bawa `activePayload`
+              // seperti v2 -- cuma activeLabel/activeIndex. Ambil mentions dari
+              // array data lokal berdasarkan tanggalnya.
+              const date = state?.activeLabel as string | undefined;
               if (!date) return;
-              const pointMentions = withPayload?.activePayload?.[0]?.payload?.mentions ?? 0;
+              const pointMentions = data.find((d) => d.date === date)?.mentions ?? 0;
               show({
                 metric: "trend",
                 platform,

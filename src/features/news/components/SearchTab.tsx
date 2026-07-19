@@ -5,14 +5,12 @@ import { Loader2, Newspaper, Search } from "lucide-react";
 
 import NewsResultCard from "@/components/news/NewsResultCard";
 import NegativeHighlightCard from "@/components/news/NegativeHighlightCard";
-import WordCloud from "@/components/dashboard/WordCloud";
 import Pagination from "@/components/common/Pagination";
 import { useNewsSearch } from "../hooks/useNewsSearch";
 import { useRecentNewsSearches } from "../hooks/useRecentSearches";
 import type { NewsSearchItem } from "../types/search.types";
 import { usePagination } from "@/hooks/usePagination";
 import { formatRelativeTime } from "@/lib/formatRelativeTime";
-import { buildWordCloud } from "@/lib/wordCloud";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 type SortKey = "terbaru" | "negatif";
@@ -60,11 +58,6 @@ export default function NewsSearchTab() {
       if (!latest || item.collected_at > latest) return item.collected_at;
       return latest;
     }, undefined);
-  }, [data]);
-
-  const contentWordCloud = useMemo(() => {
-    if (!data) return [];
-    return buildWordCloud(data.items.map((item) => `${item.title} ${item.content}`));
   }, [data]);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -178,8 +171,6 @@ export default function NewsSearchTab() {
                 ))}
               </div>
               <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
-
-              {contentWordCloud.length > 0 && <WordCloud data={contentWordCloud} />}
             </>
           )}
         </>

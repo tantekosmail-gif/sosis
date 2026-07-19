@@ -20,8 +20,6 @@
     "reports": "Laporan",
     "socialMediaGroup": "Social Media",
     "comparePlatforms": "Bandingkan Platform",
-    "toolsGroup": "Tools",
-    "aiTopicSearch": "Pencarian Topik",
     "topics": "Topik",
     "settings": "Settings",
     "brandTagline": "Pemantauan Media"
@@ -318,12 +316,6 @@
       "scrapeErrorTitle": "Gagal mengambil data terbaru dari TikTok"
     }
   },
-  "commentsTable": {
-    "title": "Komentar",
-    "searchPlaceholder": "Cari komentar atau penulis...",
-    "all": "Semua",
-    "empty": "Tidak ada komentar ditemukan"
-  },
   "sentimentTimeline": {
     "title": "Tren Sentimen Waktu",
     "subtitle": "Perubahan sentimen komentar per hari"
@@ -333,11 +325,11 @@
     "title": "Word Cloud",
     "subtitle": "50 kata yang paling sering muncul dalam komentar"
   },
-  "topPostsTable": {
-    "title": "Top Videos",
-    "subtitle": "10 konten terpopuler berdasarkan views",
-    "noData": "Tidak ada data",
-    "noImage": "No img"
+  "youtubeVideoGrid": {
+    "title": "Semua Video",
+    "subtitle": "Diurutkan berdasarkan views",
+    "noData": "Tidak ada video ditemukan",
+    "commentsUnit": "komentar"
   },
   "platformChart": {
     "title": "Distribusi Channel",
@@ -377,6 +369,7 @@
     "updatedPrefix": "Diperbarui setiap",
     "schedulePrefix": "Jadwal:",
     "emptyDefault": "Belum ada topik trending ditemukan",
+    "loadMore": "Muat Lebih Banyak Topik",
     "instagram": { "subtitle": "Topik dengan skor trending tertinggi di Instagram, diperbarui otomatis setiap hari" },
     "facebook": { "subtitle": "Topik dengan skor trending tertinggi di Facebook, diperbarui otomatis setiap hari" },
     "twitter": { "subtitle": "Topik dengan skor trending tertinggi di Twitter/X, diperbarui otomatis setiap hari" },
@@ -400,7 +393,6 @@
   },
   "youtubeSearchTab": {
     "title": "Cari Video YouTube Terkini",
-    "subtitle": "Cari video YouTube berdasarkan kata kunci dari 24 jam terakhir",
     "keywordLabel": "Kata Kunci",
     "keywordPlaceholder": "Contoh: highlights, tutorial masak, berita terkini...",
     "searchButton": "Cari",
@@ -417,7 +409,9 @@
     "noResults": "Tidak ada video ditemukan untuk kata kunci ini",
     "showingPrefix": "Menampilkan",
     "showingMiddle": "dari",
-    "showingSuffix": "video untuk"
+    "showingSuffix": "video untuk",
+    "sentimentDistributionTitle": "Distribusi Sentimen Komentar",
+    "sentimentDistributionDesc": "Dari {count} komentar yang dianalisis untuk \"{keyword}\""
   },
   "videoFilterBar": {
     "searchPlaceholder": "Cari judul video...",
@@ -462,10 +456,6 @@
       "settings": { "label": "Pengaturan", "description": "Akun & analisis" },
       "tips": { "label": "Tips & Catatan", "description": "Hal penting yang perlu diketahui" }
     }
-  },
-  "trendChat": {
-    "title": "Pencarian Topik",
-    "subtitle": "Chat otomatis untuk mencari & mengirim rekomendasi topik trending"
   },
   "auth": {
     "welcomeBack": "Masuk ke MediaWatch",

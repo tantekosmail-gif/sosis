@@ -3,17 +3,19 @@
 import { useMemo, useState } from "react";
 import { AlertTriangle, GitCompareArrows, Loader2, Search } from "lucide-react";
 import {
-  RadarChart, Radar, PolarGrid, PolarAngleAxis, ResponsiveContainer, Legend,
+  RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend,
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
 } from "recharts";
 
 import { useSocialCompare } from "../hooks/useSocialCompare";
-import type { ComparablePlatform } from "../types/socialCompare.types";
+import type { ComparablePlatform, PlatformSearchResult } from "../types/socialCompare.types";
 
+// #1DA1F2 (Twitter blue lama) gagal cek kontras dataviz (2.75:1, ambang 3:1) --
+// diganti #0c7abf, tervalidasi lightness/CVD/kontras (lihat skill dataviz).
 const PLATFORM_META: Record<ComparablePlatform, { label: string; color: string }> = {
   facebook: { label: "Facebook", color: "#1877F2" },
   instagram: { label: "Instagram", color: "#E1306C" },
-  twitter: { label: "Twitter/X", color: "#1DA1F2" },
+  twitter: { label: "Twitter/X", color: "#0c7abf" },
   tiktok: { label: "TikTok", color: "#FE2C55" },
 };
 
@@ -42,6 +44,30 @@ function CompareTooltip({ active, payload, label, totals }: any) {
   );
 }
 
+// raw: angka asli per {metric label -> platform label -> value} -- radar-nya
+// sendiri menampilkan % dari platform tertinggi (lihat radarData), tooltip
+// ini yang menampilkan angka sesungguhnya di baliknya.
+function RadarCompareTooltip({ active, payload, raw }: any) {
+  if (!active || !payload?.length) return null;
+  const metric = payload[0]?.payload?.metric;
+  const rawRow = raw?.[metric] ?? {};
+  return (
+    <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-3 shadow-lg text-xs">
+      <p className="mb-1 font-semibold text-slate-700 dark:text-slate-300">{metric}</p>
+      {payload.map((p: any) => (
+        <div key={p.dataKey} className="flex items-center gap-2 py-0.5">
+          <span className="h-2 w-2 rounded-full" style={{ background: p.color ?? p.stroke }} />
+          <span className="text-slate-500 dark:text-slate-400">{p.name}:</span>
+          <span className="font-semibold" style={{ color: p.color ?? p.stroke }}>
+            {(rawRow[p.name] ?? 0).toLocaleString("id-ID")}
+          </span>
+          <span className="text-slate-400 dark:text-slate-500">({Math.round(p.value)}% dari tertinggi)</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function pctOf(part: number, total: number) {
   return total > 0 ? Math.round((part / total) * 100) : 0;
 }
@@ -62,11 +88,14 @@ export default function SocialComparePanel() {
     compare(keywordInput);
   }
 
-  const statsData = hasMultiple
-    ? [
-        { label: "Post", ...Object.fromEntries(activePlatforms.map((p) => [p, results[p]!.totalPosts])) },
-        { label: "Komentar", ...Object.fromEntries(activePlatforms.map((p) => [p, results[p]!.totalComments])) },
-      ]
+  // Post & Komentar dipisah jadi 2 chart, bukan 1 chart yang sama -- jumlah
+  // komentar biasanya berorde ribuan sementara post cuma puluhan, kalau
+  // digabung dalam satu skala linear bar Post jadi nyaris tak terlihat.
+  const postData = hasMultiple
+    ? [{ label: "Post", ...Object.fromEntries(activePlatforms.map((p) => [p, results[p]!.totalPosts])) }]
+    : [];
+  const commentData = hasMultiple
+    ? [{ label: "Komentar", ...Object.fromEntries(activePlatforms.map((p) => [p, results[p]!.totalComments])) }]
     : [];
 
   const sentimentData = hasMultiple
@@ -85,13 +114,39 @@ export default function SocialComparePanel() {
     })
   ) as Record<ComparablePlatform, number>;
 
+  // Tiap sumbu radar dinormalisasi ke % dari platform tertinggi PADA METRIK
+  // ITU SENDIRI (bukan skala gabungan) -- Post/Komentar/Positif/Negatif punya
+  // orde besaran yang jauh berbeda (komentar bisa ribuan, sisanya puluhan),
+  // kalau dipakai skala radial linear yang sama, sumbu selain Komentar akan
+  // nyaris menempel di pusat. Angka asli tetap ditampilkan lewat tooltip.
+  const RADAR_METRICS: { key: keyof PlatformSearchResult | "positif" | "negatif"; label: string }[] = [
+    { key: "totalPosts", label: "Post" },
+    { key: "totalComments", label: "Komentar" },
+    { key: "positif", label: "Positif" },
+    { key: "negatif", label: "Negatif" },
+  ];
+
+  function radarRawValue(result: PlatformSearchResult, key: (typeof RADAR_METRICS)[number]["key"]) {
+    if (key === "positif") return result.sentiment.positif;
+    if (key === "negatif") return result.sentiment.negatif;
+    return result[key] as number;
+  }
+
+  const radarRaw: Record<string, Record<string, number>> = {};
   const radarData = hasMultiple
-    ? [
-        { metric: "Post", ...Object.fromEntries(activePlatforms.map((p) => [PLATFORM_META[p].label, results[p]!.totalPosts])) },
-        { metric: "Komentar", ...Object.fromEntries(activePlatforms.map((p) => [PLATFORM_META[p].label, results[p]!.totalComments])) },
-        { metric: "Positif", ...Object.fromEntries(activePlatforms.map((p) => [PLATFORM_META[p].label, results[p]!.sentiment.positif])) },
-        { metric: "Negatif", ...Object.fromEntries(activePlatforms.map((p) => [PLATFORM_META[p].label, results[p]!.sentiment.negatif])) },
-      ]
+    ? RADAR_METRICS.map(({ key, label }) => {
+        const values = activePlatforms.map((p) => radarRawValue(results[p]!, key));
+        const max = Math.max(...values, 1);
+        const row: Record<string, number | string> = { metric: label };
+        const rawRow: Record<string, number> = {};
+        activePlatforms.forEach((p, i) => {
+          const platformLabel = PLATFORM_META[p].label;
+          row[platformLabel] = Math.round((values[i] / max) * 100);
+          rawRow[platformLabel] = values[i];
+        });
+        radarRaw[label] = rawRow;
+        return row;
+      })
     : [];
 
   return (
@@ -199,11 +254,26 @@ export default function SocialComparePanel() {
               ))}
             </div>
 
-            <div className="grid gap-5 lg:grid-cols-2">
+            <div className="grid gap-5 lg:grid-cols-3">
               <div>
-                <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Volume</p>
-                <ResponsiveContainer width="100%" height={200}>
-                  <BarChart data={statsData} barGap={4} barSize={20}>
+                <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Jumlah Post</p>
+                <ResponsiveContainer width="100%" height={180}>
+                  <BarChart data={postData} barGap={4} barSize={20}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                    <XAxis dataKey="label" tick={{ fontSize: 11, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
+                    <YAxis tick={{ fontSize: 11, fill: "#94a3b8" }} axisLine={false} tickLine={false} allowDecimals={false} />
+                    <Tooltip content={<CompareTooltip />} />
+                    {activePlatforms.map((p) => (
+                      <Bar key={p} dataKey={p} name={PLATFORM_META[p].label} fill={PLATFORM_META[p].color} radius={[6, 6, 0, 0]} />
+                    ))}
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+
+              <div>
+                <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Jumlah Komentar</p>
+                <ResponsiveContainer width="100%" height={180}>
+                  <BarChart data={commentData} barGap={4} barSize={20}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                     <XAxis dataKey="label" tick={{ fontSize: 11, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
                     <YAxis tick={{ fontSize: 11, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
@@ -217,7 +287,7 @@ export default function SocialComparePanel() {
 
               <div>
                 <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Distribusi Sentimen</p>
-                <ResponsiveContainer width="100%" height={200}>
+                <ResponsiveContainer width="100%" height={180}>
                   <BarChart data={sentimentData} barGap={4} barSize={20}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                     <XAxis dataKey="label" tick={{ fontSize: 11, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
@@ -232,11 +302,16 @@ export default function SocialComparePanel() {
             </div>
 
             <div>
-              <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Perbandingan Keseluruhan</p>
+              <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Perbandingan Keseluruhan</p>
+              <p className="mb-3 text-xs text-slate-400 dark:text-slate-500">
+                Tiap sumbu dinormalisasi ke % dari platform tertinggi pada metrik itu sendiri (bukan skala gabungan) — angka asli ada di tooltip.
+              </p>
               <ResponsiveContainer width="100%" height={220}>
                 <RadarChart data={radarData}>
                   <PolarGrid stroke="#e2e8f0" />
                   <PolarAngleAxis dataKey="metric" tick={{ fontSize: 11, fill: "#94a3b8" }} />
+                  <PolarRadiusAxis domain={[0, 100]} tick={{ fontSize: 9, fill: "#cbd5e1" }} tickFormatter={(v) => `${v}%`} />
+                  <Tooltip content={<RadarCompareTooltip raw={radarRaw} />} />
                   {activePlatforms.map((p) => (
                     <Radar
                       key={p}

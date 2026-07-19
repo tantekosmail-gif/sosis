@@ -7,13 +7,24 @@ import { FaYoutube } from "react-icons/fa6";
 import VideoSearchGrid from "@/components/youtube/VideoSearchGrid";
 import VideoFilterBar from "@/components/youtube/VideoFilterBar";
 import Pagination from "@/components/common/Pagination";
+import SentimentBreakdownBar from "@/components/common/SentimentBreakdownBar";
 import { useVideoSearch } from "../hooks/useVideoSearch";
 import { usePagination } from "@/hooks/usePagination";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { decodeHtmlEntities } from "@/lib/decodeHtmlEntities";
 import { matchesDateRange } from "@/lib/videoDateRangeFilter";
+import type { SentimentDistributionResponse } from "../services/search.service";
 
 type SortBy = "relevance" | "newest" | "popular";
+
+function toBreakdownSummary(distribution: SentimentDistributionResponse["distribution"]) {
+  const byLabel = Object.fromEntries(distribution.map((d) => [d.label, d]));
+  return {
+    positif: byLabel.positif,
+    netral: byLabel.netral,
+    negatif: byLabel.negatif,
+  };
+}
 
 export interface VideoSearchTabHandle {
   search: (keyword: string) => void;
@@ -26,7 +37,17 @@ const VideoSearchTab = forwardRef<VideoSearchTabHandle>(function VideoSearchTab(
   const [filterChannel, setFilterChannel] = useState("");
   const [filterDateFrom, setFilterDateFrom] = useState("");
   const [filterDateTo, setFilterDateTo] = useState("");
-  const { keyword, items, total, loading, error, search, hoursBack, changeHoursBack } = useVideoSearch();
+  const {
+    keyword,
+    items,
+    total,
+    loading,
+    error,
+    search,
+    hoursBack,
+    changeHoursBack,
+    sentimentDistribution,
+  } = useVideoSearch();
 
   useImperativeHandle(ref, () => ({ search }));
 
@@ -61,7 +82,6 @@ const VideoSearchTab = forwardRef<VideoSearchTabHandle>(function VideoSearchTab(
     <div className="space-y-4">
       <div>
         <h2 className="font-semibold text-slate-900 dark:text-slate-100">{t.youtubeSearchTab.title}</h2>
-        <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">{t.youtubeSearchTab.subtitle}</p>
       </div>
 
       {error && (
@@ -74,6 +94,20 @@ const VideoSearchTab = forwardRef<VideoSearchTabHandle>(function VideoSearchTab(
         <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-5 py-4 text-sm shadow-sm dark:border-slate-700 dark:bg-slate-900">
           <Loader2 className="h-4 w-4 animate-spin text-indigo-600" />
           <span className="text-slate-500 dark:text-slate-400">{t.youtubeSearchTab.loadingDesc}</span>
+        </div>
+      )}
+
+      {hasResults && sentimentDistribution && (
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+          <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">
+            {t.youtubeSearchTab.sentimentDistributionTitle}
+          </p>
+          <p className="text-xs text-slate-400 dark:text-slate-500">
+            {t.youtubeSearchTab.sentimentDistributionDesc
+              .replace("{count}", sentimentDistribution.total_comments.toLocaleString("id-ID"))
+              .replace("{keyword}", sentimentDistribution.keyword_text)}
+          </p>
+          <SentimentBreakdownBar summary={toBreakdownSummary(sentimentDistribution.distribution)} />
         </div>
       )}
 

@@ -6,18 +6,19 @@ import { Clock, Loader2, SearchX } from "lucide-react";
 import FilterBar from "@/components/filters/FilterBar";
 import ExposureSection from "@/features/dashboard/sections/ExposureSection";
 import SentimentSection from "@/features/dashboard/sections/SentimentSection";
-import TopPostsSection from "@/features/dashboard/sections/TopPostsSection";
+import SentimentVideoGrid from "@/components/youtube/SentimentVideoGrid";
+import Pagination from "@/components/common/Pagination";
 import WordCloud from "@/components/dashboard/WordCloud";
 import SentimentTimeline from "@/components/dashboard/SentimentTimeline";
-import CommentsTable from "@/components/dashboard/CommentsTable";
-import ComparePanel from "@/features/compare/components/ComparePanel";
 import SearchHistoryPanel from "@/features/history/components/SearchHistoryPanel";
 import { useSearchHistory } from "@/features/history/hooks/useSearchHistory";
 
 import { useDashboardStore } from "@/store/dashboard.store";
 import { useFilterStore } from "@/stores/filterStore";
 import { useAnalyze } from "@/features/analysis/hooks/useAnalyze";
+import { usePagination } from "@/hooks/usePagination";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
+import type { DashboardPost } from "@/types/dashboard.type";
 
 export default function YoutubeSentimentTab() {
   const { t } = useTranslation();
@@ -32,6 +33,7 @@ export default function YoutubeSentimentTab() {
 
   const { history, push: pushHistory, remove: removeHistory, clear: clearHistory } = useSearchHistory();
   const { execute } = useAnalyze();
+  const { page, totalPages, setPage, paginated } = usePagination<DashboardPost>(dashboard?.topPosts, 8);
 
   // Push to history after analysis completes
   useEffect(() => {
@@ -116,32 +118,31 @@ export default function YoutubeSentimentTab() {
       )}
 
       {!loading && dashboard && (
-        <>
-          <div className="space-y-6">
-            <ExposureSection data={dashboard.summary} sentiment={dashboard.sentiment} timeline={dashboard.timeline} />
+        <div className="space-y-6">
+          <ExposureSection data={dashboard.summary} sentiment={dashboard.sentiment} timeline={dashboard.timeline} />
 
-            <SentimentTimeline data={dashboard.timeline} />
+          <SentimentTimeline data={dashboard.timeline} />
 
-            <SentimentSection
-              data={[
-                { sentiment: "positive", total: dashboard.sentiment.positive },
-                { sentiment: "neutral",  total: dashboard.sentiment.neutral  },
-                { sentiment: "negative", total: dashboard.sentiment.negative },
-              ]}
-              platform={dashboard.platformDistribution}
-            />
+          <SentimentSection
+            data={[
+              { sentiment: "positive", total: dashboard.sentiment.positive },
+              { sentiment: "neutral",  total: dashboard.sentiment.neutral  },
+              { sentiment: "negative", total: dashboard.sentiment.negative },
+            ]}
+            platform={dashboard.platformDistribution}
+          />
 
-            <TopPostsSection data={dashboard.topPosts} />
-
-            {dashboard.comments?.length > 0 && (
-              <CommentsTable comments={dashboard.comments} />
-            )}
-
-            <WordCloud data={dashboard.wordCloud} />
+          <div>
+            <div className="mb-4">
+              <h2 className="font-semibold text-slate-900 dark:text-slate-100">{t.youtubeVideoGrid.title}</h2>
+              <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">{t.youtubeVideoGrid.subtitle}</p>
+            </div>
+            <SentimentVideoGrid data={paginated} />
+            <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
           </div>
 
-          <ComparePanel platform="youtube" baseKeyword={dashboard.keyword ?? keyword} />
-        </>
+          <WordCloud data={dashboard.wordCloud} />
+        </div>
       )}
     </div>
   );

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BarChart3, ChevronDown, ChevronLeft, ChevronRight, FileText, GitCompareArrows, Home, MessageCircle, Newspaper, Settings, Share2, Tags, Wrench, X } from "lucide-react";
+import { BarChart3, ChevronDown, ChevronLeft, ChevronRight, FileText, GitCompareArrows, Home, Newspaper, Settings, Share2, Tags, X } from "lucide-react";
 import { FaFacebook, FaInstagram, FaTiktok, FaXTwitter, FaYoutube } from "react-icons/fa6";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
@@ -20,18 +20,11 @@ const menus = [
       { key: "facebook",    href: "/facebook",     icon: FaFacebook  },
       { key: "twitter",     href: "/twitter",      icon: FaXTwitter  },
       { key: "tiktok",      href: "/tiktok",       icon: FaTiktok    },
+      { key: "comparePlatforms", href: "/compare/social", icon: GitCompareArrows },
     ],
   },
   { key: "news",              href: "/news",              icon: Newspaper       },
   { key: "reports",           href: "/reports",           icon: FileText        },
-  {
-    key: "toolsGroup",
-    icon: Wrench,
-    children: [
-      { key: "comparePlatforms", href: "/compare/social",  icon: GitCompareArrows },
-      { key: "aiTopicSearch",    href: "/dashboard/trend",  icon: MessageCircle    },
-    ],
-  },
   { key: "settings",          href: "/settings",          icon: Settings        },
 ] as const;
 

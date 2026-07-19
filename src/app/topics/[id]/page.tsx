@@ -137,7 +137,7 @@ export default function TopicDetailPage({ params }: { params: Promise<{ id: stri
       setLoading(true);
       setError("");
       try {
-        const raw = await getTopicDetail(id, { limit_per_keyword: 20, include_sentiment: true });
+        const raw = await getTopicDetail(id, { limit_per_keyword: 100, include_sentiment: true });
         if (!cancelled) setTopic(normalizeTopicDetail(raw));
       } catch (err) {
         console.error("getTopicDetail failed:", err);

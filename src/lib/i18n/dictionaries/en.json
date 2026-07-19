@@ -20,8 +20,6 @@
     "reports": "Reports",
     "socialMediaGroup": "Social Media",
     "comparePlatforms": "Compare Platforms",
-    "toolsGroup": "Tools",
-    "aiTopicSearch": "Topic Search",
     "topics": "Topics",
     "settings": "Settings",
     "brandTagline": "Media Monitoring"
@@ -318,12 +316,6 @@
       "scrapeErrorTitle": "Failed to fetch the latest data from TikTok"
     }
   },
-  "commentsTable": {
-    "title": "Comments",
-    "searchPlaceholder": "Search comments or author...",
-    "all": "All",
-    "empty": "No comments found"
-  },
   "sentimentTimeline": {
     "title": "Sentiment Trend Over Time",
     "subtitle": "Daily change in comment sentiment"
@@ -333,11 +325,11 @@
     "title": "Word Cloud",
     "subtitle": "The 50 most frequent words in the comments"
   },
-  "topPostsTable": {
-    "title": "Top Videos",
-    "subtitle": "Top 10 content by views",
-    "noData": "No data",
-    "noImage": "No img"
+  "youtubeVideoGrid": {
+    "title": "All Videos",
+    "subtitle": "Sorted by views",
+    "noData": "No videos found",
+    "commentsUnit": "comments"
   },
   "platformChart": {
     "title": "Channel Distribution",
@@ -377,6 +369,7 @@
     "updatedPrefix": "Updated every",
     "schedulePrefix": "Schedule:",
     "emptyDefault": "No trending topics found yet",
+    "loadMore": "Load More Topics",
     "instagram": { "subtitle": "Topics with the highest trending score on Instagram, updated automatically every day" },
     "facebook": { "subtitle": "Topics with the highest trending score on Facebook, updated automatically every day" },
     "twitter": { "subtitle": "Topics with the highest trending score on Twitter/X, updated automatically every day" },
@@ -400,7 +393,6 @@
   },
   "youtubeSearchTab": {
     "title": "Search Recent YouTube Videos",
-    "subtitle": "Search YouTube videos by keyword from the last 24 hours",
     "keywordLabel": "Keyword",
     "keywordPlaceholder": "e.g. highlights, cooking tutorial, breaking news...",
     "searchButton": "Search",
@@ -417,7 +409,9 @@
     "noResults": "No videos found for this keyword",
     "showingPrefix": "Showing",
     "showingMiddle": "of",
-    "showingSuffix": "videos for"
+    "showingSuffix": "videos for",
+    "sentimentDistributionTitle": "Comment Sentiment Distribution",
+    "sentimentDistributionDesc": "From {count} analyzed comments for \"{keyword}\""
   },
   "videoFilterBar": {
     "searchPlaceholder": "Search video title...",
@@ -462,10 +456,6 @@
       "settings": { "label": "Settings", "description": "Account & analysis" },
       "tips": { "label": "Tips & Notes", "description": "Important things to know" }
     }
-  },
-  "trendChat": {
-    "title": "Topic Search",
-    "subtitle": "Chat automatically to find & send trending topic recommendations"
   },
   "auth": {
     "welcomeBack": "Sign in to MediaWatch",

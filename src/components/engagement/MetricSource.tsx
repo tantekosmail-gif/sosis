@@ -118,12 +118,14 @@ const SENTIMENT_LABEL_ID: Record<string, string> = {
 interface SourceTopic {
   id: string;
   name: string;
-  keywords: string[];
+  isActive: boolean;
 }
 
 interface ActiveKeyword {
   keywordId: string;
   keyword: string;
+  topicId: string;
+  topicName: string;
 }
 
 type DetailShape =
@@ -271,13 +273,18 @@ export function MetricSourceProvider({
     setKeywordsLoading(true);
     setKeywordsError("");
     try {
-      const listRaw = await listSavedTopics({ is_active: true, limit: 50 });
+      // Sengaja TIDAK filter is_active: true -- /metrics/summary & /metrics/trend
+      // (angka yang ditampilkan di kartu/grafik) agregat lintas SEMUA topik tanpa
+      // peduli status aktif, jadi keyword dari topik yang lagi nonaktif/pause
+      // tetap harus ikut diquery di sini, kalau tidak drill-down-nya akan
+      // kehilangan sebagian konten padahal angka totalnya sudah termasuk itu.
+      const listRaw = await listSavedTopics({ limit: 50 });
       const items: Record<string, unknown>[] = listRaw?.data?.items ?? listRaw?.items ?? [];
       const nextTopics: SourceTopic[] = items
         .map((raw) => ({
           id: String(raw.id ?? raw.topic_id ?? ""),
           name: String(raw.name ?? raw.topic ?? "-"),
-          keywords: Array.isArray(raw.keywords) ? (raw.keywords as string[]) : [],
+          isActive: Boolean(raw.is_active ?? true),
         }))
         .filter((t) => t.id);
 
@@ -287,15 +294,29 @@ export function MetricSourceProvider({
 
       const nextKeywords: ActiveKeyword[] = [];
       const seenKeywordIds = new Set<string>();
-      details.forEach((res) => {
-        if (res.status !== "fulfilled") return;
+      let failedCount = 0;
+      details.forEach((res, i) => {
+        if (res.status !== "fulfilled") {
+          failedCount++;
+          return;
+        }
+        const topic = nextTopics[i];
         const detail = normalizeTopicDetail(res.value);
         detail.keywordGroups.forEach((group) => {
           if (!group.keywordId || seenKeywordIds.has(group.keywordId)) return;
           seenKeywordIds.add(group.keywordId);
-          nextKeywords.push({ keywordId: group.keywordId, keyword: group.keyword });
+          nextKeywords.push({ keywordId: group.keywordId, keyword: group.keyword, topicId: topic.id, topicName: topic.name });
         });
       });
+
+      // Gagal sebagian (bukan seluruhnya) tidak boleh diam-diam -- kalau tidak,
+      // daftar sumber yang kurang lengkap terlihat sama persis dengan "memang
+      // tidak ada konten", padahal cuma gagal dimuat.
+      if (failedCount > 0) {
+        setKeywordsError(
+          `${failedCount} dari ${nextTopics.length} topik gagal dimuat — daftar sumber di bawah mungkin tidak lengkap.`
+        );
+      }
 
       setTopics(nextTopics);
       setActiveKeywords(nextKeywords);
@@ -338,8 +359,13 @@ export function MetricSourceProvider({
     setDetailLoading(true);
     setDetailError("");
 
-    const effectiveFrom = request.dateFrom ? `${request.dateFrom}T00:00:00` : dateFrom;
-    const effectiveTo = request.dateTo ? `${request.dateTo}T23:59:59` : dateTo;
+    // UTC ("Z"), dikonfirmasi lewat data asli dari /metrics/trend -- field
+    // `period`-nya sendiri berformat "...T00:00:00+00:00", jadi backend membucket
+    // "hari" pakai kalender UTC, bukan WIB. Dokumen API juga bilang drill-down
+    // memakai logika pengelompokan hari PERSIS SAMA dengan /metrics/trend, jadi
+    // batas jam satu-hari di sini harus ikut UTC supaya kedua sisi sinkron.
+    const effectiveFrom = request.dateFrom ? `${request.dateFrom}T00:00:00Z` : dateFrom;
+    const effectiveTo = request.dateTo ? `${request.dateTo}T23:59:59Z` : dateTo;
 
     (async () => {
       try {
@@ -463,23 +489,39 @@ export function MetricSourceProvider({
 
               {keywordsError && !keywordsLoading && <p className="text-xs text-red-500">{keywordsError}</p>}
 
-              {!keywordsLoading && topics.length > 0 && (
+              {!keywordsLoading && topics.some((t) => t.isActive && activeKeywords.some((k) => k.topicId === t.id)) && (
                 <div>
                   <p className="mb-2 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                     <Tags size={12} />
                     Topik & keyword yang dipantau
                   </p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {topics.map((topic) => (
-                      <Link
-                        key={topic.id}
-                        href={`/topics/${topic.id}`}
-                        className="rounded-lg bg-indigo-50 px-2.5 py-1 text-xs font-medium text-indigo-700 transition hover:bg-indigo-100 dark:bg-indigo-950/40 dark:text-indigo-300 dark:hover:bg-indigo-950/70"
-                        title={topic.keywords.join(", ")}
-                      >
-                        {topic.name}
-                      </Link>
-                    ))}
+                  <div className="space-y-1.5">
+                    {topics
+                      .filter((t) => t.isActive && activeKeywords.some((k) => k.topicId === t.id))
+                      .map((topic) => (
+                        <div key={topic.id} className="flex flex-wrap items-center gap-1.5">
+                          <Link
+                            href={`/topics/${topic.id}`}
+                            className="shrink-0 rounded-lg bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-indigo-700 transition hover:bg-indigo-100 dark:bg-indigo-950/40 dark:text-indigo-300 dark:hover:bg-indigo-950/70"
+                          >
+                            {topic.name}
+                          </Link>
+                          {/* Keyword nyata yang dipakai untuk drill-down (dari
+                              keyword_details/keyword_id) -- BUKAN topic.keywords
+                              dari list endpoint, yang bisa beda/basi dari yang
+                              benar-benar diquery. */}
+                          {activeKeywords
+                            .filter((k) => k.topicId === topic.id)
+                            .map((k) => (
+                              <span
+                                key={k.keywordId}
+                                className="rounded-lg bg-slate-100 px-2 py-0.5 text-[11px] text-slate-600 dark:bg-slate-800 dark:text-slate-300"
+                              >
+                                {k.keyword}
+                              </span>
+                            ))}
+                        </div>
+                      ))}
                   </div>
                 </div>
               )}
@@ -494,6 +536,11 @@ export function MetricSourceProvider({
                         : "Konten sumber"}
                     {request.platform ? ` di ${PLATFORM_LABEL[request.platform]}` : ""}
                     {request.dateLabel ? ` pada ${request.dateLabel}` : " pada periode ini"}
+                  </p>
+                  <p className="mb-3 text-[11px] leading-relaxed text-amber-700 dark:text-amber-400">
+                    Daftar ini cuma mencakup konten dari topik & keyword yang tersimpan dan dipantau -- sebagian
+                    konten yang ikut terhitung di angka total di atas bisa jadi tidak tampil di sini kalau belum
+                    terhubung ke topik manapun.
                   </p>
 
                   {detailLoading && (

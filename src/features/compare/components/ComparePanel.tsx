@@ -28,7 +28,6 @@ function extractErrorMessage(err: any): string {
 
 interface Props {
   platform: string;
-  baseKeyword: string;
 }
 
 const COLOR_A = "#6366f1";
@@ -61,7 +60,8 @@ function pctOf(part: number, total: number) {
   return total > 0 ? Math.round((part / total) * 100) : 0;
 }
 
-export default function ComparePanel({ platform, baseKeyword }: Props) {
+export default function ComparePanel({ platform }: Props) {
+  const [keywordA, setKeywordA] = useState("");
   const [compareKeyword, setCompareKeyword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -72,7 +72,7 @@ export default function ComparePanel({ platform, baseKeyword }: Props) {
   const endDate = useFilterStore((s) => s.endDate);
 
   async function runCompare() {
-    if (!baseKeyword || !compareKeyword) return;
+    if (!keywordA || !compareKeyword) return;
     setLoading(true);
     setError("");
     try {
@@ -88,7 +88,7 @@ export default function ComparePanel({ platform, baseKeyword }: Props) {
         return transformDashboard(platform, res, keyword);
       }
 
-      const [resultA, resultB] = await Promise.all([fetchOne(baseKeyword), fetchOne(compareKeyword)]);
+      const [resultA, resultB] = await Promise.all([fetchOne(keywordA), fetchOne(compareKeyword)]);
       setDataA(resultA);
       setDataB(resultB);
     } catch (e: any) {
@@ -141,13 +141,15 @@ export default function ComparePanel({ platform, baseKeyword }: Props) {
       <div className="p-6 space-y-5">
         {/* Input */}
         <div className="flex items-center gap-3">
-          {/* Keyword A (base) */}
+          {/* Keyword A */}
           <div className="flex-1 relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 flex h-5 w-5 items-center justify-center rounded-md bg-indigo-600 text-[10px] font-bold text-white">A</span>
             <input
-              value={baseKeyword}
-              readOnly
-              className="h-10 w-full rounded-xl border border-indigo-200 bg-indigo-50 pl-10 pr-3 text-sm font-medium text-indigo-800 dark:bg-indigo-950/40"
+              placeholder="Keyword pertama..."
+              value={keywordA}
+              onChange={(e) => setKeywordA(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && runCompare()}
+              className="h-10 w-full rounded-xl border border-indigo-200 bg-indigo-50 pl-10 pr-3 text-sm font-medium text-indigo-800 placeholder:text-indigo-300 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition dark:border-indigo-900 dark:bg-indigo-950/40 dark:text-indigo-200 dark:placeholder:text-indigo-700 dark:focus:bg-slate-900"
             />
           </div>
 
@@ -167,7 +169,7 @@ export default function ComparePanel({ platform, baseKeyword }: Props) {
 
           <button
             onClick={runCompare}
-            disabled={loading || !compareKeyword}
+            disabled={loading || !keywordA || !compareKeyword}
             className="flex h-10 shrink-0 items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-4 text-sm font-semibold text-white shadow shadow-indigo-500/20 transition hover:from-indigo-700 hover:to-violet-700 disabled:opacity-50"
           >
             {loading ? <Loader2 size={14} className="animate-spin" /> : <GitCompareArrows size={14} />}
