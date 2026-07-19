@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
-import { ChevronRight, Download, Eye, Loader2, Plus, Search, SearchX, Tags, Trash2 } from "lucide-react";
+import { ChevronRight, Download, Eye, Filter, Loader2, Plus, Search, SearchX, Tags, Trash2 } from "lucide-react";
 
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import TopicForm, { type TopicFormData } from "@/features/topic/components/TopicForm";
@@ -15,6 +15,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import TopTopicsLeaderboard from "@/components/topic/TopTopicsLeaderboard";
 import Pagination from "@/components/common/Pagination";
 import { usePagination } from "@/hooks/usePagination";
+import { hankenGrotesk, jetBrainsMono } from "@/lib/fonts/dashboardFonts";
+
+type SortKey = "posts" | "comments" | "name";
+const SORT_OPTIONS: { key: SortKey; label: string }[] = [
+  { key: "posts", label: "Post Terbanyak" },
+  { key: "comments", label: "Komentar Terbanyak" },
+  { key: "name", label: "Nama (A-Z)" },
+];
 
 function downloadTopicsCsv(topics: Topic[]) {
   const header = ["Nama", "Keywords", "Total Post", "Total Komentar"];
@@ -43,17 +51,25 @@ export default function TopicsPage() {
   const [pollingId, setPollingId] = useState<string | null>(null);
   const [confirmTarget, setConfirmTarget] = useState<{ topic: Topic; keywords: string[] } | null>(null);
   const [filterQuery, setFilterQuery] = useState("");
+  const [sortBy, setSortBy] = useState<SortKey>("posts");
+  const [filterOpen, setFilterOpen] = useState(false);
   const { topics, loading, error, refresh, addTopic, removeTopic, searchTopic, pollTopicResult } =
     useTopics();
   const cancelPollRef = useRef<Map<string, () => void>>(new Map());
 
   const filteredTopics = useMemo(() => {
     const q = filterQuery.trim().toLowerCase();
-    if (!q) return topics;
-    return topics.filter(
-      (topic) => topic.name.toLowerCase().includes(q) || topic.keywords.some((kw) => kw.toLowerCase().includes(q))
-    );
-  }, [topics, filterQuery]);
+    const base = !q
+      ? topics
+      : topics.filter(
+          (topic) => topic.name.toLowerCase().includes(q) || topic.keywords.some((kw) => kw.toLowerCase().includes(q))
+        );
+    return [...base].sort((a, b) => {
+      if (sortBy === "name") return a.name.localeCompare(b.name);
+      if (sortBy === "comments") return (b.totalComments ?? 0) - (a.totalComments ?? 0);
+      return (b.totalPosts ?? 0) - (a.totalPosts ?? 0);
+    });
+  }, [topics, filterQuery, sortBy]);
 
   const { page, totalPages, setPage, paginated } = usePagination(filteredTopics, 5);
   const rangeStart = filteredTopics.length === 0 ? 0 : (page - 1) * 5 + 1;
@@ -160,11 +176,13 @@ export default function TopicsPage() {
     <DashboardLayout>
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">{t.topics.pageTitle}</h1>
+          <h1 className={`${hankenGrotesk.className} text-2xl font-extrabold text-slate-900 dark:text-slate-100 sm:text-3xl`}>
+            {t.topics.pageTitle}
+          </h1>
         </div>
         <button
           onClick={() => setCreateOpen(true)}
-          className="flex h-10 shrink-0 items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-4 text-sm font-semibold text-white shadow-md shadow-indigo-500/30 transition hover:from-indigo-700 hover:to-violet-700 hover:shadow-lg"
+          className="flex h-10 shrink-0 items-center gap-2 rounded-xl bg-indigo-600 px-4 text-sm font-semibold text-white shadow-md shadow-indigo-500/30 transition hover:bg-indigo-700 hover:shadow-lg"
         >
           <Plus size={16} /> {t.topics.addButton}
         </button>
@@ -246,7 +264,7 @@ export default function TopicsPage() {
       <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 px-5 py-4">
           <div>
-            <h2 className="font-semibold text-slate-900 dark:text-slate-100">{t.topics.listTitle}</h2>
+            <h2 className={`${hankenGrotesk.className} font-bold text-slate-900 dark:text-slate-100`}>{t.topics.listTitle}</h2>
             <p className="text-xs text-slate-400 dark:text-slate-500">{topics.length} {t.topics.topicsSaved}</p>
           </div>
 
@@ -261,6 +279,47 @@ export default function TopicsPage() {
                   className="h-9 w-56 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 pl-8 pr-3 text-sm text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-indigo-400 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition"
                 />
               </div>
+
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setFilterOpen((v) => !v)}
+                  className={`flex h-9 shrink-0 items-center gap-1.5 rounded-lg border px-3 text-xs font-semibold transition ${
+                    filterOpen
+                      ? "border-indigo-300 bg-indigo-50 text-indigo-700 dark:border-indigo-800 dark:bg-indigo-950/40 dark:text-indigo-400"
+                      : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
+                  }`}
+                >
+                  <Filter size={13} />
+                  Filter
+                </button>
+
+                {filterOpen && (
+                  <div className="absolute right-0 top-full z-10 mt-2 w-52 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-2 shadow-lg">
+                    <p className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                      Urutkan
+                    </p>
+                    {SORT_OPTIONS.map((opt) => (
+                      <button
+                        key={opt.key}
+                        type="button"
+                        onClick={() => {
+                          setSortBy(opt.key);
+                          setFilterOpen(false);
+                        }}
+                        className={`flex w-full items-center rounded-lg px-2.5 py-1.5 text-left text-xs font-medium transition ${
+                          sortBy === opt.key
+                            ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-400"
+                            : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
+                        }`}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               <button
                 type="button"
                 onClick={() => downloadTopicsCsv(filteredTopics)}
@@ -305,7 +364,7 @@ export default function TopicsPage() {
                     <div className="flex flex-wrap items-center gap-2">
                       <Link
                         href={`/topics/${topic.id}`}
-                        className="group inline-flex items-center gap-0.5 font-medium text-indigo-600 dark:text-indigo-400 hover:underline"
+                        className={`${hankenGrotesk.className} group inline-flex items-center gap-0.5 font-bold text-indigo-600 dark:text-indigo-400 hover:underline`}
                       >
                         {topic.name}
                         <ChevronRight
@@ -314,7 +373,9 @@ export default function TopicsPage() {
                         />
                       </Link>
                       {(topic.totalPosts !== undefined || topic.totalComments !== undefined) && (
-                        <span className="text-xs text-slate-400 dark:text-slate-500">
+                        <span
+                          className={`${jetBrainsMono.className} rounded-md bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[11px] font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400`}
+                        >
                           {topic.totalPosts ?? 0} {t.topics.postsUnit} · {topic.totalComments ?? 0} {t.topics.commentsUnit}
                         </span>
                       )}

@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { Crown } from "lucide-react";
+import { Star } from "lucide-react";
 
 import type { Topic } from "@/features/topic/hooks/useTopics";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
+import { hankenGrotesk, jetBrainsMono } from "@/lib/fonts/dashboardFonts";
 
 const RANK_BADGE_COLOR = [
   "bg-white/20 text-white", // #1, dipakai di dalam hero card (background sudah gelap)
@@ -33,8 +34,8 @@ export default function TopTopicsLeaderboard({ topics }: { topics: Topic[] }) {
   return (
     <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm p-5">
       <div className="mb-1 flex items-center gap-2">
-        <Crown size={16} className="text-amber-500" />
-        <h2 className="font-semibold text-slate-900 dark:text-slate-100">{labels.title}</h2>
+        <Star size={16} className="fill-amber-400 text-amber-500" />
+        <h2 className={`${hankenGrotesk.className} font-bold text-slate-900 dark:text-slate-100`}>{labels.title}</h2>
       </div>
       <p className="mb-4 text-xs text-slate-400 dark:text-slate-500">{labels.desc}</p>
 
@@ -47,11 +48,13 @@ export default function TopTopicsLeaderboard({ topics }: { topics: Topic[] }) {
             <span className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold ${RANK_BADGE_COLOR[0]}`}>
               {labels.rankPrefix}1
             </span>
-            <Crown size={16} className="text-amber-300" />
+            <Star size={16} className="fill-amber-300 text-amber-300" />
           </div>
           <div>
-            <p className="font-semibold leading-snug text-white group-hover:underline">{top1.name}</p>
-            <p className="mt-1 text-sm text-indigo-100">
+            <p className={`${hankenGrotesk.className} text-xl font-extrabold leading-snug text-white group-hover:underline`}>
+              {top1.name}
+            </p>
+            <p className={`${jetBrainsMono.className} mt-1 text-sm text-indigo-100`}>
               {(top1.totalPosts ?? 0).toLocaleString("id-ID")} {labels.mentionsUnit}
             </p>
           </div>
@@ -73,7 +76,7 @@ export default function TopTopicsLeaderboard({ topics }: { topics: Topic[] }) {
                 </span>
                 <span className="truncate text-sm font-medium text-slate-700 dark:text-slate-300">{topic.name}</span>
               </div>
-              <span className="shrink-0 text-xs text-slate-400 dark:text-slate-500">
+              <span className={`${jetBrainsMono.className} shrink-0 text-xs text-slate-400 dark:text-slate-500`}>
                 {(topic.totalPosts ?? 0).toLocaleString("id-ID")} {labels.mentionsUnit}
               </span>
             </Link>
