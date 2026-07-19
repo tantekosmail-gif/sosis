@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BarChart3, ChevronDown, ChevronLeft, ChevronRight, FileText, GitCompareArrows, Home, Newspaper, Settings, Share2, Tags, X } from "lucide-react";
-import { FaFacebook, FaInstagram, FaTiktok, FaXTwitter, FaYoutube } from "react-icons/fa6";
+import { FaFacebook, FaInstagram, FaThreads, FaTiktok, FaXTwitter, FaYoutube } from "react-icons/fa6";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 // Menu dikelompokkan per fungsi: Ringkasan (dashboard lintas-platform),
@@ -32,6 +32,7 @@ const sections = [
           { key: "facebook",    href: "/facebook",     icon: FaFacebook  },
           { key: "twitter",     href: "/twitter",      icon: FaXTwitter  },
           { key: "tiktok",      href: "/tiktok",       icon: FaTiktok    },
+          { key: "threads",     href: "/threads",      icon: FaThreads   },
           { key: "comparePlatforms", href: "/compare/social", icon: GitCompareArrows },
         ],
       },
