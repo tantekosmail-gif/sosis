@@ -5,13 +5,14 @@ import { ChevronDown, Loader2, RefreshCw } from "lucide-react";
 
 import TrendingTopicCard from "@/components/instagram/TrendingTopicCard";
 import TrendingCommentsList from "@/components/instagram/TrendingCommentsList";
+import ExecutiveInsightCard from "@/components/common/ExecutiveInsightCard";
 import CommentsModal from "@/components/common/CommentsModal";
 import { useInstagramTrending } from "../hooks/useInstagramTrending";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
-const SHOW_HEADER = false;
+const SHOW_HEADER = true;
 const SHOW_SCHEDULE = false;
-const TOPICS_PAGE_SIZE = 6;
+const TOPICS_PAGE_SIZE = 3;
 
 export default function InstagramTrendingTab() {
   const { t } = useTranslation();
@@ -134,6 +135,8 @@ export default function InstagramTrendingTab() {
                   </button>
                 </div>
               )}
+
+              <ExecutiveInsightCard topic={topics[0]} />
             </>
           )}
 

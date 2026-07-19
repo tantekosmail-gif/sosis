@@ -15,6 +15,18 @@ function getLastWeekRange() {
   return { dateFrom: fmt(from), dateTo: fmt(to) };
 }
 
+// dateFrom/dateTo tidak boleh tanggal yang sama -- backend membandingkan
+// rentang tanggal secara eksklusif di batas atas, jadi from=to=hari-ini
+// selalu balik kosong. dateTo digeser +1 hari supaya rentangnya benar-benar
+// mencakup hari ini.
+function getTodayRange() {
+  const from = new Date();
+  const to = new Date();
+  to.setDate(to.getDate() + 1);
+  const fmt = (d: Date) => d.toISOString().slice(0, 10);
+  return { dateFrom: fmt(from), dateTo: fmt(to) };
+}
+
 export function useTwitterTrending() {
   const [data, setData] = useState<TwitterTrendingData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -28,7 +40,7 @@ export function useTwitterTrending() {
       setError("");
       setSelectedPostId(null);
 
-      const range = period === "week" ? getLastWeekRange() : {};
+      const range = period === "week" ? getLastWeekRange() : getTodayRange();
       const result = await getTwitterTrending(range);
       setData(result);
     } catch (err: any) {

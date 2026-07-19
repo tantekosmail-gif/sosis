@@ -5,6 +5,7 @@ import { Activity, AtSign, ExternalLink, Hash, MessageCircle, ThumbsUp } from "l
 import type { FacebookTrendingPost, FacebookTrendingTopic } from "@/features/facebook/types/trending.types";
 import SentimentBar from "@/components/common/SentimentBreakdownBar";
 import FallbackImage from "@/components/common/FallbackImage";
+import { hankenGrotesk } from "@/lib/fonts/dashboardFonts";
 
 const SHOW_STATUS_BADGE = false;
 
@@ -134,7 +135,7 @@ export default function TrendingTopicCard({
     <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm">
       <div className="flex items-start justify-between gap-3 p-5">
         <div className="min-w-0">
-          <p className="flex items-center gap-1.5 text-base font-bold text-slate-900 dark:text-slate-100">
+          <p className={`${hankenGrotesk.className} flex items-center gap-1.5 text-lg font-bold text-slate-900 dark:text-slate-100`}>
             <span>#{rank}</span>
             <Hash size={15} className="shrink-0 text-slate-400 dark:text-slate-500" />
             <span className="truncate">{topic.topic}</span>
