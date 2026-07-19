@@ -118,35 +118,43 @@ export default function NewsSummaryWidget({ data }: Props) {
 
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Sentimen Berita */}
-        <div className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm lg:col-span-1">
+        <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm lg:col-span-1">
           <SectionHeader icon={PieChart} title={t.newsSummary.sentimentTitle} subtitle={t.newsSummary.sentimentSubtitle} />
-          <div className="p-6">
+          <div className="flex flex-1 flex-col p-6">
             {total_analyzed > 0 ? (
-              <>
-                <div className="mb-2 flex items-center justify-end">
+              <div className="flex flex-1 flex-col">
+                <div className="mb-4 flex items-center justify-end">
                   <span className="text-[11px] text-slate-400 dark:text-slate-500">
                     {t.newsSummary.articlesAnalyzed.replace("{count}", String(total_analyzed))}
                   </span>
                 </div>
-                <div className="flex h-2 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+                <div className="flex flex-1 items-end justify-around gap-4">
                   {(["positif", "netral", "negatif"] as const).map((key) => (
-                    <div key={key} className={SENTIMENT_COLOR[key].bar} style={{ width: `${sentiment[key].percentage}%` }} />
-                  ))}
-                </div>
-                <div className="mt-3 space-y-2">
-                  {(["positif", "netral", "negatif"] as const).map((key) => (
-                    <div key={key} className="flex items-center justify-between text-xs">
-                      <span className="flex items-center gap-1.5 font-medium text-slate-600 dark:text-slate-400">
-                        <span className={`h-1.5 w-1.5 rounded-full ${SENTIMENT_COLOR[key].bar}`} />
-                        {SENTIMENT_LABEL[key]}
+                    <div key={key} className="flex h-full flex-1 flex-col items-center justify-end gap-1.5">
+                      <span className={`text-xs font-semibold ${SENTIMENT_COLOR[key].text}`}>
+                        {sentiment[key].percentage.toFixed(1)}%
                       </span>
-                      <span className={`font-semibold ${SENTIMENT_COLOR[key].text}`}>
-                        {sentiment[key].percentage.toFixed(1)}% ({sentiment[key].count})
-                      </span>
+                      <div className="flex w-full flex-1 items-end justify-center">
+                        <div
+                          className={`w-9 rounded-t-lg transition-all ${SENTIMENT_COLOR[key].bar}`}
+                          style={{ height: `${Math.max(sentiment[key].percentage, 2)}%` }}
+                        />
+                      </div>
                     </div>
                   ))}
                 </div>
-              </>
+                <div className="mt-3 flex items-start justify-around gap-4 border-t border-slate-100 dark:border-slate-800 pt-3">
+                  {(["positif", "netral", "negatif"] as const).map((key) => (
+                    <div key={key} className="flex flex-1 flex-col items-center gap-1 text-center">
+                      <span className="flex items-center gap-1.5 text-xs font-medium text-slate-600 dark:text-slate-400">
+                        <span className={`h-1.5 w-1.5 rounded-full ${SENTIMENT_COLOR[key].bar}`} />
+                        {SENTIMENT_LABEL[key]}
+                      </span>
+                      <span className="text-[11px] text-slate-400 dark:text-slate-500">{sentiment[key].count}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             ) : (
               <p className="text-sm text-slate-400 dark:text-slate-500">{t.newsSummary.noEntities}</p>
             )}
