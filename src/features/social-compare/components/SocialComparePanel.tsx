@@ -10,13 +10,18 @@ import {
 import { useSocialCompare } from "../hooks/useSocialCompare";
 import type { ComparablePlatform, PlatformSearchResult } from "../types/socialCompare.types";
 
-// #1DA1F2 (Twitter blue lama) gagal cek kontras dataviz (2.75:1, ambang 3:1) --
-// diganti #0c7abf, tervalidasi lightness/CVD/kontras (lihat skill dataviz).
+// Warna asli brand tiap platform (biru FB/Twitter, pink IG/TikTok) gagal cek
+// all-pairs dataviz -- dua platform biru (FB↔Twitter ΔE 8.1) dan dua platform
+// pink/merah (IG↔TikTok ΔE 6.6) di bawah ambang 15, tidak bisa dibedakan
+// meski oleh penglihatan warna normal. Twitter & TikTok diganti ke ungu/teal
+// (keduanya tetap warna asli dari brand masing-masing -- ungu Twitter/X's
+// dark mode UI, teal aksen sekunder logo TikTok) yang lolos all-pairs di
+// mode terang & gelap (lihat skill dataviz, validate_palette.js --pairs all).
 const PLATFORM_META: Record<ComparablePlatform, { label: string; color: string }> = {
   facebook: { label: "Facebook", color: "#1877F2" },
   instagram: { label: "Instagram", color: "#E1306C" },
-  twitter: { label: "Twitter/X", color: "#0c7abf" },
-  tiktok: { label: "TikTok", color: "#FE2C55" },
+  twitter: { label: "Twitter/X", color: "#6d28d9" },
+  tiktok: { label: "TikTok", color: "#0d9488" },
 };
 
 const PLATFORM_ORDER: ComparablePlatform[] = ["facebook", "instagram", "twitter", "tiktok"];
@@ -220,38 +225,77 @@ export default function SocialComparePanel() {
 
             <div className={`grid grid-cols-2 gap-3 ${activePlatforms.length >= 3 ? "sm:grid-cols-2" : "sm:grid-cols-4"}`}>
               {[
-                { label: "Total Post", key: "totalPosts" as const },
-                { label: "Komentar", key: "totalComments" as const },
-                { label: "Sentimen +", key: "sentiment.positif" as const },
-                { label: "Sentimen -", key: "sentiment.negatif" as const },
-              ].map(({ label, key }) => (
-                <div key={label} className="rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-4">
-                  <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">{label}</p>
-                  <div className="mt-2 flex flex-wrap items-end gap-3">
-                    {activePlatforms.map((p) => {
-                      const result = results[p]!;
-                      const isSentiment = key === "sentiment.positif" || key === "sentiment.negatif";
-                      const value = key === "sentiment.positif"
-                        ? result.sentiment.positif
-                        : key === "sentiment.negatif"
-                          ? result.sentiment.negatif
-                          : result[key];
-                      const pct = isSentiment ? pctOf(value, sentimentTotals[p]) : null;
-                      return (
-                        <div key={p}>
-                          <span className="text-[10px] font-semibold" style={{ color: PLATFORM_META[p].color }}>
-                            {PLATFORM_META[p].label.slice(0, 2).toUpperCase()}
-                          </span>
-                          <p className="text-lg font-bold text-slate-900 dark:text-slate-100">
-                            {value?.toLocaleString("id-ID")}
-                            {pct !== null && <span className="ml-1 text-xs font-semibold text-slate-400 dark:text-slate-500">({pct}%)</span>}
-                          </p>
-                        </div>
-                      );
-                    })}
+                { label: "Total Post", key: "totalPosts" as const, titleClassName: "text-slate-400 dark:text-slate-500" },
+                { label: "Komentar", key: "totalComments" as const, titleClassName: "text-slate-400 dark:text-slate-500" },
+                { label: "Sentimen (+)", key: "sentiment.positif" as const, titleClassName: "text-emerald-600 dark:text-emerald-400" },
+                { label: "Sentimen (-)", key: "sentiment.negatif" as const, titleClassName: "text-red-600 dark:text-red-400" },
+              ].map(({ label, key, titleClassName }) => {
+                const isSentiment = key === "sentiment.positif" || key === "sentiment.negatif";
+
+                return (
+                  <div key={label} className="rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-4">
+                    <p className={`text-[10px] font-semibold uppercase tracking-wider ${titleClassName}`}>{label}</p>
+
+                    {isSentiment ? (
+                      <div className="mt-3 space-y-2.5">
+                        {activePlatforms.map((p) => {
+                          const result = results[p]!;
+                          const value = key === "sentiment.positif" ? result.sentiment.positif : result.sentiment.negatif;
+                          const pct = pctOf(value, sentimentTotals[p]);
+                          return (
+                            <div key={p}>
+                              <div className="flex items-center justify-between gap-3 text-sm">
+                                <span className="text-xs font-semibold" style={{ color: PLATFORM_META[p].color }}>
+                                  {PLATFORM_META[p].label}
+                                </span>
+                                <span className="font-bold text-slate-900 dark:text-slate-100">
+                                  {value.toLocaleString("id-ID")}
+                                  <span className="ml-1.5 text-xs font-medium text-slate-400 dark:text-slate-500">({pct}%)</span>
+                                </span>
+                              </div>
+                              <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+                                <div
+                                  className="h-full rounded-full transition-all"
+                                  style={{ width: `${pct}%`, background: PLATFORM_META[p].color }}
+                                />
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <div className="mt-3 space-y-2.5">
+                        {(() => {
+                          const max = Math.max(...activePlatforms.map((p) => results[p]![key]), 1);
+                          return activePlatforms.map((p) => {
+                            const result = results[p]!;
+                            const value = result[key];
+                            const barPct = Math.round((value / max) * 100);
+                            return (
+                              <div key={p}>
+                                <div className="flex items-center justify-between gap-3 text-sm">
+                                  <span className="text-xs font-semibold" style={{ color: PLATFORM_META[p].color }}>
+                                    {PLATFORM_META[p].label}
+                                  </span>
+                                  <span className="font-bold text-slate-900 dark:text-slate-100">
+                                    {value?.toLocaleString("id-ID")}
+                                  </span>
+                                </div>
+                                <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+                                  <div
+                                    className="h-full rounded-full transition-all"
+                                    style={{ width: `${barPct}%`, background: PLATFORM_META[p].color }}
+                                  />
+                                </div>
+                              </div>
+                            );
+                          });
+                        })()}
+                      </div>
+                    )}
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             <div className="grid gap-5 lg:grid-cols-3">
