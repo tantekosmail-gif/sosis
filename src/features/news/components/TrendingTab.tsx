@@ -1,19 +1,26 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Loader2, TrendingUp } from "lucide-react";
+import { Eye, Loader2, TrendingUp } from "lucide-react";
 
-import NewsResultCard from "@/components/news/NewsResultCard";
 import NewsSummaryWidget from "@/components/news/NewsSummaryWidget";
 import NegativeHighlightCard from "@/components/news/NegativeHighlightCard";
 import { useNewsSummary } from "../hooks/useNewsSummary";
 import { useNewsTrending } from "../hooks/useNewsTrending";
+import { getNewsSourceName } from "../lib/format";
+import { formatRelativeTime } from "@/lib/formatRelativeTime";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 type SortKey = "terbaru" | "positif" | "negatif";
 
 type SentimentKey = "positif" | "netral" | "negatif";
 type SentimentFilter = "all" | SentimentKey;
+
+const TABLE_SENTIMENT_COLOR: Record<string, { text: string; dot: string }> = {
+  positif: { text: "text-emerald-700 dark:text-emerald-400", dot: "bg-emerald-500" },
+  netral: { text: "text-amber-700 dark:text-amber-400", dot: "bg-amber-400" },
+  negatif: { text: "text-red-700 dark:text-red-400", dot: "bg-red-500" },
+};
 
 function formatDate(value: string, language: string) {
   const date = new Date(value);
@@ -188,9 +195,66 @@ export default function NewsTrendingTab() {
                   {t.newsTrendingTab.noSentimentMatch}
                 </div>
               ) : (
-                filteredItems.map((item, idx) => (
-                  <NewsResultCard key={item.post_id} item={item} sentiment={item.sentiment} rank={idx + 1} dateMode="relative" />
-                ))
+                <div className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead className="bg-slate-50 dark:bg-slate-950 text-[10px] uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                        <tr>
+                          <th className="px-6 py-3 text-left">{t.newsTrendingTab.tableHeadline}</th>
+                          <th className="px-4 py-3 text-left">{t.newsTrendingTab.tableSource}</th>
+                          <th className="px-4 py-3 text-left">{t.newsTrendingTab.tableSentiment}</th>
+                          <th className="px-4 py-3 text-left">{t.newsTrendingTab.tableTime}</th>
+                          <th className="px-6 py-3 text-right">{t.newsTrendingTab.tableAction}</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                        {filteredItems.map((item) => {
+                          const sentimentLabel = item.sentiment?.label;
+                          const sentimentColor = sentimentLabel ? TABLE_SENTIMENT_COLOR[sentimentLabel] : null;
+                          const relativeDate = formatRelativeTime(item.published_at ?? item.collected_at, language);
+                          return (
+                            <tr key={item.post_id} className="transition-colors hover:bg-slate-50/70 dark:hover:bg-slate-800/40">
+                              <td className="max-w-sm px-6 py-3">
+                                <a
+                                  href={item.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="line-clamp-2 font-medium text-slate-800 dark:text-slate-200 hover:text-indigo-600"
+                                >
+                                  {item.title}
+                                </a>
+                              </td>
+                              <td className="px-4 py-3">
+                                <span className="rounded-md bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-xs font-medium text-slate-500 dark:text-slate-400">
+                                  {getNewsSourceName(item.url)}
+                                </span>
+                              </td>
+                              <td className="px-4 py-3">
+                                {sentimentLabel && sentimentColor && (
+                                  <span className={`inline-flex items-center gap-1.5 text-xs font-semibold ${sentimentColor.text}`}>
+                                    <span className={`h-1.5 w-1.5 rounded-full ${sentimentColor.dot}`} />
+                                    {SENTIMENT_FILTER_META[sentimentLabel as SentimentKey]?.label ?? sentimentLabel}
+                                  </span>
+                                )}
+                              </td>
+                              <td className="px-4 py-3 text-xs text-slate-400 dark:text-slate-500">{relativeDate}</td>
+                              <td className="px-6 py-3 text-right">
+                                <a
+                                  href={item.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex text-slate-400 hover:text-indigo-600 dark:text-slate-500 dark:hover:text-indigo-400"
+                                >
+                                  <Eye size={15} />
+                                </a>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               )}
             </div>
           )

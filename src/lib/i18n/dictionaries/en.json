@@ -9,6 +9,9 @@
   },
   "sidebar": {
     "mainMenu": "Main Menu",
+    "summaryGroup": "Summary",
+    "monitoringGroup": "Monitoring",
+    "systemGroup": "System",
     "overview": "Overview",
     "engagement": "Engagement",
     "youtube": "YouTube",
@@ -198,7 +201,12 @@
     "sortLabel": "Sort:",
     "sortNewest": "Newest",
     "sortMostPositive": "Most Positive",
-    "sortMostNegative": "Most Negative"
+    "sortMostNegative": "Most Negative",
+    "tableHeadline": "Article Headline",
+    "tableSource": "Source",
+    "tableSentiment": "Sentiment",
+    "tableTime": "Time",
+    "tableAction": "Action"
   },
   "newsSearchTab": {
     "placeholder": "Search news, e.g. jokowi, election, economy...",
@@ -471,6 +479,9 @@
     "pageSubtitle": "Search the database first, then ask permission before reaching third-party sources.",
     "listTitle": "Topic List",
     "topicsSaved": "topics saved",
+    "filterPlaceholder": "Search topic name or keyword...",
+    "downloadCsv": "Download CSV",
+    "noMatch": "No topics match",
     "emptyTitle": "No topics yet",
     "emptyDesc": "Add a new topic using the form above.",
     "nameLabel": "Topic Name",
@@ -547,6 +558,9 @@
   },
   "reports": {
     "pageTitle": "Reports",
+    "pageSubtitle": "Configure and generate detailed executive analysis across all monitored media channels.",
+    "configTitle": "Report Configuration",
+    "timeRangeLabel": "Time Range",
     "periodDaily": "Daily",
     "periodWeekly": "Weekly",
     "periodMonthly": "Monthly",
@@ -563,7 +577,12 @@
     "generateError": "Failed to generate report",
     "generateTimeout": "Report isn't ready yet, check back in a bit.",
     "downloadError": "Failed to download report",
-    "emptyTopics": "No topics yet. Add one on the Topics page first."
+    "emptyTopics": "No topics yet. Add one on the Topics page first.",
+    "insightTitle": "Live Data Insight",
+    "insightDescWithTopic": "The report will be generated from {period} data on the \"{topic}\" topic.",
+    "insightDescNoTopic": "Select a topic to see the report's data coverage.",
+    "recentReportsTitle": "Recently Generated Reports",
+    "recentReportsEmpty": "No reports generated in this session yet."
   },
   "settings": {
     "title": "Settings",

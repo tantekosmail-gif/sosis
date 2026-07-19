@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { AlertTriangle, LayoutGrid, Loader2, RefreshCw, Table2 } from "lucide-react";
+import { AlertTriangle, Download, LayoutGrid, Loader2, RefreshCw, Table2 } from "lucide-react";
 
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import PeriodSelect from "@/components/dashboard/PeriodSelect";
@@ -12,9 +12,46 @@ import EngagementCompositionChart from "@/components/engagement/EngagementCompos
 import EngagementTrendGrid from "@/components/engagement/EngagementTrendGrid";
 import { MetricSourceProvider } from "@/components/engagement/MetricSource";
 import { ENGAGEMENT_PLATFORMS, useEngagementDashboard } from "@/features/engagement/hooks/useEngagementDashboard";
+import type { EngagementPlatform, EngagementSummary, EngagementTrend } from "@/features/engagement/types/engagement.types";
 import { PLATFORM_LABEL } from "@/features/engagement/lib/colors";
+import { fillDailySeries } from "@/features/engagement/lib/format";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { type PeriodPreset } from "@/lib/period";
+
+function downloadEngagementReportCsv(
+  summaries: Partial<Record<EngagementPlatform, EngagementSummary>>,
+  trends: Partial<Record<EngagementPlatform, EngagementTrend>>,
+  dateFrom: string,
+  dateTo: string
+) {
+  const lines: string[] = [];
+
+  lines.push("Ringkasan Engagement");
+  lines.push(["Platform", "Total Engagement", "Mentions", "Reach", "Exposure", "Sentimen (%)"].join(","));
+  for (const platform of ENGAGEMENT_PLATFORMS) {
+    const s = summaries[platform];
+    if (!s) continue;
+    lines.push([PLATFORM_LABEL[platform], s.engagement, s.mentions, s.reach, s.exposure, s.sentimentScore.toFixed(1)].join(","));
+  }
+
+  lines.push("");
+  lines.push("Tren Mention Harian");
+  const seriesByPlatform = ENGAGEMENT_PLATFORMS.map((platform) => fillDailySeries(trends[platform]?.series ?? [], dateFrom, dateTo));
+  const dates = seriesByPlatform[0]?.map((d) => d.date) ?? [];
+  lines.push(["Tanggal", ...ENGAGEMENT_PLATFORMS.map((p) => PLATFORM_LABEL[p])].join(","));
+  dates.forEach((date, i) => {
+    lines.push([date, ...seriesByPlatform.map((series) => series[i]?.mentions ?? 0)].join(","));
+  });
+
+  const csv = lines.join("\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "laporan-engagement.csv";
+  a.click();
+  URL.revokeObjectURL(url);
+}
 
 export default function EngagementPage() {
   const router = useRouter();
@@ -69,6 +106,16 @@ export default function EngagementPage() {
             >
               <RefreshCw size={12} className={loading ? "animate-spin" : ""} />
               Refresh
+            </button>
+            <button
+              type="button"
+              onClick={() => downloadEngagementReportCsv(summaries, trends, range.date_from, range.date_to)}
+              disabled={loading || !hasAnySummary}
+              title="Export ringkasan & tren harian ke CSV"
+              className="flex h-8 items-center gap-1.5 rounded-lg bg-indigo-600 px-2.5 text-[11px] font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-50"
+            >
+              <Download size={12} />
+              Export Report
             </button>
             <div className="flex items-center gap-0.5 rounded-lg border border-slate-200 bg-slate-50 p-0.5 dark:border-slate-700 dark:bg-slate-800">
               <button

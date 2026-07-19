@@ -9,6 +9,9 @@
   },
   "sidebar": {
     "mainMenu": "Menu Utama",
+    "summaryGroup": "Ringkasan",
+    "monitoringGroup": "Pemantauan",
+    "systemGroup": "Sistem",
     "overview": "Overview",
     "engagement": "Engagement",
     "youtube": "YouTube",
@@ -198,7 +201,12 @@
     "sortLabel": "Urutkan:",
     "sortNewest": "Terbaru",
     "sortMostPositive": "Paling Positif",
-    "sortMostNegative": "Paling Negatif"
+    "sortMostNegative": "Paling Negatif",
+    "tableHeadline": "Headline Artikel",
+    "tableSource": "Sumber",
+    "tableSentiment": "Sentimen",
+    "tableTime": "Waktu",
+    "tableAction": "Aksi"
   },
   "newsSearchTab": {
     "placeholder": "Cari berita, mis. jokowi, pemilu, ekonomi...",
@@ -471,6 +479,9 @@
     "pageSubtitle": "Cari dari database dulu, baru minta izin sebelum menjangkau sumber pihak ketiga.",
     "listTitle": "Daftar Topik",
     "topicsSaved": "topik tersimpan",
+    "filterPlaceholder": "Cari nama atau keyword topik...",
+    "downloadCsv": "Download CSV",
+    "noMatch": "Tidak ada topik yang cocok",
     "emptyTitle": "Belum ada topik",
     "emptyDesc": "Tambahkan topik baru lewat form di atas.",
     "nameLabel": "Nama Topik",
@@ -547,6 +558,9 @@
   },
   "reports": {
     "pageTitle": "Laporan",
+    "pageSubtitle": "Konfigurasi dan buat analisis eksekutif dari seluruh kanal media yang dipantau.",
+    "configTitle": "Konfigurasi Laporan",
+    "timeRangeLabel": "Rentang Waktu",
     "periodDaily": "Harian",
     "periodWeekly": "Mingguan",
     "periodMonthly": "Bulanan",
@@ -563,7 +577,12 @@
     "generateError": "Gagal membuat laporan",
     "generateTimeout": "Laporan belum selesai diproses, cek lagi beberapa saat lagi.",
     "downloadError": "Gagal mengunduh laporan",
-    "emptyTopics": "Belum ada topik. Tambahkan topik dulu di halaman Topik."
+    "emptyTopics": "Belum ada topik. Tambahkan topik dulu di halaman Topik.",
+    "insightTitle": "Live Data Insight",
+    "insightDescWithTopic": "Laporan akan dibuat dari data {period} pada topik \"{topic}\".",
+    "insightDescNoTopic": "Pilih topik untuk melihat cakupan data laporan.",
+    "recentReportsTitle": "Laporan Baru Dibuat",
+    "recentReportsEmpty": "Belum ada laporan yang dibuat pada sesi ini."
   },
   "settings": {
     "title": "Pengaturan",

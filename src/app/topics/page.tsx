@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
-import { ChevronRight, Eye, Loader2, Plus, Search, Tags, Trash2 } from "lucide-react";
+import { ChevronRight, Download, Eye, Loader2, Plus, Search, SearchX, Tags, Trash2 } from "lucide-react";
 
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import TopicForm, { type TopicFormData } from "@/features/topic/components/TopicForm";
@@ -13,6 +13,23 @@ import { apiErrorMessage } from "@/features/topic/lib/apiError";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import TopTopicsLeaderboard from "@/components/topic/TopTopicsLeaderboard";
+import Pagination from "@/components/common/Pagination";
+import { usePagination } from "@/hooks/usePagination";
+
+function downloadTopicsCsv(topics: Topic[]) {
+  const header = ["Nama", "Keywords", "Total Post", "Total Komentar"];
+  const lines = topics.map((t) =>
+    [t.name, `"${t.keywords.join("; ")}"`, t.totalPosts ?? 0, t.totalComments ?? 0].join(",")
+  );
+  const csv = [header.join(","), ...lines].join("\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "daftar-topik.csv";
+  a.click();
+  URL.revokeObjectURL(url);
+}
 
 export default function TopicsPage() {
   const router = useRouter();
@@ -25,9 +42,22 @@ export default function TopicsPage() {
   const [searchBusyId, setSearchBusyId] = useState<string | null>(null);
   const [pollingId, setPollingId] = useState<string | null>(null);
   const [confirmTarget, setConfirmTarget] = useState<{ topic: Topic; keywords: string[] } | null>(null);
+  const [filterQuery, setFilterQuery] = useState("");
   const { topics, loading, error, refresh, addTopic, removeTopic, searchTopic, pollTopicResult } =
     useTopics();
   const cancelPollRef = useRef<Map<string, () => void>>(new Map());
+
+  const filteredTopics = useMemo(() => {
+    const q = filterQuery.trim().toLowerCase();
+    if (!q) return topics;
+    return topics.filter(
+      (topic) => topic.name.toLowerCase().includes(q) || topic.keywords.some((kw) => kw.toLowerCase().includes(q))
+    );
+  }, [topics, filterQuery]);
+
+  const { page, totalPages, setPage, paginated } = usePagination(filteredTopics, 5);
+  const rangeStart = filteredTopics.length === 0 ? 0 : (page - 1) * 5 + 1;
+  const rangeEnd = Math.min(page * 5, filteredTopics.length);
 
   useEffect(() => {
     const cancels = cancelPollRef.current;
@@ -214,9 +244,33 @@ export default function TopicsPage() {
       {!loading && !error && <TopTopicsLeaderboard topics={topics} />}
 
       <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm">
-        <div className="border-b border-slate-100 dark:border-slate-800 px-5 py-4">
-          <h2 className="font-semibold text-slate-900 dark:text-slate-100">{t.topics.listTitle}</h2>
-          <p className="text-xs text-slate-400 dark:text-slate-500">{topics.length} {t.topics.topicsSaved}</p>
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 px-5 py-4">
+          <div>
+            <h2 className="font-semibold text-slate-900 dark:text-slate-100">{t.topics.listTitle}</h2>
+            <p className="text-xs text-slate-400 dark:text-slate-500">{topics.length} {t.topics.topicsSaved}</p>
+          </div>
+
+          {!loading && !error && topics.length > 0 && (
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="relative">
+                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
+                <input
+                  value={filterQuery}
+                  onChange={(e) => setFilterQuery(e.target.value)}
+                  placeholder={t.topics.filterPlaceholder}
+                  className="h-9 w-56 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 pl-8 pr-3 text-sm text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-indigo-400 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => downloadTopicsCsv(filteredTopics)}
+                className="flex h-9 shrink-0 items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-xs font-semibold text-indigo-600 dark:text-indigo-400 transition hover:bg-indigo-50 dark:hover:bg-indigo-950/40"
+              >
+                <Download size={13} />
+                {t.topics.downloadCsv}
+              </button>
+            </div>
+          )}
         </div>
 
         {loading ? (
@@ -233,9 +287,17 @@ export default function TopicsPage() {
             <p className="font-medium text-slate-600 dark:text-slate-300">{t.topics.emptyTitle}</p>
             <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">{t.topics.emptyDesc}</p>
           </div>
+        ) : filteredTopics.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-14 text-center">
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-50 dark:bg-slate-800">
+              <SearchX size={22} className="text-slate-300 dark:text-slate-600" />
+            </div>
+            <p className="font-medium text-slate-600 dark:text-slate-300">{t.topics.noMatch}</p>
+          </div>
         ) : (
+          <>
           <ul className="divide-y divide-slate-100 dark:divide-slate-800">
-            {topics.map((topic) => {
+            {paginated.map((topic) => {
               const isBusy = busyId === topic.id;
               return (
                 <li key={topic.id} className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-start sm:justify-between">
@@ -307,6 +369,16 @@ export default function TopicsPage() {
               );
             })}
           </ul>
+
+          {totalPages > 1 && (
+            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 dark:border-slate-800 px-5 py-3">
+              <p className="text-xs text-slate-400 dark:text-slate-500">
+                Menampilkan {rangeStart}-{rangeEnd} dari {filteredTopics.length} topik
+              </p>
+              <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+            </div>
+          )}
+          </>
         )}
       </div>
     </DashboardLayout>

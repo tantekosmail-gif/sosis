@@ -7,28 +7,49 @@ import { BarChart3, ChevronDown, ChevronLeft, ChevronRight, FileText, GitCompare
 import { FaFacebook, FaInstagram, FaTiktok, FaXTwitter, FaYoutube } from "react-icons/fa6";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
-const menus = [
-  { key: "overview",          href: "/overview",          icon: Home            },
-  { key: "engagement",        href: "/engagement",        icon: BarChart3       },
-  { key: "topics",            href: "/topics",            icon: Tags            },
+// Menu dikelompokkan per fungsi: Ringkasan (dashboard lintas-platform),
+// Pemantauan (sumber data yang benar-benar dipantau — topik, media sosial,
+// berita), Sistem (output & konfigurasi aplikasi). Urutan grup mengikuti alur
+// kerja: lihat ringkasan -> pantau sumber -> ambil laporan/atur aplikasi.
+const sections = [
   {
-    key: "socialMediaGroup",
-    icon: Share2,
-    children: [
-      { key: "youtube",     href: "/youtube",     icon: FaYoutube   },
-      { key: "instagram",   href: "/instagram",   icon: FaInstagram },
-      { key: "facebook",    href: "/facebook",     icon: FaFacebook  },
-      { key: "twitter",     href: "/twitter",      icon: FaXTwitter  },
-      { key: "tiktok",      href: "/tiktok",       icon: FaTiktok    },
-      { key: "comparePlatforms", href: "/compare/social", icon: GitCompareArrows },
+    key: "summaryGroup",
+    items: [
+      { key: "overview",   href: "/overview",   icon: Home      },
+      { key: "engagement", href: "/engagement", icon: BarChart3 },
     ],
   },
-  { key: "news",              href: "/news",              icon: Newspaper       },
-  { key: "reports",           href: "/reports",           icon: FileText        },
-  { key: "settings",          href: "/settings",          icon: Settings        },
+  {
+    key: "monitoringGroup",
+    items: [
+      { key: "topics", href: "/topics", icon: Tags },
+      {
+        key: "socialMediaGroup",
+        icon: Share2,
+        children: [
+          { key: "youtube",     href: "/youtube",     icon: FaYoutube   },
+          { key: "instagram",   href: "/instagram",   icon: FaInstagram },
+          { key: "facebook",    href: "/facebook",     icon: FaFacebook  },
+          { key: "twitter",     href: "/twitter",      icon: FaXTwitter  },
+          { key: "tiktok",      href: "/tiktok",       icon: FaTiktok    },
+          { key: "comparePlatforms", href: "/compare/social", icon: GitCompareArrows },
+        ],
+      },
+      { key: "news", href: "/news", icon: Newspaper },
+    ],
+  },
+  {
+    key: "systemGroup",
+    items: [
+      { key: "reports",  href: "/reports",  icon: FileText },
+      { key: "settings", href: "/settings", icon: Settings },
+    ],
+  },
 ] as const;
 
-function isGroupMenu(menu: (typeof menus)[number]): menu is Extract<(typeof menus)[number], { children: readonly unknown[] }> {
+type MenuItem = (typeof sections)[number]["items"][number];
+
+function isGroupMenu(menu: MenuItem): menu is Extract<MenuItem, { children: readonly unknown[] }> {
   return "children" in menu;
 }
 
@@ -80,11 +101,14 @@ export default function AppSidebar({ open = false, onClose, collapsed = false, o
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 overflow-y-auto p-3 space-y-1">
-          <p className={`text-slate-600 text-[10px] font-semibold uppercase tracking-widest px-3 mb-3 mt-2 ${collapsed ? "lg:hidden" : ""}`}>
-            {t.sidebar.mainMenu}
+        <nav className="flex-1 overflow-y-auto p-3">
+          {sections.map((section, sectionIdx) => (
+          <div key={section.key} className={sectionIdx > 0 ? "mt-5" : ""}>
+          <p className={`text-slate-600 text-[10px] font-semibold uppercase tracking-widest px-3 mb-3 ${sectionIdx === 0 ? "mt-2" : ""} ${collapsed ? "lg:hidden" : ""}`}>
+            {t.sidebar[section.key]}
           </p>
-          {menus.map((menu) => {
+          <div className="space-y-1">
+          {section.items.map((menu) => {
             const name = t.sidebar[menu.key];
 
             if (isGroupMenu(menu)) {
@@ -179,6 +203,9 @@ export default function AppSidebar({ open = false, onClose, collapsed = false, o
               </Link>
             );
           })}
+          </div>
+          </div>
+          ))}
         </nav>
 
         {/* Bottom */}
