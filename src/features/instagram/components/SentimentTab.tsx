@@ -62,7 +62,7 @@ export default function InstagramSentimentTab() {
     return items.sort((a, b) => (b.published_at || "").localeCompare(a.published_at || ""));
   }, [data, sortBy]);
 
-  const { page, totalPages, setPage, paginated } = usePagination(sortedItems, 8);
+  const { page, totalPages, setPage, paginated } = usePagination(sortedItems, 4);
 
   const commentsWordCloud = useMemo(() => {
     if (!data) return [];
@@ -219,10 +219,6 @@ export default function InstagramSentimentTab() {
 
           <NegativeHighlightCard items={data.items} onSelect={(item) => setSelectedPostId(item.post_id)} />
 
-          <TopHashtags items={data.items} />
-
-          {commentsWordCloud.length > 0 && <WordCloud data={commentsWordCloud} />}
-
           <div className="flex items-center justify-end gap-2">
             <span className="text-xs font-medium text-slate-400 dark:text-slate-500">Urutkan:</span>
             <div className="inline-flex rounded-xl border border-slate-200 bg-slate-50 p-1 dark:border-slate-700 dark:bg-slate-800">
@@ -247,6 +243,10 @@ export default function InstagramSentimentTab() {
             onSelectPost={(item) => setSelectedPostId(item.post_id)}
           />
           <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+
+          <TopHashtags items={data.items} />
+
+          {commentsWordCloud.length > 0 && <WordCloud data={commentsWordCloud} />}
 
           <CommentsModal
             open={!!selectedPost}

@@ -30,6 +30,8 @@ const SORT_OPTIONS = [
 
 type SortKey = (typeof SORT_OPTIONS)[number]["key"];
 
+const SHOW_DISCOVER_PANEL = false;
+
 export default function TikTokSentimentTab() {
   const { t } = useTranslation();
   const tp = t.accountSentimentTab.tiktok;
@@ -63,7 +65,7 @@ export default function TikTokSentimentTab() {
     return items.sort((a, b) => (b.published_at || "").localeCompare(a.published_at || ""));
   }, [data, sortBy]);
 
-  const { page, totalPages, setPage, paginated } = usePagination(sortedItems, 8);
+  const { page, totalPages, setPage, paginated } = usePagination(sortedItems, 4);
 
   const commentsWordCloud = useMemo(() => {
     if (!data) return [];
@@ -91,7 +93,7 @@ export default function TikTokSentimentTab() {
             {tp.desc}
           </p>
         </div>
-        <TikTokDiscoverPanel onSelectAccount={handleSelectAccount} />
+        {SHOW_DISCOVER_PANEL && <TikTokDiscoverPanel onSelectAccount={handleSelectAccount} />}
       </div>
 
       {summary && <TikTokSummaryWidget data={summary} onSelectAccount={handleSelectAccount} />}
@@ -223,10 +225,6 @@ export default function TikTokSentimentTab() {
 
           <NegativeHighlightCard items={data.items} onSelect={(item) => setSelectedPostId(item.post_id)} />
 
-          <TopHashtags items={data.items} />
-
-          {commentsWordCloud.length > 0 && <WordCloud data={commentsWordCloud} />}
-
           <div className="flex items-center justify-end gap-2">
             <span className="text-xs font-medium text-slate-400 dark:text-slate-500">Urutkan:</span>
             <div className="inline-flex rounded-xl border border-slate-200 bg-slate-50 p-1 dark:border-slate-700 dark:bg-slate-800">
@@ -251,6 +249,10 @@ export default function TikTokSentimentTab() {
             onSelectPost={(item) => setSelectedPostId(item.post_id)}
           />
           <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+
+          <TopHashtags items={data.items} />
+
+          {commentsWordCloud.length > 0 && <WordCloud data={commentsWordCloud} />}
 
           <CommentsModal
             open={!!selectedPost}

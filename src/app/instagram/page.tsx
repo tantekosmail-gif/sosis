@@ -21,7 +21,7 @@ export default function InstagramPage() {
   const router = useRouter();
   const { t } = useTranslation();
   const [checkingAuth, setCheckingAuth] = useState(true);
-  const [tab, setTab] = useState<TabKey>("sentiment");
+  const [tab, setTab] = useState<TabKey>("trending");
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
