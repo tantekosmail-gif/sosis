@@ -21,7 +21,7 @@ const SHOW_COMPARE_TAB = false;
 const TABS = [
   { key: "trending", label: "Video Viral" },
   { key: "terkini", label: "Cari Video" },
-  { key: "sentiment", label: "Analisis AI" },
+  { key: "sentiment", label: "Analisis Sentimen" },
   { key: "compare", label: "Bandingkan" },
 ] as const;
 

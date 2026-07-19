@@ -11,6 +11,11 @@ export interface TopicPost {
   likes?: number;
   published_at?: string | null;
   thumbnail_url?: string;
+  /** Opsional -- backend belum konsisten mengirim ini meski include_sentiment
+   *  diminta. Jangan pernah ditampilkan sebagai badge kalau kosong/undefined. */
+  sentiment?: "positif" | "netral" | "negatif" | string;
+  /** Opsional, format mis. "12:45". Sama seperti sentiment, jangan difabrikasi. */
+  duration?: string;
 }
 
 export interface KeywordGroup {
@@ -53,6 +58,17 @@ function sortByNewest(posts: TopicPost[]): TopicPost[] {
   });
 }
 
+// sentiment/duration belum konsisten dikirim backend (lihat komentar di
+// TopicPost) -- ambil dari beberapa kemungkinan nama field, tapi biarkan
+// undefined kalau memang tidak ada, jangan mengarang nilai default.
+function normalizePost(raw: any): TopicPost {
+  return {
+    ...raw,
+    sentiment: raw.sentiment ?? raw.sentiment_label ?? undefined,
+    duration: raw.duration ?? raw.duration_text ?? undefined,
+  };
+}
+
 // GET /search/topics/{id} mengembalikan postingan dikelompokkan per keyword
 // (keyword_details[].posts), berbeda dari response POST /search/topics yang
 // pakai array "results" flat + status/sentimen per keyword.
@@ -69,7 +85,7 @@ export function normalizeTopicDetail(raw: any): TopicDetail {
           keyword: g.keyword,
           keywordId: g.keyword_id,
           totalPosts: g.total_posts ?? g.posts?.length ?? 0,
-          posts: sortByNewest(g.posts ?? []),
+          posts: sortByNewest((g.posts ?? []).map(normalizePost)),
         }))
       : [],
   };

@@ -1,11 +1,11 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { use, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
-import { ArrowLeft, Eye, Loader2, Tag, ThumbsUp } from "lucide-react";
+import { ArrowLeft, ChevronDown, Eye, Loader2, Tag, ThumbsUp } from "lucide-react";
 
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { getTopicDetail, getShareOfVoice, getTopicTrendGraph } from "@/features/topic/services/topic.service";
@@ -13,11 +13,31 @@ import { normalizeTopicDetail, platformMeta, type TopicDetail, type TopicPost } 
 import { normalizeTopicTrendGraph, type TopicTrendGraph } from "@/features/topic/lib/topicTrendGraph";
 import ShareOfVoiceCard, { type ShareOfVoiceItem } from "@/components/topic/ShareOfVoiceCard";
 import TopicTrendGraphChart from "@/components/topic/TopicTrendGraphChart";
-import Pagination from "@/components/common/Pagination";
-import { usePagination } from "@/hooks/usePagination";
 import { normalizeShareOfVoice } from "@/lib/shareOfVoice";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import FallbackImage from "@/components/common/FallbackImage";
+import { hankenGrotesk, jetBrainsMono } from "@/lib/fonts/dashboardFonts";
+
+const PERIOD_OPTIONS = [
+  { key: 7, label: "7 Hari" },
+  { key: 14, label: "14 Hari" },
+  { key: 30, label: "30 Hari" },
+] as const;
+
+const RESULTS_PAGE_SIZE = 8;
+
+type SortKey = "recent" | "views";
+const SORT_OPTIONS: { key: SortKey; label: string }[] = [
+  { key: "recent", label: "Terbaru" },
+  { key: "views", label: "Paling Banyak Dilihat" },
+];
+
+const SENTIMENT_LABEL: Record<string, string> = { positif: "Positif", netral: "Netral", negatif: "Negatif" };
+const SENTIMENT_STYLE: Record<string, string> = {
+  positif: "bg-emerald-500 text-white",
+  netral: "bg-amber-400 text-white",
+  negatif: "bg-red-500 text-white",
+};
 
 function groupByPlatform(posts: TopicPost[]): [string, TopicPost[]][] {
   const map = new Map<string, TopicPost[]>();
@@ -41,7 +61,6 @@ function stripMarkdown(text: string): string {
     .trim();
 }
 
-
 function PostCard({ post }: { post: TopicPost }) {
   let dateStr = "";
   if (post.published_at) {
@@ -50,18 +69,33 @@ function PostCard({ post }: { post: TopicPost }) {
     } catch {}
   }
 
+  const sentimentKey = post.sentiment?.toLowerCase();
+  const sentimentStyle = sentimentKey ? SENTIMENT_STYLE[sentimentKey] : undefined;
+
   return (
     <a
       href={post.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex flex-col overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm transition hover:border-indigo-300 hover:shadow-md"
+      className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm transition-all hover:-translate-y-0.5 hover:border-indigo-300 hover:shadow-md"
     >
-      <FallbackImage
-        src={post.thumbnail_url}
-        className="aspect-video w-full shrink-0"
-        imgClassName="h-full w-full object-cover transition duration-200 group-hover:scale-105"
-      />
+      <div className="relative aspect-video w-full shrink-0 overflow-hidden">
+        <FallbackImage
+          src={post.thumbnail_url}
+          className="h-full w-full"
+          imgClassName="h-full w-full object-cover transition duration-200 group-hover:scale-105"
+        />
+        {sentimentKey && sentimentStyle && (
+          <span className={`absolute left-2 top-2 rounded-md px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide shadow ${sentimentStyle}`}>
+            {SENTIMENT_LABEL[sentimentKey] ?? post.sentiment}
+          </span>
+        )}
+        {post.duration && (
+          <span className="absolute bottom-2 right-2 rounded-md bg-black/75 px-1.5 py-0.5 text-[11px] font-semibold text-white">
+            {post.duration}
+          </span>
+        )}
+      </div>
 
       <div className="flex flex-1 flex-col gap-2 p-3.5">
         <p className="line-clamp-3 text-sm font-medium leading-snug text-slate-800 dark:text-slate-200 transition-colors group-hover:text-indigo-600">
@@ -74,7 +108,7 @@ function PostCard({ post }: { post: TopicPost }) {
             {dateStr && <span className="shrink-0">{dateStr}</span>}
           </div>
           {(!!post.view_count || !!post.likes) && (
-            <div className="flex items-center gap-3 text-[11px] text-slate-400 dark:text-slate-500">
+            <div className={`${jetBrainsMono.className} flex items-center gap-3 text-[11px] text-slate-400 dark:text-slate-500`}>
               {!!post.view_count && (
                 <span className="flex items-center gap-1">
                   <Eye size={11} /> {post.view_count.toLocaleString("id-ID")}
@@ -93,18 +127,70 @@ function PostCard({ post }: { post: TopicPost }) {
   );
 }
 
-function PlatformPostsGrid({ posts }: { posts: TopicPost[] }) {
-  const { page, totalPages, setPage, paginated } = usePagination(posts, 8);
+function PlatformResultsSection({ platform, posts }: { platform: string; posts: TopicPost[] }) {
+  const meta = platformMeta(platform);
+  const Icon = meta.icon;
+  const [sortBy, setSortBy] = useState<SortKey>("recent");
+  const [visibleCount, setVisibleCount] = useState(RESULTS_PAGE_SIZE);
+
+  const sortedPosts = useMemo(() => {
+    const items = [...posts];
+    if (sortBy === "views") {
+      return items.sort((a, b) => (b.view_count ?? 0) - (a.view_count ?? 0));
+    }
+    return items; // posts sudah diurutkan terbaru->lama saat normalisasi
+  }, [posts, sortBy]);
+
+  const visiblePosts = sortedPosts.slice(0, visibleCount);
+  const hasMore = visiblePosts.length < sortedPosts.length;
 
   return (
-    <>
+    <div className="px-5 py-5">
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <Icon size={16} className={meta.color} />
+          <h3 className={`${hankenGrotesk.className} text-sm font-bold text-slate-800 dark:text-slate-200`}>
+            {meta.label} Results
+          </h3>
+          <span className="text-xs text-slate-400 dark:text-slate-500">({posts.length})</span>
+        </div>
+
+        <div className="flex items-center gap-1.5 text-xs text-slate-400 dark:text-slate-500">
+          Sort by:
+          <div className="relative">
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as SortKey)}
+              className="h-7 appearance-none rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 pl-2.5 pr-6 text-xs font-medium text-slate-600 dark:text-slate-300 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition"
+            >
+              {SORT_OPTIONS.map((opt) => (
+                <option key={opt.key} value={opt.key}>{opt.label}</option>
+              ))}
+            </select>
+            <ChevronDown size={12} className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-slate-400" />
+          </div>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {paginated.map((post) => (
+        {visiblePosts.map((post) => (
           <PostCard key={post.id} post={post} />
         ))}
       </div>
-      <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
-    </>
+
+      {hasMore && (
+        <div className="mt-5 flex justify-center">
+          <button
+            type="button"
+            onClick={() => setVisibleCount((c) => c + RESULTS_PAGE_SIZE)}
+            className="flex items-center gap-2 rounded-xl border border-emerald-200 dark:border-emerald-900 px-5 py-2.5 text-sm font-semibold text-emerald-600 dark:text-emerald-400 transition hover:bg-emerald-50 dark:hover:bg-emerald-950/40"
+          >
+            Muat Lebih Banyak Hasil
+            <ChevronDown size={15} />
+          </button>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -199,14 +285,35 @@ export default function TopicDetailPage({ params }: { params: Promise<{ id: stri
 
   return (
     <DashboardLayout>
-      <div>
-        <Link
-          href="/topics"
-          className="mb-2 inline-flex items-center gap-1.5 text-xs font-medium text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-        >
-          <ArrowLeft size={12} /> {t.topics.detail.backLink}
-        </Link>
-        <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">{topic?.name ?? "..."}</h1>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <Link
+            href="/topics"
+            className="mb-2 inline-flex items-center gap-1.5 text-xs font-medium text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+          >
+            <ArrowLeft size={12} /> {t.topics.detail.backLink}
+          </Link>
+          <h1 className={`${hankenGrotesk.className} text-xl font-bold text-slate-900 dark:text-slate-100`}>
+            Detail Topik: {topic?.name ?? "..."}
+          </h1>
+        </div>
+
+        <div className="inline-flex shrink-0 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-1">
+          {PERIOD_OPTIONS.map((opt) => (
+            <button
+              key={opt.key}
+              type="button"
+              onClick={() => setTrendDays(opt.key)}
+              className={`rounded-lg px-3 py-1.5 text-sm font-medium transition ${
+                trendDays === opt.key
+                  ? "bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 shadow-sm"
+                  : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {loading ? (
@@ -219,28 +326,37 @@ export default function TopicDetailPage({ params }: { params: Promise<{ id: stri
         </div>
       ) : topic ? (
         <>
-          {/* Keywords overview */}
+          {/* Keywords Associated */}
           <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm p-5">
-            <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-              {t.topics.detail.keywordsTitle}
-            </h2>
+            <div className="mb-3 flex items-center gap-2">
+              <Tag size={15} className="text-indigo-600" />
+              <h2 className={`${hankenGrotesk.className} font-bold text-slate-900 dark:text-slate-100`}>
+                Keywords Associated
+              </h2>
+            </div>
             <div className="flex flex-wrap gap-2">
               {topic.keywordGroups.map((g) => (
                 <span
                   key={g.keywordId}
-                  className="flex items-center gap-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 px-2.5 py-1 text-xs font-medium text-indigo-700 dark:text-indigo-300"
+                  className="flex items-center gap-2 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 px-2.5 py-1.5 text-xs font-medium text-indigo-700 dark:text-indigo-300"
                 >
-                  <Tag size={11} />
                   {g.keyword}
-                  <span className="opacity-70">· {g.totalPosts}</span>
+                  <span className={`${jetBrainsMono.className} flex h-4 min-w-4 items-center justify-center rounded-full bg-indigo-600 px-1 text-[10px] font-bold text-white`}>
+                    {g.totalPosts}
+                  </span>
                 </span>
               ))}
             </div>
           </div>
 
-          {trendGraph && <TopicTrendGraphChart data={trendGraph} days={trendDays} onDaysChange={setTrendDays} />}
-
-          {shareOfVoice.length > 1 && <ShareOfVoiceCard items={shareOfVoice} />}
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            <div className="lg:col-span-2">
+              {trendGraph && <TopicTrendGraphChart data={trendGraph} days={trendDays} />}
+            </div>
+            <div className="lg:col-span-1">
+              {shareOfVoice.length > 1 && <ShareOfVoiceCard items={shareOfVoice} />}
+            </div>
+          </div>
 
           {/* Results per keyword, separated per platform */}
           {topic.keywordGroups.length === 0 ? (
@@ -254,7 +370,7 @@ export default function TopicDetailPage({ params }: { params: Promise<{ id: stri
                 className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm overflow-hidden"
               >
                 <div className="border-b border-slate-100 dark:border-slate-800 px-5 py-4">
-                  <h2 className="font-semibold text-slate-900 dark:text-slate-100">
+                  <h2 className={`${hankenGrotesk.className} font-bold text-slate-900 dark:text-slate-100`}>
                     {t.topics.detail.resultsTitle} <span className="text-indigo-600">&quot;{g.keyword}&quot;</span>
                   </h2>
                 </div>
@@ -265,20 +381,9 @@ export default function TopicDetailPage({ params }: { params: Promise<{ id: stri
                   </div>
                 ) : (
                   <div className="divide-y divide-slate-100 dark:divide-slate-800">
-                    {groupByPlatform(g.posts).map(([platform, posts]) => {
-                      const meta = platformMeta(platform);
-                      const Icon = meta.icon;
-                      return (
-                        <div key={platform} className="px-5 py-5">
-                          <div className="mb-3 flex items-center gap-2">
-                            <Icon size={16} className={meta.color} />
-                            <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">{meta.label}</h3>
-                            <span className="text-xs text-slate-400 dark:text-slate-500">({posts.length})</span>
-                          </div>
-                          <PlatformPostsGrid posts={posts} />
-                        </div>
-                      );
-                    })}
+                    {groupByPlatform(g.posts).map(([platform, posts]) => (
+                      <PlatformResultsSection key={platform} platform={platform} posts={posts} />
+                    ))}
                   </div>
                 )}
               </div>

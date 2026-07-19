@@ -3,6 +3,7 @@
 import { PieChart } from "lucide-react";
 
 import type { ShareOfVoiceItem } from "@/lib/shareOfVoice";
+import { hankenGrotesk, jetBrainsMono } from "@/lib/fonts/dashboardFonts";
 
 export type { ShareOfVoiceItem };
 
@@ -33,7 +34,7 @@ export default function ShareOfVoiceCard({
     <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm p-5">
       <div className="mb-4 flex items-center gap-2">
         <PieChart size={16} className="text-indigo-600" />
-        <h2 className="font-semibold text-slate-900 dark:text-slate-100">{title}</h2>
+        <h2 className={`${hankenGrotesk.className} font-bold text-slate-900 dark:text-slate-100`}>{title}</h2>
       </div>
       <p className="mb-4 text-xs text-slate-400 dark:text-slate-500">{description}</p>
 
@@ -47,7 +48,7 @@ export default function ShareOfVoiceCard({
             <div key={item.keywordId || item.keyword}>
               <div className="mb-1 flex items-center justify-between text-sm">
                 <span className="font-medium text-slate-700 dark:text-slate-300">{item.keyword}</span>
-                <span className="text-xs text-slate-400 dark:text-slate-500">
+                <span className={`${jetBrainsMono.className} text-xs text-slate-400 dark:text-slate-500`}>
                   {item.percentage.toFixed(1)}% · {item.mentions.toLocaleString("id-ID")} mention
                 </span>
               </div>

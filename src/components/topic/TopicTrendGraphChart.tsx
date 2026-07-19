@@ -10,6 +10,7 @@ import { PLATFORM_ORDER } from "@/features/topic/lib/topicTrendGraph";
 import { platformMeta } from "@/features/topic/lib/topicDetail";
 import { CATEGORICAL_PALETTE } from "@/lib/chartColors";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
+import { hankenGrotesk } from "@/lib/fonts/dashboardFonts";
 
 const SENTIMENT_SERIES = [
   { key: "positive", color: "#10b981" },
@@ -68,10 +69,9 @@ function VolumeTooltip({ active, payload, label, locale, withShare }: any) {
 interface Props {
   data: TopicTrendGraph;
   days: number;
-  onDaysChange: (days: number) => void;
 }
 
-export default function TopicTrendGraphChart({ data, days, onDaysChange }: Props) {
+export default function TopicTrendGraphChart({ data, days }: Props) {
   const { t, language } = useTranslation();
   const locale = language === "en" ? enUS : idLocale;
   const labels = t.topics.detail.trendGraph;
@@ -83,21 +83,9 @@ export default function TopicTrendGraphChart({ data, days, onDaysChange }: Props
 
   return (
     <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm p-5">
-      <div className="mb-1 flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <LineChartIcon size={16} className="text-indigo-600" />
-          <h2 className="font-semibold text-slate-900 dark:text-slate-100">{labels.title}</h2>
-        </div>
-        <select
-          value={days}
-          onChange={(e) => onDaysChange(Number(e.target.value))}
-          aria-label={labels.daysLabel}
-          className="h-7 shrink-0 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 pl-2 pr-6 text-[11px] font-medium text-slate-600 dark:text-slate-300 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition"
-        >
-          <option value={7}>{labels.days7}</option>
-          <option value={14}>{labels.days14}</option>
-          <option value={30}>{labels.days30}</option>
-        </select>
+      <div className="mb-1 flex items-center gap-2">
+        <LineChartIcon size={16} className="text-indigo-600" />
+        <h2 className={`${hankenGrotesk.className} font-bold text-slate-900 dark:text-slate-100`}>{labels.title}</h2>
       </div>
       <p className="mb-4 text-xs text-slate-400 dark:text-slate-500">{labels.desc.replace("{n}", String(days))}</p>
 
@@ -107,11 +95,10 @@ export default function TopicTrendGraphChart({ data, days, onDaysChange }: Props
         </p>
       ) : (
         <div className="space-y-6">
-          <div className="grid gap-6 lg:grid-cols-2">
-            <div>
-              <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                {labels.volumeTitle}
-              </h3>
+          <div>
+            <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+              {labels.volumeTitle}
+            </h3>
               <ResponsiveContainer width="100%" height={220}>
                 <BarChart data={volumeData} margin={{ top: 4, right: 8, left: -20, bottom: 0 }} barCategoryGap="20%">
                   <CartesianGrid vertical={false} stroke="#f1f5f9" />
@@ -175,7 +162,6 @@ export default function TopicTrendGraphChart({ data, days, onDaysChange }: Props
                 </BarChart>
               </ResponsiveContainer>
             </div>
-          </div>
 
           {subTopics.length > 0 && (
             <div>
