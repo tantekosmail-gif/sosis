@@ -19,9 +19,9 @@ import { useTranslation } from "@/lib/i18n/LanguageProvider";
 const SHOW_COMPARE_TAB = false;
 
 const TABS = [
-  { key: "trending", label: "Trending" },
-  { key: "terkini", label: "Terkini" },
-  { key: "sentiment", label: "Sentiment" },
+  { key: "trending", label: "Video Viral" },
+  { key: "terkini", label: "Cari Video" },
+  { key: "sentiment", label: "Analisis AI" },
   { key: "compare", label: "Bandingkan" },
 ] as const;
 
@@ -100,6 +100,8 @@ export default function YoutubePage() {
           <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">YouTube</h1>
         </div>
 
+        <PageTabs tabs={SHOW_COMPARE_TAB ? TABS : TABS.filter((t) => t.key !== "compare")} active={tab} onChange={setTab} />
+
         {tab !== "compare" && (
         <form
           onSubmit={handleSubmit}
@@ -132,8 +134,6 @@ export default function YoutubePage() {
           </div>
         </form>
         )}
-
-        <PageTabs tabs={SHOW_COMPARE_TAB ? TABS : TABS.filter((t) => t.key !== "compare")} active={tab} onChange={setTab} />
 
         {tab === "trending" && <YoutubeTrendingTab ref={trendingRef} />}
         {tab === "terkini" && <VideoSearchTab ref={terkiniRef} />}

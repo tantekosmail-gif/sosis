@@ -3,9 +3,10 @@
 import { forwardRef, useImperativeHandle, useMemo, useState } from "react";
 import { Loader2, RefreshCw } from "lucide-react";
 
-import ViralVideoGrid from "@/components/youtube/ViralVideoGrid";
+import AnalyticsVideoGrid from "@/components/youtube/analytics/AnalyticsVideoGrid";
+import AnalyticsStatCards from "@/components/youtube/analytics/AnalyticsStatCards";
+import AnalyticsSentimentPanel from "@/components/youtube/analytics/AnalyticsSentimentPanel";
 import ViralCommentsList from "@/components/youtube/ViralCommentsList";
-import ViralOverview from "@/components/youtube/ViralOverview";
 import VideoFilterBar from "@/components/youtube/VideoFilterBar";
 import CommentsModal from "@/components/common/CommentsModal";
 import Pagination from "@/components/common/Pagination";
@@ -16,9 +17,17 @@ import { decodeHtmlEntities } from "@/lib/decodeHtmlEntities";
 import { matchesAgeFilter, type VideoAgeFilter } from "@/lib/videoAgeFilter";
 import { matchesDateRange } from "@/lib/videoDateRangeFilter";
 import { aggregateViralStats } from "../lib/aggregateViralStats";
+import { hankenGrotesk } from "@/lib/fonts/dashboardFonts";
+import { formatRelativeTime } from "@/lib/formatRelativeTime";
 
-const LIMIT_OPTIONS = [10, 20, 50, 100];
-type SortBy = "newest" | "views" | "negatif";
+const PAGE_SIZE = 8; // 4 kolom (xl) x 2 baris
+type SortBy = "trending" | "newest" | "viral";
+
+const SORT_OPTIONS: { key: SortBy; label: string }[] = [
+  { key: "trending", label: "Trending" },
+  { key: "newest", label: "Newest" },
+  { key: "viral", label: "Most Viral" },
+];
 
 export interface TrendingTabHandle {
   search: (keyword: string) => void;
@@ -26,10 +35,7 @@ export interface TrendingTabHandle {
 
 const YoutubeTrendingTab = forwardRef<TrendingTabHandle>(function YoutubeTrendingTab(_props, ref) {
   const { t } = useTranslation();
-  const [sortBy, setSortBy] = useState<SortBy>("views");
-  const [filterQuery, setFilterQuery] = useState("");
-  const [filterChannel, setFilterChannel] = useState("");
-  const [filterTopic, setFilterTopic] = useState("");
+  const [sortBy, setSortBy] = useState<SortBy>("trending");
   const [filterAge, setFilterAge] = useState<VideoAgeFilter>("all");
   const [filterDateFrom, setFilterDateFrom] = useState("");
   const [filterDateTo, setFilterDateTo] = useState("");
@@ -39,8 +45,6 @@ const YoutubeTrendingTab = forwardRef<TrendingTabHandle>(function YoutubeTrendin
     loading,
     error,
     setQ,
-    limit,
-    setLimit,
     refetch,
     selectedVideoId,
     setSelectedVideoId,
@@ -57,99 +61,44 @@ const YoutubeTrendingTab = forwardRef<TrendingTabHandle>(function YoutubeTrendin
     if (sortBy === "newest") {
       return items.sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime());
     }
-    if (sortBy === "negatif") {
-      return items.sort((a, b) => b.sentiment_summary.negatif.percentage - a.sentiment_summary.negatif.percentage);
+    if (sortBy === "viral") {
+      return items.sort((a, b) => b.view_count - a.view_count);
     }
-    return items.sort((a, b) => b.view_count - a.view_count);
+    return items.sort((a, b) => a.rank - b.rank);
   }, [data?.items, sortBy]);
 
-  const channelOptions = useMemo(() => {
-    if (!data?.items) return [];
-    return Array.from(new Set(data.items.map((item) => decodeHtmlEntities(item.channel).trim()).filter(Boolean))).sort();
-  }, [data?.items]);
-
-  const topicOptions = useMemo(() => {
-    if (!data?.items) return [];
-    return Array.from(new Set(data.items.map((item) => decodeHtmlEntities(item.keyword).trim()).filter(Boolean))).sort();
-  }, [data?.items]);
-
   const filteredItems = useMemo(() => {
-    const q = filterQuery.trim().toLowerCase();
     return sortedItems.filter((item) => {
-      if (q && !decodeHtmlEntities(item.title).toLowerCase().includes(q)) return false;
-      if (filterChannel && decodeHtmlEntities(item.channel).trim() !== filterChannel) return false;
-      if (filterTopic && decodeHtmlEntities(item.keyword).trim() !== filterTopic) return false;
       if (!matchesAgeFilter(item.published_at, filterAge)) return false;
       if (!matchesDateRange(item.published_at, filterDateFrom, filterDateTo)) return false;
       return true;
     });
-  }, [sortedItems, filterQuery, filterChannel, filterTopic, filterAge, filterDateFrom, filterDateTo]);
+  }, [sortedItems, filterAge, filterDateFrom, filterDateTo]);
 
-  const { page, totalPages, setPage, paginated } = usePagination(filteredItems, 8);
+  const { page, totalPages, setPage, paginated } = usePagination(filteredItems, PAGE_SIZE);
 
   const { stats: filteredStats, sentiment: filteredSentiment } = useMemo(
     () => aggregateViralStats(filteredItems),
     [filteredItems]
   );
 
+  const lastUpdatedAt = useMemo(() => (data?.items ? new Date().toISOString() : null), [data?.items]);
+  const rangeStart = filteredItems.length === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
+  const rangeEnd = Math.min(page * PAGE_SIZE, filteredItems.length);
+
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="font-semibold text-slate-900 dark:text-slate-100">{t.youtubeTrendingTab.title}</h2>
-        <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">
-          {t.youtubeTrendingTab.subtitle}
-        </p>
-      </div>
-
       {/* Filter bar */}
-      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm space-y-3">
-        <VideoFilterBar
-          query={filterQuery}
-          onQueryChange={setFilterQuery}
-          channels={channelOptions}
-          channel={filterChannel}
-          onChannelChange={setFilterChannel}
-          topics={topicOptions}
-          topic={filterTopic}
-          onTopicChange={setFilterTopic}
-          age={filterAge}
-          onAgeChange={setFilterAge}
-          dateFrom={filterDateFrom}
-          onDateFromChange={setFilterDateFrom}
-          dateTo={filterDateTo}
-          onDateToChange={setFilterDateTo}
-        />
-
-        <div className="flex flex-col gap-3 border-t border-slate-100 pt-3 dark:border-slate-800 sm:flex-row sm:items-end">
-          <div className="shrink-0">
-            <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-              {t.youtubeTrendingTab.sortLabel}
-            </label>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as SortBy)}
-              className="h-10 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-3.5 text-sm text-slate-800 dark:text-slate-200 focus:border-indigo-400 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition"
-            >
-              <option value="newest">{t.youtubeTrendingTab.sortNewest}</option>
-              <option value="views">{t.youtubeTrendingTab.sortViews}</option>
-              <option value="negatif">{t.youtubeTrendingTab.sortNegatif}</option>
-            </select>
-          </div>
-
-          <div className="shrink-0">
-            <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-              {t.youtubeTrendingTab.countLabel}
-            </label>
-            <select
-              value={limit}
-              onChange={(e) => setLimit(Number(e.target.value))}
-              className="h-10 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-3.5 text-sm text-slate-800 dark:text-slate-200 focus:border-indigo-400 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition"
-            >
-              {LIMIT_OPTIONS.map((opt) => (
-                <option key={opt} value={opt}>{opt} {t.youtubeTrendingTab.countUnit}</option>
-              ))}
-            </select>
-          </div>
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-sm">
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+          <VideoFilterBar
+            age={filterAge}
+            onAgeChange={setFilterAge}
+            dateFrom={filterDateFrom}
+            onDateFromChange={setFilterDateFrom}
+            dateTo={filterDateTo}
+            onDateToChange={setFilterDateTo}
+          />
 
           <button
             onClick={() => refetch()}
@@ -177,15 +126,30 @@ const YoutubeTrendingTab = forwardRef<TrendingTabHandle>(function YoutubeTrendin
 
       {!loading && !error && data && (
         <>
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-slate-500 dark:text-slate-400">
-              {t.youtubeTrendingTab.showingPrefix} <span className="font-semibold text-slate-700 dark:text-slate-300">{data.items?.length ?? 0}</span> {t.youtubeTrendingTab.showingMiddle}{" "}
-              <span className="font-semibold text-slate-700 dark:text-slate-300">{data.total}</span> {t.youtubeTrendingTab.showingSuffix}
-            </p>
-            <p className="text-xs text-slate-400 dark:text-slate-500">{data.note}</p>
-          </div>
+          <AnalyticsStatCards stats={filteredStats} />
+          <AnalyticsSentimentPanel sentiment={filteredSentiment} />
 
-          <ViralOverview stats={filteredStats} sentiment={filteredSentiment} />
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h3 className={`${hankenGrotesk.className} text-lg font-bold text-slate-900 dark:text-slate-100`}>
+              Viral Video Performance
+            </h3>
+            <div className="inline-flex rounded-xl border border-slate-200 bg-white p-1 dark:border-slate-700 dark:bg-slate-900">
+              {SORT_OPTIONS.map((opt) => (
+                <button
+                  key={opt.key}
+                  type="button"
+                  onClick={() => setSortBy(opt.key)}
+                  className={`rounded-lg px-3.5 py-1.5 text-sm font-medium transition ${
+                    sortBy === opt.key
+                      ? "bg-indigo-600 text-white shadow-sm"
+                      : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300"
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
 
           {filteredItems.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-slate-300 bg-white py-16 text-center text-sm text-slate-400 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-500">
@@ -193,12 +157,18 @@ const YoutubeTrendingTab = forwardRef<TrendingTabHandle>(function YoutubeTrendin
             </div>
           ) : (
             <>
-              <ViralVideoGrid
+              <AnalyticsVideoGrid
                 data={paginated}
                 selectedVideoId={selectedVideoId}
                 onSelectVideo={(item) => setSelectedVideoId(item.video_id)}
               />
-              <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <p className="text-xs text-slate-400 dark:text-slate-500">
+                  Showing {rangeStart}-{rangeEnd} of {filteredItems.length} videos
+                  {lastUpdatedAt && <> &middot; Last updated: {formatRelativeTime(lastUpdatedAt, "en")}</>}
+                </p>
+                <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+              </div>
             </>
           )}
 
