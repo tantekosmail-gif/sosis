@@ -2,6 +2,25 @@
 
 import { useState } from "react";
 
+// Domain CDN Meta (Instagram/Facebook) mengirim header
+// Cross-Origin-Resource-Policy: same-origin, yang membuat browser memblokir
+// <img> lintas-origin walau URL-nya valid. Untuk domain ini, src dialihkan
+// lewat /api/image-proxy (server kita) supaya gambarnya jadi same-origin.
+// Lihat src/app/api/image-proxy/route.ts untuk detailnya.
+const PROXIED_HOST_SUFFIXES = ["cdninstagram.com", "fbcdn.net"];
+
+function resolveImageSrc(src: string) {
+  try {
+    const { hostname } = new URL(src);
+    const needsProxy = PROXIED_HOST_SUFFIXES.some(
+      (suffix) => hostname === suffix || hostname.endsWith(`.${suffix}`)
+    );
+    return needsProxy ? `/api/image-proxy?url=${encodeURIComponent(src)}` : src;
+  } catch {
+    return src;
+  }
+}
+
 // Ilustrasi lanskap sederhana — dipakai saat gambar (thumbnail/post/artikel)
 // kosong atau gagal dimuat (404 dsb). Dua warna via Tailwind fill-* supaya
 // otomatis menyesuaikan dark mode tanpa logic tambahan.
@@ -78,14 +97,15 @@ export default function FallbackImage({
 
   const showImage = !!src && !failed;
   const Illustration = variant === "avatar" ? AvatarIllustration : PhotoIllustration;
+  const resolvedSrc = src ? resolveImageSrc(src) : src;
 
   return (
     <div className={`flex items-center justify-center overflow-hidden bg-slate-100 dark:bg-slate-800 ${className}`}>
       {showImage ? (
         <img
-          key={src}
+          key={resolvedSrc}
           ref={checkAlreadyFailed}
-          src={src ?? undefined}
+          src={resolvedSrc ?? undefined}
           alt={alt}
           className={imgClassName}
           onError={() => setFailed(true)}
