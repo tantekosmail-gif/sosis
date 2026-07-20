@@ -3,8 +3,8 @@ import type { ThreadsPostDetail, ThreadsSearchData, ThreadsSearchJob } from "../
 
 export async function getThreadsSearch(
   query: string,
-  limitPosts = 20,
-  limitComments = 999999
+  limitPosts = 100,
+  limitComments = 500
 ): Promise<ThreadsSearchData> {
   const { data } = await api.get<{ data: ThreadsSearchData }>("/api/v1/threads/search", {
     params: { q: query, limit_posts: limitPosts, limit_comments: limitComments },
@@ -14,8 +14,8 @@ export async function getThreadsSearch(
 
 export async function triggerThreadsSearch(
   query: string,
-  maxPosts = 10,
-  commentsTopN = 3
+  maxPosts = 20,
+  commentsTopN = 10
 ): Promise<ThreadsSearchJob> {
   const { data } = await api.post<{ data: ThreadsSearchJob }>(
     "/api/v1/threads/search",
