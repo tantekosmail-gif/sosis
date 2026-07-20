@@ -5,6 +5,7 @@ import { ExternalLink, Rss } from "lucide-react";
 import type { TrendFeedData } from "@/features/trends/types/feed.types";
 import { getPlatformIcon } from "@/lib/platformIcons";
 import { formatRelativeTime } from "@/lib/formatRelativeTime";
+import { decodeHtmlEntities } from "@/lib/decodeHtmlEntities";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 interface Props {
@@ -70,7 +71,7 @@ export default function TrendFeedChart({ keywords, selectedKeyword, onSelectKeyw
                     <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-50 dark:bg-indigo-950/40">
                       <Icon size={12} className="text-indigo-600" />
                     </span>
-                    <span className="truncate text-sm font-semibold text-slate-800 dark:text-slate-200">{item.author}</span>
+                    <span className="truncate text-sm font-semibold text-slate-800 dark:text-slate-200">{decodeHtmlEntities(item.author)}</span>
                     <span className="shrink-0 rounded-md bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 text-[10px] font-medium capitalize text-slate-500 dark:text-slate-400">
                       {SOURCE_LABEL[item.source_type] ?? item.source_type}
                     </span>
@@ -79,7 +80,7 @@ export default function TrendFeedChart({ keywords, selectedKeyword, onSelectKeyw
                 </div>
 
                 <p className="mt-1.5 line-clamp-3 whitespace-pre-line break-words text-sm leading-snug text-slate-600 dark:text-slate-400">
-                  {item.content}
+                  {decodeHtmlEntities(item.content)}
                 </p>
 
                 <a

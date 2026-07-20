@@ -8,6 +8,7 @@ import FallbackImage from "@/components/common/FallbackImage";
 import { getPlatformIcon } from "@/lib/platformIcons";
 import { CATEGORICAL_PALETTE, OTHER_COLOR } from "@/lib/chartColors";
 import { formatRelativeTime } from "@/lib/formatRelativeTime";
+import { decodeHtmlEntities } from "@/lib/decodeHtmlEntities";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 const STRIP_SIZE = 6;
@@ -155,10 +156,10 @@ export default function TrendVisualsChart({ keywords, selectedKeyword, onSelectK
 
             <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
               <p className="truncate text-[11px] font-medium uppercase tracking-wide text-white/70">
-                {active.author} &middot; {formatRelativeTime(active.published_at, language)}
+                {decodeHtmlEntities(active.author)} &middot; {formatRelativeTime(active.published_at, language)}
               </p>
               <p className="mt-1.5 line-clamp-2 text-lg font-bold leading-snug text-white sm:text-xl">
-                {active.title}
+                {decodeHtmlEntities(active.title)}
               </p>
             </div>
           </a>
