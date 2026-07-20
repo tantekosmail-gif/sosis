@@ -134,7 +134,7 @@ export default function TrendVisualsChart({ keywords, selectedKeyword, onSelectK
                     e.preventDefault();
                     goPrev();
                   }}
-                  aria-label="Sebelumnya"
+                  aria-label={t.common.previous}
                   className="absolute left-2.5 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-black/30 text-white opacity-0 backdrop-blur-sm transition hover:bg-black/50 group-hover:opacity-100"
                 >
                   <ChevronLeft size={16} />
@@ -145,7 +145,7 @@ export default function TrendVisualsChart({ keywords, selectedKeyword, onSelectK
                     e.preventDefault();
                     goNext();
                   }}
-                  aria-label="Berikutnya"
+                  aria-label={t.common.next}
                   className="absolute right-2.5 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-black/30 text-white opacity-0 backdrop-blur-sm transition hover:bg-black/50 group-hover:opacity-100"
                 >
                   <ChevronRight size={16} />

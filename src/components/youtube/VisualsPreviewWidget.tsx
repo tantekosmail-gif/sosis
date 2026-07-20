@@ -68,8 +68,8 @@ export default function VisualsPreviewWidget({ items, refreshing, onRefresh }: P
             type="button"
             onClick={onRefresh}
             disabled={refreshing}
-            title="Muat ulang data terbaru"
-            aria-label="Muat ulang data terbaru"
+            title={t.overviewWidgets.videoViral.reloadTitle}
+            aria-label={t.overviewWidgets.videoViral.reloadTitle}
             className="flex h-7 w-7 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-600 disabled:opacity-50 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-slate-300"
           >
             <RefreshCw size={14} className={refreshing ? "animate-spin" : ""} />
@@ -119,7 +119,7 @@ export default function VisualsPreviewWidget({ items, refreshing, onRefresh }: P
                     e.preventDefault();
                     goPrev();
                   }}
-                  aria-label="Sebelumnya"
+                  aria-label={t.common.previous}
                   className="absolute left-2.5 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-black/30 text-white opacity-0 backdrop-blur-sm transition hover:bg-black/50 group-hover:opacity-100"
                 >
                   <ChevronLeft size={16} />
@@ -130,7 +130,7 @@ export default function VisualsPreviewWidget({ items, refreshing, onRefresh }: P
                     e.preventDefault();
                     goNext();
                   }}
-                  aria-label="Berikutnya"
+                  aria-label={t.common.next}
                   className="absolute right-2.5 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-black/30 text-white opacity-0 backdrop-blur-sm transition hover:bg-black/50 group-hover:opacity-100"
                 >
                   <ChevronRight size={16} />

@@ -101,7 +101,7 @@ export default function EngagementPage() {
               type="button"
               onClick={refresh}
               disabled={loading}
-              title="Ambil ulang data dari API"
+              title={t.engagement.refreshTitle}
               className="flex h-8 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 text-[11px] font-medium text-slate-600 transition hover:bg-slate-50 disabled:opacity-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400 dark:hover:bg-slate-800"
             >
               <RefreshCw size={12} className={loading ? "animate-spin" : ""} />

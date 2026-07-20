@@ -44,6 +44,8 @@ function WidgetRow({
   onMoveUp: () => void; onMoveDown: () => void; disableUp: boolean; disableDown: boolean;
   isDragging: boolean; onDragStart: () => void; onDragOver: (e: DragEvent) => void; onDrop: () => void; onDragEnd: () => void;
 }) {
+  const { t } = useTranslation();
+
   return (
     <div
       draggable
@@ -62,7 +64,7 @@ function WidgetRow({
           type="button"
           onClick={onMoveUp}
           disabled={disableUp}
-          aria-label="Pindah ke atas"
+          aria-label={t.settings.widgetsPage.moveUpAria}
           className="rounded p-0.5 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-300 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent"
         >
           <ChevronUp size={15} />
@@ -71,7 +73,7 @@ function WidgetRow({
           type="button"
           onClick={onMoveDown}
           disabled={disableDown}
-          aria-label="Pindah ke bawah"
+          aria-label={t.settings.widgetsPage.moveDownAria}
           className="rounded p-0.5 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-300 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent"
         >
           <ChevronDown size={15} />

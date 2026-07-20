@@ -2,6 +2,8 @@
 
 import { Clock, Trash2, X, RotateCcw } from "lucide-react";
 import { HistoryItem } from "../hooks/useSearchHistory";
+import { useTranslation } from "@/lib/i18n/LanguageProvider";
+import { formatRelativeTime } from "@/lib/formatRelativeTime";
 
 const PLATFORM_STYLE: Record<string, { dot: string; label: string }> = {
   youtube:   { dot: "bg-red-500",   label: "YouTube"   },
@@ -15,16 +17,6 @@ const SENTIMENT_BAR = (pos: number, neu: number, neg: number) => {
   return { pos: (pos / total) * 100, neu: (neu / total) * 100, neg: (neg / total) * 100 };
 };
 
-function relativeTime(iso: string) {
-  const diff = Date.now() - new Date(iso).getTime();
-  const m = Math.floor(diff / 60000);
-  if (m < 1) return "Baru saja";
-  if (m < 60) return `${m} menit lalu`;
-  const h = Math.floor(m / 60);
-  if (h < 24) return `${h} jam lalu`;
-  return `${Math.floor(h / 24)} hari lalu`;
-}
-
 interface Props {
   history: HistoryItem[];
   onRemove: (id: string) => void;
@@ -35,6 +27,7 @@ interface Props {
 }
 
 export default function SearchHistoryPanel({ history, onRemove, onClear, onReload, open, onClose }: Props) {
+  const { t, language } = useTranslation();
   if (!open) return null;
 
   return (
@@ -54,8 +47,8 @@ export default function SearchHistoryPanel({ history, onRemove, onClear, onReloa
               <Clock size={15} className="text-indigo-600" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">Riwayat Pencarian</p>
-              <p className="text-[11px] text-slate-400 dark:text-slate-500">{history.length} analisis tersimpan</p>
+              <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{t.searchHistory.title}</p>
+              <p className="text-[11px] text-slate-400 dark:text-slate-500">{history.length} {t.searchHistory.itemsSavedUnit}</p>
             </div>
           </div>
           <div className="flex items-center gap-1">
@@ -65,7 +58,7 @@ export default function SearchHistoryPanel({ history, onRemove, onClear, onReloa
                 className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-red-500 hover:bg-red-50 transition-colors dark:hover:bg-red-950/40"
               >
                 <Trash2 size={12} />
-                Hapus semua
+                {t.header.clearAll}
               </button>
             )}
             <button
@@ -84,8 +77,8 @@ export default function SearchHistoryPanel({ history, onRemove, onClear, onReloa
               <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800">
                 <Clock size={22} className="text-slate-400" />
               </div>
-              <p className="font-semibold text-slate-600 dark:text-slate-400">Belum ada riwayat</p>
-              <p className="mt-1.5 text-sm text-slate-400 dark:text-slate-500">Riwayat analisis akan muncul di sini setelah kamu melakukan analisis pertama.</p>
+              <p className="font-semibold text-slate-600 dark:text-slate-400">{t.searchHistory.emptyTitle}</p>
+              <p className="mt-1.5 text-sm text-slate-400 dark:text-slate-500">{t.searchHistory.emptyDesc}</p>
             </div>
           ) : (
             <ul className="divide-y divide-slate-100 p-3 space-y-1 dark:divide-slate-800">
@@ -110,7 +103,7 @@ export default function SearchHistoryPanel({ history, onRemove, onClear, onReloa
                         <p className="mt-1 truncate font-semibold text-slate-900 dark:text-slate-100">
                           {item.keyword}
                         </p>
-                        <p className="mt-0.5 text-[11px] text-slate-400 dark:text-slate-500">{relativeTime(item.analyzedAt)}</p>
+                        <p className="mt-0.5 text-[11px] text-slate-400 dark:text-slate-500">{formatRelativeTime(item.analyzedAt, language)}</p>
 
                         {/* Mini sentiment bar — disembunyikan kalau belum ada
                             komentar dianalisis; bar penuh abu-abu dengan angka
@@ -129,21 +122,21 @@ export default function SearchHistoryPanel({ history, onRemove, onClear, onReloa
                             </div>
                           </>
                         ) : (
-                          <p className="mt-2 text-[10px] italic text-slate-400 dark:text-slate-500">Belum ada komentar dianalisis</p>
+                          <p className="mt-2 text-[10px] italic text-slate-400 dark:text-slate-500">{t.searchHistory.noCommentsAnalyzed}</p>
                         )}
                       </div>
 
                       <div className="flex shrink-0 flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
                           onClick={() => { onReload(item); onClose(); }}
-                          title="Jalankan ulang analisis"
+                          title={t.searchHistory.rerunTitle}
                           className="rounded-lg p-1.5 text-indigo-500 hover:bg-indigo-50 transition-colors dark:hover:bg-indigo-950/40"
                         >
                           <RotateCcw size={13} />
                         </button>
                         <button
                           onClick={() => onRemove(item.id)}
-                          title="Hapus dari riwayat"
+                          title={t.searchHistory.removeTitle}
                           className="rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-500 transition-colors dark:hover:bg-red-950/40"
                         >
                           <X size={13} />
