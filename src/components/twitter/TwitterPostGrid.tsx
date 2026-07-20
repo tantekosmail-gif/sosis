@@ -4,7 +4,6 @@ import { ExternalLink, MessageCircle, Repeat2, ThumbsUp } from "lucide-react";
 
 import type { TwitterPostItem, TwitterSentimentBreakdown } from "@/features/twitter/types/posts.types";
 import SentimentBar from "@/components/common/SentimentBreakdownBar";
-import FallbackImage from "@/components/common/FallbackImage";
 
 const SENTIMENT_BAR_COLOR: Record<string, string> = {
   positif: "bg-emerald-500",
@@ -73,22 +72,16 @@ export default function TwitterPostGrid({
               isSelected ? "border-sky-400 ring-2 ring-sky-500/20" : "border-slate-200 dark:border-slate-700"
             }`}
           >
-            <a href={item.url} target="_blank" rel="noopener noreferrer" className="relative block aspect-[16/9] w-full overflow-hidden">
-              <FallbackImage
-                src={item.thumbnail}
-                className="h-full w-full"
-                imgClassName="h-full w-full object-cover transition-transform hover:scale-105"
-              />
-
-              {dominant && (
-                <span
-                  title={`Dominan: ${SENTIMENT_LABEL[dominant]}`}
-                  className={`absolute left-2 top-2 h-3 w-3 rounded-full ring-2 ring-white dark:ring-slate-900 ${SENTIMENT_BAR_COLOR[dominant]}`}
-                />
-              )}
-            </a>
-
             <div className="p-4">
+              {dominant && (
+                <div className="mb-2 flex items-center gap-1.5">
+                  <span className={`h-2 w-2 rounded-full ${SENTIMENT_BAR_COLOR[dominant]}`} />
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                    {SENTIMENT_LABEL[dominant]}
+                  </span>
+                </div>
+              )}
+
               <a href={item.url} target="_blank" rel="noopener noreferrer" className="flex items-start gap-1">
                 <p className="line-clamp-2 min-w-0 flex-1 break-words text-sm leading-snug text-slate-700 dark:text-slate-300 hover:text-sky-600 transition-colors">
                   {item.caption || "(tanpa teks)"}
