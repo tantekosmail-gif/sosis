@@ -9,16 +9,15 @@ import AnalyticsSentimentPanel from "@/components/youtube/analytics/AnalyticsSen
 import ViralCommentsList from "@/components/youtube/ViralCommentsList";
 import VideoFilterBar from "@/components/youtube/VideoFilterBar";
 import CommentsModal from "@/components/common/CommentsModal";
-import Pagination from "@/components/common/Pagination";
+import LoadMoreButton from "@/components/common/LoadMoreButton";
 import { useViralVideos } from "../hooks/useViralVideos";
-import { usePagination } from "@/hooks/usePagination";
+import { useLoadMore } from "@/hooks/useLoadMore";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { decodeHtmlEntities } from "@/lib/decodeHtmlEntities";
 import { matchesAgeFilter, type VideoAgeFilter } from "@/lib/videoAgeFilter";
 import { matchesDateRange } from "@/lib/videoDateRangeFilter";
 import { aggregateViralStats } from "../lib/aggregateViralStats";
 import { hankenGrotesk } from "@/lib/fonts/dashboardFonts";
-import { formatRelativeTime } from "@/lib/formatRelativeTime";
 
 const PAGE_SIZE = 8; // 4 kolom (xl) x 2 baris
 type SortBy = "trending" | "newest" | "viral";
@@ -75,16 +74,12 @@ const YoutubeTrendingTab = forwardRef<TrendingTabHandle>(function YoutubeTrendin
     });
   }, [sortedItems, filterAge, filterDateFrom, filterDateTo]);
 
-  const { page, totalPages, setPage, paginated } = usePagination(filteredItems, PAGE_SIZE);
+  const { visible: paginated, hasMore, loadMore } = useLoadMore(filteredItems, PAGE_SIZE);
 
   const { stats: filteredStats, sentiment: filteredSentiment } = useMemo(
     () => aggregateViralStats(filteredItems),
     [filteredItems]
   );
-
-  const lastUpdatedAt = useMemo(() => (data?.items ? new Date().toISOString() : null), [data?.items]);
-  const rangeStart = filteredItems.length === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
-  const rangeEnd = Math.min(page * PAGE_SIZE, filteredItems.length);
 
   return (
     <div className="space-y-6">
@@ -162,13 +157,7 @@ const YoutubeTrendingTab = forwardRef<TrendingTabHandle>(function YoutubeTrendin
                 selectedVideoId={selectedVideoId}
                 onSelectVideo={(item) => setSelectedVideoId(item.video_id)}
               />
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <p className="text-xs text-slate-400 dark:text-slate-500">
-                  Showing {rangeStart}-{rangeEnd} of {filteredItems.length} videos
-                  {lastUpdatedAt && <> &middot; Last updated: {formatRelativeTime(lastUpdatedAt, "en")}</>}
-                </p>
-                <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
-              </div>
+              {hasMore && <LoadMoreButton onClick={loadMore} />}
             </>
           )}
 

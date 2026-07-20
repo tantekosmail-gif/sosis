@@ -6,10 +6,10 @@ import { FaYoutube } from "react-icons/fa6";
 
 import VideoSearchGrid from "@/components/youtube/VideoSearchGrid";
 import VideoFilterBar from "@/components/youtube/VideoFilterBar";
-import Pagination from "@/components/common/Pagination";
+import LoadMoreButton from "@/components/common/LoadMoreButton";
 import SentimentBreakdownBar from "@/components/common/SentimentBreakdownBar";
 import { useVideoSearch } from "../hooks/useVideoSearch";
-import { usePagination } from "@/hooks/usePagination";
+import { useLoadMore } from "@/hooks/useLoadMore";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { decodeHtmlEntities } from "@/lib/decodeHtmlEntities";
 import { matchesDateRange } from "@/lib/videoDateRangeFilter";
@@ -74,7 +74,7 @@ const VideoSearchTab = forwardRef<VideoSearchTabHandle>(function VideoSearchTab(
     });
   }, [sortedItems, filterQuery, filterChannel, filterDateFrom, filterDateTo]);
 
-  const { page, totalPages, setPage, paginated } = usePagination(filteredItems, 8);
+  const { visible: paginated, hasMore, loadMore } = useLoadMore(filteredItems, 8);
 
   const hasResults = !loading && !error && items !== null;
 
@@ -173,7 +173,7 @@ const VideoSearchTab = forwardRef<VideoSearchTabHandle>(function VideoSearchTab(
           ) : (
             <div className="mt-4">
               <VideoSearchGrid items={paginated} />
-              <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+              {hasMore && <LoadMoreButton onClick={loadMore} />}
             </div>
           )}
         </div>

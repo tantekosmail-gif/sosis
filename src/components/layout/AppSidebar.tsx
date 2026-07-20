@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BarChart3, ChevronDown, ChevronLeft, ChevronRight, FileText, GitCompareArrows, Home, Newspaper, Settings, Share2, Tags, X } from "lucide-react";
+import { BarChart3, ChevronDown, FileText, GitCompareArrows, Home, Newspaper, Settings, Share2, Tags, X } from "lucide-react";
 import { FaFacebook, FaInstagram, FaThreads, FaTiktok, FaXTwitter, FaYoutube } from "react-icons/fa6";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
@@ -58,10 +58,9 @@ interface Props {
   open?: boolean;
   onClose?: () => void;
   collapsed?: boolean;
-  onToggleCollapsed?: () => void;
 }
 
-export default function AppSidebar({ open = false, onClose, collapsed = false, onToggleCollapsed }: Props) {
+export default function AppSidebar({ open = false, onClose, collapsed = false }: Props) {
   const pathname = usePathname();
   const { t } = useTranslation();
   const [manuallyOpenGroups, setManuallyOpenGroups] = useState<Record<string, boolean>>({});
@@ -95,7 +94,7 @@ export default function AppSidebar({ open = false, onClose, collapsed = false, o
           <button
             onClick={onClose}
             className={`rounded-lg p-1.5 text-slate-400 hover:bg-slate-800 hover:text-white lg:hidden ${collapsed ? "lg:hidden" : ""}`}
-            aria-label="Tutup menu"
+            aria-label={t.header.closeMenu}
           >
             <X size={18} />
           </button>
@@ -208,22 +207,6 @@ export default function AppSidebar({ open = false, onClose, collapsed = false, o
           </div>
           ))}
         </nav>
-
-        {/* Bottom */}
-        <div className="border-t border-slate-800 p-3">
-          <button
-            onClick={onToggleCollapsed}
-            className="hidden w-full items-center justify-center rounded-xl p-2 text-slate-400 hover:bg-slate-800 hover:text-white lg:flex"
-            aria-label={collapsed ? "Perbesar menu" : "Perkecil menu"}
-            title={collapsed ? "Perbesar menu" : "Perkecil menu"}
-          >
-            {collapsed ? <ChevronRight size={18} /> : (
-              <span className="flex items-center gap-2 text-xs font-medium">
-                <ChevronLeft size={18} /> Perkecil menu
-              </span>
-            )}
-          </button>
-        </div>
       </aside>
     </>
   );

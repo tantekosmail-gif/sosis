@@ -4,8 +4,8 @@ import type { LucideIcon } from "lucide-react";
 import { Download, Eye, FileText, MessageSquare, PieChart, Users } from "lucide-react";
 
 import type { FacebookAccountSummary, FacebookAnalysisSummary } from "@/features/facebook/types/summary.types";
-import Pagination from "@/components/common/Pagination";
-import { usePagination } from "@/hooks/usePagination";
+import LoadMoreButton from "@/components/common/LoadMoreButton";
+import { useLoadMore } from "@/hooks/useLoadMore";
 
 const SENTIMENT_LABEL: Record<string, string> = {
   positif: "Positif",
@@ -85,9 +85,7 @@ export default function FacebookSummaryWidget({
 }) {
   const { overall, per_account } = data;
   const analyzedPct = overall.total_comments > 0 ? (overall.total_analyzed / overall.total_comments) * 100 : 0;
-  const { page, totalPages, setPage, paginated } = usePagination(per_account, 5);
-  const rangeStart = per_account.length === 0 ? 0 : (page - 1) * 5 + 1;
-  const rangeEnd = Math.min(page * 5, per_account.length);
+  const { visible: paginated, hasMore, loadMore } = useLoadMore(per_account, 5);
 
   return (
     <div className="space-y-5">
@@ -185,9 +183,9 @@ export default function FacebookSummaryWidget({
 
             <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 dark:border-slate-800 px-6 py-3">
               <p className="text-xs text-slate-400 dark:text-slate-500">
-                Menampilkan {rangeStart}-{rangeEnd} dari {per_account.length} akun
+                Menampilkan {paginated.length} dari {per_account.length} akun
               </p>
-              <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+              {hasMore && <LoadMoreButton onClick={loadMore} />}
             </div>
           </>
         )}

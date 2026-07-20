@@ -6,21 +6,22 @@ import { AtSign, Loader2, Search } from "lucide-react";
 import ThreadsPostGrid from "@/components/threads/ThreadsPostGrid";
 import ThreadsCommentsList from "@/components/threads/ThreadsCommentsList";
 import CommentsModal from "@/components/common/CommentsModal";
-import Pagination from "@/components/common/Pagination";
-import { usePagination } from "@/hooks/usePagination";
+import LoadMoreButton from "@/components/common/LoadMoreButton";
+import { useLoadMore } from "@/hooks/useLoadMore";
 import { useThreadsSearch } from "../hooks/useThreadsSearch";
 import { useRecentThreadsSearches } from "../hooks/useRecentSearches";
+import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import type { ThreadsPost } from "../types/search.types";
 
-const SORT_OPTIONS = [
-  { key: "terbaru", label: "Terbaru" },
-  { key: "likes", label: "Paling Disukai" },
-  { key: "balasan", label: "Paling Banyak Balasan" },
-] as const;
-
-type SortKey = (typeof SORT_OPTIONS)[number]["key"];
+type SortKey = "terbaru" | "likes" | "balasan";
 
 export default function ThreadsSearchTab() {
+  const { t } = useTranslation();
+  const SORT_OPTIONS: { key: SortKey; label: string }[] = [
+    { key: "terbaru", label: t.threadsSearchTab.sortNewest },
+    { key: "likes", label: t.threadsSearchTab.sortLikes },
+    { key: "balasan", label: t.threadsSearchTab.sortReplies },
+  ];
   const [query, setQuery] = useState("");
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<SortKey>("terbaru");
@@ -38,7 +39,7 @@ export default function ThreadsSearchTab() {
     return items.sort((a, b) => (b.published_at || "").localeCompare(a.published_at || ""));
   }, [data, sortBy]);
 
-  const { page, totalPages, setPage, paginated } = usePagination(sortedItems, 8);
+  const { visible: paginated, hasMore, loadMore } = useLoadMore(sortedItems, 8);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -64,7 +65,7 @@ export default function ThreadsSearchTab() {
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Cari topik di Threads, mis. jokowi, pemilu, ekonomi..."
+            placeholder={t.threadsSearchTab.placeholder}
             className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 text-sm text-slate-900 placeholder:text-slate-400 transition-colors focus:border-purple-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-500/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:bg-slate-900"
           />
         </div>
@@ -74,14 +75,14 @@ export default function ThreadsSearchTab() {
           className="flex h-11 shrink-0 items-center gap-2 rounded-xl bg-purple-600 px-5 text-sm font-medium text-white shadow-lg shadow-purple-500/30 transition hover:bg-purple-700 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {loading || polling ? <Loader2 size={16} className="animate-spin" /> : <Search size={16} />}
-          Cari
+          {t.threadsSearchTab.searchButton}
         </button>
       </form>
 
       {recent.length > 0 && (
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-            Pencarian Terakhir
+            {t.threadsSearchTab.recentSearches}
           </span>
           {recent.map((term) => (
             <button
@@ -105,7 +106,7 @@ export default function ThreadsSearchTab() {
       {loading && (
         <div className="flex flex-col items-center justify-center rounded-2xl border bg-white py-24 shadow-sm dark:bg-slate-900">
           <Loader2 className="mb-4 h-10 w-10 animate-spin text-purple-600" />
-          <p className="font-semibold text-slate-700 dark:text-slate-300">Mencari post Threads...</p>
+          <p className="font-semibold text-slate-700 dark:text-slate-300">{t.threadsSearchTab.loading}</p>
         </div>
       )}
 
@@ -113,9 +114,9 @@ export default function ThreadsSearchTab() {
         <div className="flex items-start gap-3 rounded-2xl border border-purple-200 bg-purple-50 px-5 py-4 text-sm text-purple-800 dark:border-purple-900 dark:bg-purple-950/30 dark:text-purple-300">
           <Loader2 size={18} className="mt-0.5 shrink-0 animate-spin" />
           <div>
-            <p className="font-semibold">Mengumpulkan post baru dari Threads...</p>
+            <p className="font-semibold">{t.threadsSearchTab.pollingTitle}</p>
             <p className="mt-1 text-xs text-purple-700/80 dark:text-purple-400/80">
-              Pencarian berjalan di background (kuota API terbatas), hasil akan muncul otomatis di sini begitu selesai.
+              {t.threadsSearchTab.pollingDesc}
             </p>
           </div>
         </div>
@@ -125,13 +126,14 @@ export default function ThreadsSearchTab() {
         <>
           {data.posts.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-slate-300 bg-white py-16 text-center text-sm text-slate-400 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-500">
-              {polling ? "Belum ada post tersimpan, sedang mencari..." : "Tidak ada post Threads ditemukan untuk pencarian ini"}
+              {polling ? t.threadsSearchTab.noResultsPolling : t.threadsSearchTab.noResults}
             </div>
           ) : (
             <>
               <div className="flex items-center justify-between gap-3">
                 <p className="text-sm text-slate-500 dark:text-slate-400">
-                  <span className="font-semibold text-slate-700 dark:text-slate-300">{data.posts.length}</span> hasil untuk{" "}
+                  <span className="font-semibold text-slate-700 dark:text-slate-300">{data.posts.length}</span>{" "}
+                  {t.threadsSearchTab.resultsPrefix}{" "}
                   <span className="font-semibold text-slate-700 dark:text-slate-300">&ldquo;{data.query}&rdquo;</span>
                 </p>
 
@@ -154,12 +156,12 @@ export default function ThreadsSearchTab() {
               </div>
 
               <ThreadsPostGrid data={paginated} selectedPostId={selectedPostId} onSelectPost={handleSelectPost} />
-              <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+              {hasMore && <LoadMoreButton onClick={loadMore} />}
 
               <CommentsModal
                 open={!!selectedPost}
                 onClose={() => setSelectedPostId(null)}
-                title="Balasan Threads"
+                title={t.threadsSearchTab.repliesModalTitle}
                 url={selectedPost?.url}
                 caption={selectedPost?.content}
               >
@@ -179,8 +181,8 @@ export default function ThreadsSearchTab() {
       {!hasSearched && !loading && (
         <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-white py-24 text-center dark:border-slate-600 dark:bg-slate-900">
           <AtSign className="mb-4 h-10 w-10 text-slate-300" />
-          <p className="font-semibold text-slate-700 dark:text-slate-300">Mulai cari post Threads</p>
-          <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">Masukkan kata kunci di atas untuk memulai pencarian</p>
+          <p className="font-semibold text-slate-700 dark:text-slate-300">{t.threadsSearchTab.emptyTitle}</p>
+          <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">{t.threadsSearchTab.emptyDesc}</p>
         </div>
       )}
     </div>

@@ -12,29 +12,28 @@ import TikTokSummaryWidget from "@/components/tiktok/TikTokSummaryWidget";
 import TikTokDiscoverPanel from "@/components/tiktok/TikTokDiscoverPanel";
 import CommentsModal from "@/components/common/CommentsModal";
 import WordCloud from "@/components/dashboard/WordCloud";
-import Pagination from "@/components/common/Pagination";
+import LoadMoreButton from "@/components/common/LoadMoreButton";
 import { useTikTokPosts } from "../hooks/useTikTokPosts";
 import { useTikTokSummary } from "../hooks/useTikTokSummary";
 import { useRecentTikTokSearches } from "../hooks/useRecentSearches";
-import { usePagination } from "@/hooks/usePagination";
+import { useLoadMore } from "@/hooks/useLoadMore";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { buildWordCloud } from "@/lib/wordCloud";
 
 const MAX_POSTS_OPTIONS = [3, 5, 10];
 
-const SORT_OPTIONS = [
-  { key: "terbaru", label: "Terbaru" },
-  { key: "negatif", label: "Paling Negatif" },
-  { key: "komentar", label: "Paling Banyak Komentar" },
-] as const;
-
-type SortKey = (typeof SORT_OPTIONS)[number]["key"];
+type SortKey = "terbaru" | "negatif" | "komentar";
 
 const SHOW_DISCOVER_PANEL = false;
 
 export default function TikTokSentimentTab() {
   const { t } = useTranslation();
   const tp = t.accountSentimentTab.tiktok;
+  const SORT_OPTIONS: { key: SortKey; label: string }[] = [
+    { key: "terbaru", label: t.accountSentimentTab.sortRecent },
+    { key: "negatif", label: t.accountSentimentTab.sortNegative },
+    { key: "komentar", label: t.accountSentimentTab.sortComments },
+  ];
   const [usernameInput, setUsernameInput] = useState("");
 
   const {
@@ -65,7 +64,7 @@ export default function TikTokSentimentTab() {
     return items.sort((a, b) => (b.published_at || "").localeCompare(a.published_at || ""));
   }, [data, sortBy]);
 
-  const { page, totalPages, setPage, paginated } = usePagination(sortedItems, 4);
+  const { visible: paginated, hasMore, loadMore } = useLoadMore(sortedItems, 4);
 
   const commentsWordCloud = useMemo(() => {
     if (!data) return [];
@@ -156,7 +155,7 @@ export default function TikTokSentimentTab() {
         {recent.length > 0 && (
           <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-slate-100 dark:border-slate-800 pt-3">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-              Pencarian Terakhir
+              {t.accountSentimentTab.recentSearches}
             </span>
             {recent.map((username) => (
               <button
@@ -215,7 +214,7 @@ export default function TikTokSentimentTab() {
             <div className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-sm text-slate-600 dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-300">
               <Info size={18} className="mt-0.5 shrink-0 text-slate-400" />
               <div>
-                <p className="font-semibold">Data tidak diperbarui</p>
+                <p className="font-semibold">{t.accountSentimentTab.dataNotUpdated}</p>
                 <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{data.scrape.skipped_reason}</p>
               </div>
             </div>
@@ -226,7 +225,7 @@ export default function TikTokSentimentTab() {
           <NegativeHighlightCard items={data.items} onSelect={(item) => setSelectedPostId(item.post_id)} />
 
           <div className="flex items-center justify-end gap-2">
-            <span className="text-xs font-medium text-slate-400 dark:text-slate-500">Urutkan:</span>
+            <span className="text-xs font-medium text-slate-400 dark:text-slate-500">{t.accountSentimentTab.sortLabel}</span>
             <div className="inline-flex rounded-xl border border-slate-200 bg-slate-50 p-1 dark:border-slate-700 dark:bg-slate-800">
               {SORT_OPTIONS.map((opt) => (
                 <button
@@ -248,7 +247,7 @@ export default function TikTokSentimentTab() {
             selectedPostId={selectedPostId}
             onSelectPost={(item) => setSelectedPostId(item.post_id)}
           />
-          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+          {hasMore && <LoadMoreButton onClick={loadMore} />}
 
           <TopHashtags items={data.items} />
 

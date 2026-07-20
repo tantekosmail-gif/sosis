@@ -5,7 +5,11 @@
     "cancel": "Batal",
     "active": "Aktif",
     "saved": "Tersimpan!",
-    "checkingAuth": "Memeriksa autentikasi..."
+    "checkingAuth": "Memeriksa autentikasi...",
+    "loadMore": "Muat Lebih Banyak",
+    "previous": "Sebelumnya",
+    "next": "Berikutnya",
+    "reload": "Muat ulang"
   },
   "sidebar": {
     "mainMenu": "Menu Utama",
@@ -39,7 +43,11 @@
     "logout": "Logout",
     "language": "Bahasa",
     "lightMode": "Mode cerah",
-    "darkMode": "Mode gelap"
+    "darkMode": "Mode gelap",
+    "openMenu": "Buka menu",
+    "closeMenu": "Tutup menu",
+    "collapseMenu": "Perkecil menu",
+    "expandMenu": "Perbesar menu"
   },
   "overview": {
     "title": "Overview",
@@ -112,7 +120,8 @@
       "itemsAnalyzed": "{n} item dianalisis"
     },
     "videoViral": {
-      "title": "Video Viral"
+      "title": "Video Viral",
+      "reloadTitle": "Muat ulang data terbaru"
     },
     "postinganVisual": {
       "title": "Postingan Visual",
@@ -260,6 +269,7 @@
   "engagement": {
     "title": "Dashboard Engagement",
     "subtitle": "Ringkasan engagement (Like + Komentar + Share + Save), reach, exposure & sentimen dari seluruh platform yang dipantau",
+    "refreshTitle": "Ambil ulang data dari API",
     "cardView": "Kartu",
     "tableView": "Tabel"
   },
@@ -283,6 +293,12 @@
     "refreshButton": "Refresh",
     "loadingDesc": "Proses pengumpulan data bisa butuh beberapa detik",
     "scrapeErrorDesc": "Data di bawah ini (jika ada) berasal dari hasil pengumpulan data sebelumnya, bukan data terbaru.",
+    "sortLabel": "Urutkan:",
+    "sortRecent": "Terbaru",
+    "sortNegative": "Paling Negatif",
+    "sortComments": "Paling Banyak Komentar",
+    "recentSearches": "Pencarian Terakhir",
+    "dataNotUpdated": "Data tidak diperbarui",
     "instagram": {
       "desc": "Analisis sentimen komentar dari postingan sebuah akun Instagram",
       "usernameLabel": "Username Instagram",
@@ -312,7 +328,8 @@
       "loadingTitle": "Mengambil & menganalisis data Twitter/X...",
       "emptyState": "Masukkan username Twitter/X untuk melihat analisis sentimennya",
       "scrapeErrorTitle": "Gagal mengambil data terbaru dari Twitter/X",
-      "repliesModalTitle": "Balasan"
+      "repliesModalTitle": "Balasan",
+      "sortReplies": "Paling Banyak Balasan"
     },
     "tiktok": {
       "desc": "Analisis sentimen komentar dari video sebuah akun TikTok",
@@ -325,9 +342,30 @@
       "scrapeErrorTitle": "Gagal mengambil data terbaru dari TikTok"
     }
   },
+  "executiveInsight": {
+    "badge": "Executive Insight",
+    "generateTooltip": "Buat ringkasan otomatis berdasarkan data topik ini",
+    "generating": "Membuat...",
+    "regenerate": "Buat Ulang",
+    "generate": "Buat Insight",
+    "scoreLabel": "Skor Topik",
+    "positiveSentimentLabel": "Sentimen Positif",
+    "fallbackHeadline": "{topic} Mendominasi Trending",
+    "fallbackInsight": "Topik ini meraih skor {score} dengan {count} postingan{sentimentClause}.",
+    "fallbackSentimentClause": " dan sentimen dominan {sentiment} ({pct}%)"
+  },
   "sentimentTimeline": {
     "title": "Tren Sentimen Waktu",
     "subtitle": "Perubahan sentimen komentar per hari"
+  },
+  "searchHistory": {
+    "title": "Riwayat Pencarian",
+    "itemsSavedUnit": "analisis tersimpan",
+    "emptyTitle": "Belum ada riwayat",
+    "emptyDesc": "Riwayat analisis akan muncul di sini setelah kamu melakukan analisis pertama.",
+    "noCommentsAnalyzed": "Belum ada komentar dianalisis",
+    "rerunTitle": "Jalankan ulang analisis",
+    "removeTitle": "Hapus dari riwayat"
   },
   "wordCloud": {
     "loading": "Memuat word cloud...",
@@ -445,6 +483,23 @@
     "emptyDescPrefix": "Masukkan keyword di atas, lalu klik",
     "emptyDescSuffix": "untuk memulai."
   },
+  "threadsSearchTab": {
+    "placeholder": "Cari topik di Threads, mis. jokowi, pemilu, ekonomi...",
+    "searchButton": "Cari",
+    "recentSearches": "Pencarian Terakhir",
+    "loading": "Mencari post Threads...",
+    "pollingTitle": "Mengumpulkan post baru dari Threads...",
+    "pollingDesc": "Pencarian berjalan di background (kuota API terbatas), hasil akan muncul otomatis di sini begitu selesai.",
+    "resultsPrefix": "hasil untuk",
+    "noResultsPolling": "Belum ada post tersimpan, sedang mencari...",
+    "noResults": "Tidak ada post Threads ditemukan untuk pencarian ini",
+    "sortNewest": "Terbaru",
+    "sortLikes": "Paling Disukai",
+    "sortReplies": "Paling Banyak Balasan",
+    "repliesModalTitle": "Balasan Threads",
+    "emptyTitle": "Mulai cari post Threads",
+    "emptyDesc": "Masukkan kata kunci di atas untuk memulai pencarian"
+  },
   "notFound": {
     "title": "Halaman tidak ditemukan",
     "desc": "URL yang kamu tuju tidak tersedia atau sudah dipindahkan.",
@@ -528,6 +583,10 @@
     "scheduleError": "Gagal memperbarui jadwal",
     "postsUnit": "post",
     "commentsUnit": "komentar",
+    "sortByPosts": "Post Terbanyak",
+    "sortByComments": "Komentar Terbanyak",
+    "sortByName": "Nama (A-Z)",
+    "loadMoreLabel": "Muat Lebih Banyak Topik",
     "topTopics": {
       "title": "Top 5 Topik",
       "desc": "Topik dengan jumlah post terbanyak, diurutkan dari yang paling ramai.",
@@ -538,10 +597,16 @@
     "detail": {
       "backLink": "Daftar Topik",
       "loadError": "Gagal memuat detail topik",
+      "pageTitlePrefix": "Detail Topik",
       "keywordsTitle": "Keyword",
       "resultsTitle": "Hasil Postingan",
       "noResults": "Belum ada postingan untuk topik ini",
       "viewSource": "Buka sumber",
+      "sortLabel": "Urutkan:",
+      "sortRecent": "Terbaru",
+      "sortViews": "Paling Banyak Dilihat",
+      "platformResultsSuffix": "Hasil",
+      "loadMoreResultsLabel": "Muat Lebih Banyak Hasil",
       "trendGraph": {
         "title": "Grafik Tren Topik",
         "desc": "Volume post per platform dan sentimen komentar dalam {n} hari terakhir.",
@@ -666,7 +731,9 @@
     "widgetsPage": {
       "title": "Widget Overview",
       "desc": "Atur widget mana saja yang tampil, dan urutannya, di halaman Overview",
-      "saveButton": "Simpan Pengaturan"
+      "saveButton": "Simpan Pengaturan",
+      "moveUpAria": "Pindah ke atas",
+      "moveDownAria": "Pindah ke bawah"
     },
     "users": {
       "searchPlaceholder": "Cari email atau username...",

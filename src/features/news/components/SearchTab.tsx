@@ -5,11 +5,11 @@ import { Loader2, Newspaper, Search } from "lucide-react";
 
 import NewsResultCard from "@/components/news/NewsResultCard";
 import NegativeHighlightCard from "@/components/news/NegativeHighlightCard";
-import Pagination from "@/components/common/Pagination";
+import LoadMoreButton from "@/components/common/LoadMoreButton";
 import { useNewsSearch } from "../hooks/useNewsSearch";
 import { useRecentNewsSearches } from "../hooks/useRecentSearches";
 import type { NewsSearchItem } from "../types/search.types";
-import { usePagination } from "@/hooks/usePagination";
+import { useLoadMore } from "@/hooks/useLoadMore";
 import { formatRelativeTime } from "@/lib/formatRelativeTime";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
@@ -50,7 +50,7 @@ export default function NewsSearchTab() {
     return items.sort((a, b) => (b.published_at ?? b.collected_at).localeCompare(a.published_at ?? a.collected_at));
   }, [data, sortBy]);
 
-  const { page, totalPages, setPage, paginated } = usePagination(sortedItems, 8);
+  const { visible: paginated, hasMore, loadMore } = useLoadMore(sortedItems, 8);
 
   const lastCollectedAt = useMemo(() => {
     if (!data) return undefined;
@@ -170,7 +170,7 @@ export default function NewsSearchTab() {
                   <NewsResultCard key={item.post_id} item={item} sentiment={item.sentiment} variant="grid" />
                 ))}
               </div>
-              <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+              {hasMore && <LoadMoreButton onClick={loadMore} />}
             </>
           )}
         </>

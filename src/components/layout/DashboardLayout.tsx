@@ -42,7 +42,6 @@ export default function DashboardLayout({ children, onOpenHistory, historyCount 
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
         collapsed={collapsed}
-        onToggleCollapsed={toggleCollapsed}
       />
 
       <div className="flex-1 flex flex-col overflow-hidden">
@@ -50,6 +49,8 @@ export default function DashboardLayout({ children, onOpenHistory, historyCount 
           onOpenHistory={onOpenHistory}
           historyCount={historyCount}
           onOpenSidebar={() => setSidebarOpen(true)}
+          collapsed={collapsed}
+          onToggleCollapsed={toggleCollapsed}
         />
 
         <main className="flex-1 overflow-y-auto">

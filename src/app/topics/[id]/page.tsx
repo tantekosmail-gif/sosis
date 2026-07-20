@@ -18,19 +18,9 @@ import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import FallbackImage from "@/components/common/FallbackImage";
 import { hankenGrotesk, jetBrainsMono } from "@/lib/fonts/dashboardFonts";
 
-const PERIOD_OPTIONS = [
-  { key: 7, label: "7 Hari" },
-  { key: 14, label: "14 Hari" },
-  { key: 30, label: "30 Hari" },
-] as const;
-
 const RESULTS_PAGE_SIZE = 8;
 
 type SortKey = "recent" | "views";
-const SORT_OPTIONS: { key: SortKey; label: string }[] = [
-  { key: "recent", label: "Terbaru" },
-  { key: "views", label: "Paling Banyak Dilihat" },
-];
 
 const SENTIMENT_LABEL: Record<string, string> = { positif: "Positif", netral: "Netral", negatif: "Negatif" };
 const SENTIMENT_STYLE: Record<string, string> = {
@@ -128,10 +118,15 @@ function PostCard({ post }: { post: TopicPost }) {
 }
 
 function PlatformResultsSection({ platform, posts }: { platform: string; posts: TopicPost[] }) {
+  const { t } = useTranslation();
   const meta = platformMeta(platform);
   const Icon = meta.icon;
   const [sortBy, setSortBy] = useState<SortKey>("recent");
   const [visibleCount, setVisibleCount] = useState(RESULTS_PAGE_SIZE);
+  const SORT_OPTIONS: { key: SortKey; label: string }[] = [
+    { key: "recent", label: t.topics.detail.sortRecent },
+    { key: "views", label: t.topics.detail.sortViews },
+  ];
 
   const sortedPosts = useMemo(() => {
     const items = [...posts];
@@ -150,13 +145,13 @@ function PlatformResultsSection({ platform, posts }: { platform: string; posts: 
         <div className="flex items-center gap-2">
           <Icon size={16} className={meta.color} />
           <h3 className={`${hankenGrotesk.className} text-sm font-bold text-slate-800 dark:text-slate-200`}>
-            {meta.label} Results
+            {meta.label} {t.topics.detail.platformResultsSuffix}
           </h3>
           <span className="text-xs text-slate-400 dark:text-slate-500">({posts.length})</span>
         </div>
 
         <div className="flex items-center gap-1.5 text-xs text-slate-400 dark:text-slate-500">
-          Sort by:
+          {t.topics.detail.sortLabel}
           <div className="relative">
             <select
               value={sortBy}
@@ -185,7 +180,7 @@ function PlatformResultsSection({ platform, posts }: { platform: string; posts: 
             onClick={() => setVisibleCount((c) => c + RESULTS_PAGE_SIZE)}
             className="flex items-center gap-2 rounded-xl border border-emerald-200 dark:border-emerald-900 px-5 py-2.5 text-sm font-semibold text-emerald-600 dark:text-emerald-400 transition hover:bg-emerald-50 dark:hover:bg-emerald-950/40"
           >
-            Muat Lebih Banyak Hasil
+            {t.topics.detail.loadMoreResultsLabel}
             <ChevronDown size={15} />
           </button>
         </div>
@@ -198,6 +193,11 @@ export default function TopicDetailPage({ params }: { params: Promise<{ id: stri
   const { id } = use(params);
   const router = useRouter();
   const { t } = useTranslation();
+  const PERIOD_OPTIONS = [
+    { key: 7, label: t.topics.detail.trendGraph.days7 },
+    { key: 14, label: t.topics.detail.trendGraph.days14 },
+    { key: 30, label: t.topics.detail.trendGraph.days30 },
+  ] as const;
   const [authChecked, setAuthChecked] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -294,7 +294,7 @@ export default function TopicDetailPage({ params }: { params: Promise<{ id: stri
             <ArrowLeft size={12} /> {t.topics.detail.backLink}
           </Link>
           <h1 className={`${hankenGrotesk.className} text-xl font-bold text-slate-900 dark:text-slate-100`}>
-            Detail Topik: {topic?.name ?? "..."}
+            {t.topics.detail.pageTitlePrefix}: {topic?.name ?? "..."}
           </h1>
         </div>
 

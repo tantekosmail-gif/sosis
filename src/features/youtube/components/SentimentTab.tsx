@@ -7,7 +7,7 @@ import FilterBar from "@/components/filters/FilterBar";
 import ExposureSection from "@/features/dashboard/sections/ExposureSection";
 import SentimentSection from "@/features/dashboard/sections/SentimentSection";
 import SentimentVideoGrid from "@/components/youtube/SentimentVideoGrid";
-import Pagination from "@/components/common/Pagination";
+import LoadMoreButton from "@/components/common/LoadMoreButton";
 import WordCloud from "@/components/dashboard/WordCloud";
 import SentimentTimeline from "@/components/dashboard/SentimentTimeline";
 import SearchHistoryPanel from "@/features/history/components/SearchHistoryPanel";
@@ -16,7 +16,7 @@ import { useSearchHistory } from "@/features/history/hooks/useSearchHistory";
 import { useDashboardStore } from "@/store/dashboard.store";
 import { useFilterStore } from "@/stores/filterStore";
 import { useAnalyze } from "@/features/analysis/hooks/useAnalyze";
-import { usePagination } from "@/hooks/usePagination";
+import { useLoadMore } from "@/hooks/useLoadMore";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import type { DashboardPost } from "@/types/dashboard.type";
 
@@ -33,7 +33,7 @@ export default function YoutubeSentimentTab() {
 
   const { history, push: pushHistory, remove: removeHistory, clear: clearHistory } = useSearchHistory();
   const { execute } = useAnalyze();
-  const { page, totalPages, setPage, paginated } = usePagination<DashboardPost>(dashboard?.topPosts, 8);
+  const { visible: paginated, hasMore, loadMore } = useLoadMore<DashboardPost>(dashboard?.topPosts, 8);
 
   // Push to history after analysis completes
   useEffect(() => {
@@ -138,7 +138,7 @@ export default function YoutubeSentimentTab() {
               <p className="mt-0.5 text-xs text-slate-400 dark:text-slate-500">{t.youtubeVideoGrid.subtitle}</p>
             </div>
             <SentimentVideoGrid data={paginated} />
-            <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+            {hasMore && <LoadMoreButton onClick={loadMore} />}
           </div>
 
           <WordCloud data={dashboard.wordCloud} />

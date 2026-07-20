@@ -13,16 +13,11 @@ import { apiErrorMessage } from "@/features/topic/lib/apiError";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import TopTopicsLeaderboard from "@/components/topic/TopTopicsLeaderboard";
-import Pagination from "@/components/common/Pagination";
-import { usePagination } from "@/hooks/usePagination";
+import LoadMoreButton from "@/components/common/LoadMoreButton";
+import { useLoadMore } from "@/hooks/useLoadMore";
 import { hankenGrotesk, jetBrainsMono } from "@/lib/fonts/dashboardFonts";
 
 type SortKey = "posts" | "comments" | "name";
-const SORT_OPTIONS: { key: SortKey; label: string }[] = [
-  { key: "posts", label: "Post Terbanyak" },
-  { key: "comments", label: "Komentar Terbanyak" },
-  { key: "name", label: "Nama (A-Z)" },
-];
 
 function downloadTopicsCsv(topics: Topic[]) {
   const header = ["Nama", "Keywords", "Total Post", "Total Komentar"];
@@ -42,6 +37,11 @@ function downloadTopicsCsv(topics: Topic[]) {
 export default function TopicsPage() {
   const router = useRouter();
   const { t } = useTranslation();
+  const SORT_OPTIONS: { key: SortKey; label: string }[] = [
+    { key: "posts", label: t.topics.sortByPosts },
+    { key: "comments", label: t.topics.sortByComments },
+    { key: "name", label: t.topics.sortByName },
+  ];
   const [authChecked, setAuthChecked] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -71,9 +71,7 @@ export default function TopicsPage() {
     });
   }, [topics, filterQuery, sortBy]);
 
-  const { page, totalPages, setPage, paginated } = usePagination(filteredTopics, 5);
-  const rangeStart = filteredTopics.length === 0 ? 0 : (page - 1) * 5 + 1;
-  const rangeEnd = Math.min(page * 5, filteredTopics.length);
+  const { visible: paginated, hasMore, loadMore } = useLoadMore(filteredTopics, 5);
 
   useEffect(() => {
     const cancels = cancelPollRef.current;
@@ -431,12 +429,12 @@ export default function TopicsPage() {
             })}
           </ul>
 
-          {totalPages > 1 && (
-            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 dark:border-slate-800 px-5 py-3">
-              <p className="text-xs text-slate-400 dark:text-slate-500">
-                Menampilkan {rangeStart}-{rangeEnd} dari {filteredTopics.length} topik
+          {hasMore && (
+            <div className="border-t border-slate-100 dark:border-slate-800 px-5 py-4">
+              <p className="mb-3 text-center text-xs text-slate-400 dark:text-slate-500">
+                Menampilkan {paginated.length} dari {filteredTopics.length} topik
               </p>
-              <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+              <LoadMoreButton onClick={loadMore} label={t.topics.loadMoreLabel} />
             </div>
           )}
           </>

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
-import { Bell, LogOut, ChevronDown, Clock, Menu, Moon, Sun, CheckCheck, CheckCircle2, XCircle, Info, Trash2 } from "lucide-react";
+import { Bell, LogOut, ChevronDown, Clock, Menu, Moon, PanelLeftClose, PanelLeftOpen, Sun, CheckCheck, CheckCircle2, XCircle, Info, Trash2 } from "lucide-react";
 import { FaFacebook, FaInstagram, FaTiktok, FaXTwitter, FaYoutube } from "react-icons/fa6";
 import { getSettings, setThemeSetting, type Theme } from "@/features/settings/hooks/useSettings";
 import { useNotifications, type NotificationType } from "@/features/notifications/hooks/useNotifications";
@@ -59,6 +59,8 @@ interface Props {
   onOpenHistory?: () => void;
   historyCount?: number;
   onOpenSidebar?: () => void;
+  collapsed?: boolean;
+  onToggleCollapsed?: () => void;
 }
 
 function readUser(): User {
@@ -69,7 +71,7 @@ function readUser(): User {
   return {};
 }
 
-export default function AppHeader({ onOpenHistory, historyCount = 0, onOpenSidebar }: Props) {
+export default function AppHeader({ onOpenHistory, historyCount = 0, onOpenSidebar, collapsed = false, onToggleCollapsed }: Props) {
   const router = useRouter();
   const [user] = useState<User>(readUser);
   const [theme, setTheme] = useState<Theme>(() => getSettings().theme);
@@ -122,19 +124,28 @@ export default function AppHeader({ onOpenHistory, historyCount = 0, onOpenSideb
         <button
           onClick={onOpenSidebar}
           className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition lg:hidden"
-          aria-label="Buka menu"
+          aria-label={t.header.openMenu}
         >
           <Menu size={17} />
         </button>
 
-        <div className="hidden h-6 w-px bg-slate-200 dark:bg-slate-700 sm:block" />
+        <div className="hidden h-6 w-px bg-slate-200 dark:bg-slate-700 sm:block lg:hidden" />
 
-        <div className="flex min-w-0 items-center gap-2">
+        <button
+          onClick={onToggleCollapsed}
+          className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition lg:flex"
+          aria-label={collapsed ? t.header.expandMenu : t.header.collapseMenu}
+          title={collapsed ? t.header.expandMenu : t.header.collapseMenu}
+        >
+          {collapsed ? <PanelLeftOpen size={17} /> : <PanelLeftClose size={17} />}
+        </button>
+
+        <div className="flex min-w-0 items-center gap-2 rounded-full border border-emerald-200 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950/40 px-3 py-1.5">
           <span className="relative flex h-2 w-2 shrink-0">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
           </span>
-          <span className="truncate text-sm font-medium text-slate-600 dark:text-slate-300">{t.header.liveStatus}</span>
+          <span className="truncate text-xs font-semibold text-emerald-700 dark:text-emerald-400">{t.header.liveStatus}</span>
         </div>
       </div>
 

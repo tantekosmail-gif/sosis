@@ -5,7 +5,11 @@
     "cancel": "Cancel",
     "active": "Active",
     "saved": "Saved!",
-    "checkingAuth": "Checking authentication..."
+    "checkingAuth": "Checking authentication...",
+    "loadMore": "Load More",
+    "previous": "Previous",
+    "next": "Next",
+    "reload": "Reload"
   },
   "sidebar": {
     "mainMenu": "Main Menu",
@@ -39,7 +43,11 @@
     "logout": "Logout",
     "language": "Language",
     "lightMode": "Light mode",
-    "darkMode": "Dark mode"
+    "darkMode": "Dark mode",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "collapseMenu": "Collapse menu",
+    "expandMenu": "Expand menu"
   },
   "overview": {
     "title": "Overview",
@@ -112,7 +120,8 @@
       "itemsAnalyzed": "{n} items analyzed"
     },
     "videoViral": {
-      "title": "Viral Videos"
+      "title": "Viral Videos",
+      "reloadTitle": "Reload latest data"
     },
     "postinganVisual": {
       "title": "Visual Posts",
@@ -260,6 +269,7 @@
   "engagement": {
     "title": "Engagement Dashboard",
     "subtitle": "Engagement (Likes + Comments + Shares + Saves), reach, exposure & sentiment summary across all monitored platforms",
+    "refreshTitle": "Refetch data from API",
     "cardView": "Cards",
     "tableView": "Table"
   },
@@ -283,6 +293,12 @@
     "refreshButton": "Refresh",
     "loadingDesc": "Data collection may take a few seconds",
     "scrapeErrorDesc": "The data below (if any) is from a previous data collection run, not the latest.",
+    "sortLabel": "Sort by:",
+    "sortRecent": "Most Recent",
+    "sortNegative": "Most Negative",
+    "sortComments": "Most Comments",
+    "recentSearches": "Recent Searches",
+    "dataNotUpdated": "Data not updated",
     "instagram": {
       "desc": "Analyze comment sentiment from an Instagram account's posts",
       "usernameLabel": "Instagram Username",
@@ -312,7 +328,8 @@
       "loadingTitle": "Fetching & analyzing Twitter/X data...",
       "emptyState": "Enter a Twitter/X username to see the sentiment analysis",
       "scrapeErrorTitle": "Failed to fetch the latest data from Twitter/X",
-      "repliesModalTitle": "Replies"
+      "repliesModalTitle": "Replies",
+      "sortReplies": "Most Replies"
     },
     "tiktok": {
       "desc": "Analyze comment sentiment from a TikTok account's videos",
@@ -325,9 +342,30 @@
       "scrapeErrorTitle": "Failed to fetch the latest data from TikTok"
     }
   },
+  "executiveInsight": {
+    "badge": "Executive Insight",
+    "generateTooltip": "Generate an automatic summary based on this topic's data",
+    "generating": "Generating...",
+    "regenerate": "Regenerate",
+    "generate": "Generate Insight",
+    "scoreLabel": "Topic Score",
+    "positiveSentimentLabel": "Positive Sentiment",
+    "fallbackHeadline": "{topic} Dominates Trending",
+    "fallbackInsight": "This topic scored {score} with {count} posts{sentimentClause}.",
+    "fallbackSentimentClause": " and a dominant {sentiment} sentiment ({pct}%)"
+  },
   "sentimentTimeline": {
     "title": "Sentiment Trend Over Time",
     "subtitle": "Daily change in comment sentiment"
+  },
+  "searchHistory": {
+    "title": "Search History",
+    "itemsSavedUnit": "analyses saved",
+    "emptyTitle": "No history yet",
+    "emptyDesc": "Your analysis history will appear here after your first analysis.",
+    "noCommentsAnalyzed": "No comments analyzed yet",
+    "rerunTitle": "Re-run analysis",
+    "removeTitle": "Remove from history"
   },
   "wordCloud": {
     "loading": "Loading word cloud...",
@@ -445,6 +483,23 @@
     "emptyDescPrefix": "Enter a keyword above, then click",
     "emptyDescSuffix": "to get started."
   },
+  "threadsSearchTab": {
+    "placeholder": "Search topics on Threads, e.g. jokowi, election, economy...",
+    "searchButton": "Search",
+    "recentSearches": "Recent Searches",
+    "loading": "Searching Threads posts...",
+    "pollingTitle": "Collecting new posts from Threads...",
+    "pollingDesc": "The search runs in the background (API quota is limited) — results will appear here automatically once ready.",
+    "resultsPrefix": "results for",
+    "noResultsPolling": "No posts saved yet, still searching...",
+    "noResults": "No Threads posts found for this search",
+    "sortNewest": "Newest",
+    "sortLikes": "Most Liked",
+    "sortReplies": "Most Replies",
+    "repliesModalTitle": "Threads Replies",
+    "emptyTitle": "Start searching Threads posts",
+    "emptyDesc": "Enter a keyword above to start searching"
+  },
   "notFound": {
     "title": "Page not found",
     "desc": "The URL you're looking for isn't available or has been moved.",
@@ -528,6 +583,10 @@
     "scheduleError": "Failed to update schedule",
     "postsUnit": "posts",
     "commentsUnit": "comments",
+    "sortByPosts": "Most Posts",
+    "sortByComments": "Most Comments",
+    "sortByName": "Name (A-Z)",
+    "loadMoreLabel": "Load More Topics",
     "topTopics": {
       "title": "Top 5 Topics",
       "desc": "Topics with the most posts, ranked from the busiest.",
@@ -538,10 +597,16 @@
     "detail": {
       "backLink": "Topic List",
       "loadError": "Failed to load topic detail",
+      "pageTitlePrefix": "Topic Detail",
       "keywordsTitle": "Keywords",
       "resultsTitle": "Post Results",
       "noResults": "No posts for this topic yet",
       "viewSource": "Open source",
+      "sortLabel": "Sort by:",
+      "sortRecent": "Most Recent",
+      "sortViews": "Most Viewed",
+      "platformResultsSuffix": "Results",
+      "loadMoreResultsLabel": "Load More Results",
       "trendGraph": {
         "title": "Topic Trend Graph",
         "desc": "Post volume per platform and comment sentiment over the last {n} days.",
@@ -666,7 +731,9 @@
     "widgetsPage": {
       "title": "Overview Widgets",
       "desc": "Choose which widgets appear, and their order, on the Overview page",
-      "saveButton": "Save Settings"
+      "saveButton": "Save Settings",
+      "moveUpAria": "Move up",
+      "moveDownAria": "Move down"
     },
     "users": {
       "searchPlaceholder": "Search email or username...",

@@ -21,8 +21,8 @@ import {
   type MetricDetailPostItem,
 } from "@/features/engagement/services/metricDetail.service";
 import { decodeHtmlEntities } from "@/lib/decodeHtmlEntities";
-import { usePagination } from "@/hooks/usePagination";
-import Pagination from "@/components/common/Pagination";
+import { useLoadMore } from "@/hooks/useLoadMore";
+import LoadMoreButton from "@/components/common/LoadMoreButton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 export type MetricKey =
@@ -133,8 +133,8 @@ type DetailShape =
   | { kind: "accounts"; data: MetricDetailAccountItem[] }
   | { kind: "comments"; data: MetricDetailCommentItem[] };
 
-// Referensi tetap (bukan literal `[]` baru tiap render) supaya usePagination
-// tidak salah kira daftar berubah dan reset ke halaman 1 terus-menerus.
+// Referensi tetap (bukan literal `[]` baru tiap render) supaya useLoadMore
+// tidak salah kira daftar berubah dan reset jendela tampilan terus-menerus.
 const EMPTY_DETAIL_ITEMS: (MetricDetailPostItem | MetricDetailAccountItem | MetricDetailCommentItem)[] = [];
 
 // Konten "title" post topik bisa berupa markdown mentah (berita) — sederhanakan
@@ -409,7 +409,7 @@ export function MetricSourceProvider({
   }, [request, apiMetric, activeKeywords, keywordsLoading, dateFrom, dateTo]);
 
   const detailItems = detail?.data ?? EMPTY_DETAIL_ITEMS;
-  const { page, totalPages, setPage, paginated } = usePagination(detailItems, 8);
+  const { visible: paginated, hasMore, loadMore } = useLoadMore(detailItems, 8);
 
   return (
     <MetricSourceContext.Provider value={value}>
@@ -668,7 +668,7 @@ export function MetricSourceProvider({
                               </li>
                             ))}
                         </ul>
-                        <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+                        {hasMore && <LoadMoreButton onClick={loadMore} />}
                       </>
                     )
                   )}
