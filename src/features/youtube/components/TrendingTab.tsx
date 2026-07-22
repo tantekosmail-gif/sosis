@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef, useImperativeHandle, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Loader2, RefreshCw } from "lucide-react";
 
 import AnalyticsVideoGrid from "@/components/youtube/analytics/AnalyticsVideoGrid";
@@ -23,16 +23,12 @@ const PAGE_SIZE = 8; // 4 kolom (xl) x 2 baris
 type SortBy = "trending" | "newest" | "viral";
 
 const SORT_OPTIONS: { key: SortBy; label: string }[] = [
-  { key: "trending", label: "Trending" },
+  { key: "trending", label: "Top Rank" },
   { key: "newest", label: "Newest" },
   { key: "viral", label: "Most Viral" },
 ];
 
-export interface TrendingTabHandle {
-  search: (keyword: string) => void;
-}
-
-const YoutubeTrendingTab = forwardRef<TrendingTabHandle>(function YoutubeTrendingTab(_props, ref) {
+export default function YoutubeTrendingTab() {
   const { t } = useTranslation();
   const [sortBy, setSortBy] = useState<SortBy>("trending");
   const [filterAge, setFilterAge] = useState<VideoAgeFilter>("all");
@@ -43,16 +39,11 @@ const YoutubeTrendingTab = forwardRef<TrendingTabHandle>(function YoutubeTrendin
     data,
     loading,
     error,
-    setQ,
     refetch,
     selectedVideoId,
     setSelectedVideoId,
     selectedVideo,
   } = useViralVideos();
-
-  useImperativeHandle(ref, () => ({
-    search: (keyword: string) => setQ(keyword),
-  }));
 
   const sortedItems = useMemo(() => {
     if (!data?.items) return [];
@@ -64,7 +55,7 @@ const YoutubeTrendingTab = forwardRef<TrendingTabHandle>(function YoutubeTrendin
       return items.sort((a, b) => b.view_count - a.view_count);
     }
     return items.sort((a, b) => a.rank - b.rank);
-  }, [data?.items, sortBy]);
+  }, [data, sortBy]);
 
   const filteredItems = useMemo(() => {
     return sortedItems.filter((item) => {
@@ -173,6 +164,4 @@ const YoutubeTrendingTab = forwardRef<TrendingTabHandle>(function YoutubeTrendin
       )}
     </div>
   );
-});
-
-export default YoutubeTrendingTab;
+}

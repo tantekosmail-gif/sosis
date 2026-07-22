@@ -9,7 +9,6 @@ export function useViralVideos() {
   const [data, setData] = useState<ViralVideoData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [q, setQ] = useState("");
   const [limit, setLimit] = useState(100);
   const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
 
@@ -19,14 +18,14 @@ export function useViralVideos() {
       setError("");
       setSelectedVideoId(null);
 
-      const result = await getViralVideos({ limit, limitComments: 20, q });
+      const result = await getViralVideos({ limit, limitComments: 20 });
       setData(result);
     } catch (err: any) {
       setError(err?.message || "Gagal memuat data video viral");
     } finally {
       setLoading(false);
     }
-  }, [limit, q]);
+  }, [limit]);
 
   useEffect(() => {
     fetchData();
@@ -38,8 +37,6 @@ export function useViralVideos() {
     data,
     loading,
     error,
-    q,
-    setQ,
     limit,
     setLimit,
     refetch: fetchData,

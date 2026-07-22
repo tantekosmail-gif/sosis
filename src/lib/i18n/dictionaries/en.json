@@ -9,7 +9,9 @@
     "loadMore": "Load More",
     "previous": "Previous",
     "next": "Next",
-    "reload": "Reload"
+    "reload": "Reload",
+    "comingSoonBadge": "Coming Soon",
+    "comingSoonDesc": "This feature is currently in development and will be available soon."
   },
   "sidebar": {
     "mainMenu": "Main Menu",
@@ -17,7 +19,7 @@
     "monitoringGroup": "Monitoring",
     "systemGroup": "System",
     "overview": "Overview",
-    "engagement": "Engagement",
+    "engagement": "Engagement"j,
     "youtube": "YouTube",
     "instagram": "Instagram",
     "facebook": "Facebook",
@@ -26,9 +28,15 @@
     "threads": "Threads",
     "news": "News",
     "reports": "Reports",
-    "socialMediaGroup": "Social Media",
-    "comparePlatforms": "Compare Platforms",
+    "platformGroup": "Platform",
+    "comparePlatforms": "Compare",
     "topics": "Topics",
+    "viral": "Viral",
+    "buzzerDetectorGroup": "Buzzer Detector",
+    "sna": "SNA",
+    "videoAnalysisGroup": "Video Analysis",
+    "videoTracking": "Video Tracking",
+    "liveStreamer": "Live Streamer",
     "settings": "Settings",
     "brandTagline": "Media Monitoring"
   },
@@ -439,7 +447,7 @@
     "showingSuffix": "videos"
   },
   "youtubeSearchTab": {
-    "title": "Search Recent YouTube Videos",
+    "title": "YouTube Video Analysis",
     "keywordLabel": "Keyword",
     "keywordPlaceholder": "e.g. highlights, cooking tutorial, breaking news...",
     "searchButton": "Search",
@@ -447,18 +455,11 @@
     "sortRelevance": "Most Relevant",
     "sortNewest": "Newest",
     "sortPopular": "Most Popular",
-    "windowLabel": "Period",
-    "window1Day": "24 Hours",
-    "window1Week": "1 Week",
     "loadingTitle": "Searching videos...",
-    "loadingDesc": "Fetching videos from the last 24 hours matching your keyword",
+    "loadingDesc": "Fetching videos matching your keyword",
     "emptyTitle": "Enter a keyword to search YouTube videos",
     "noResults": "No videos found for this keyword",
-    "showingPrefix": "Showing",
-    "showingMiddle": "of",
-    "showingSuffix": "videos for",
-    "sentimentDistributionTitle": "Comment Sentiment Distribution",
-    "sentimentDistributionDesc": "From {count} analyzed comments for \"{keyword}\""
+    "resultsRangeLabel": "Showing {start}–{end} of {total} results"
   },
   "videoFilterBar": {
     "searchPlaceholder": "Search video title...",
@@ -473,7 +474,19 @@
     "dateFromPlaceholder": "from",
     "dateToPlaceholder": "until",
     "dateRangeSeparator": "to",
-    "noMatch": "No videos match this filter"
+    "noMatch": "No videos match this filter",
+    "openOnYoutube": "Open on YouTube"
+  },
+  "videoDetailModal": {
+    "loading": "Loading video detail...",
+    "trendScoreLabel": "Trend",
+    "engagementScoreLabel": "Engagement",
+    "freshnessScoreLabel": "Freshness",
+    "authorityScoreLabel": "Authority",
+    "aiSummaryLabel": "AI Summary",
+    "keywordLabel": "Keyword",
+    "commentsLabel": "Comments",
+    "noComments": "No comments yet"
   },
   "youtubeSentimentTab": {
     "desc": "Search a keyword to analyze YouTube video & comment sentiment",
@@ -607,6 +620,12 @@
       "sortViews": "Most Viewed",
       "platformResultsSuffix": "Results",
       "loadMoreResultsLabel": "Load More Results",
+      "viewsLabel": "views",
+      "likesLabel": "likes",
+      "moreActionsLabel": "More actions",
+      "openLinkLabel": "Open Link",
+      "copyLinkLabel": "Copy Link",
+      "linkCopied": "Link copied to clipboard",
       "trendGraph": {
         "title": "Topic Trend Graph",
         "desc": "Post volume per platform and comment sentiment over the last {n} days.",

@@ -3,9 +3,10 @@
 import { use, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
-import { ArrowLeft, ChevronDown, Eye, Loader2, Tag, ThumbsUp } from "lucide-react";
+import { ArrowLeft, ChevronDown, Copy, ExternalLink, Loader2, MoreVertical, Tag } from "lucide-react";
 
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { getTopicDetail, getShareOfVoice, getTopicTrendGraph } from "@/features/topic/services/topic.service";
@@ -15,18 +16,23 @@ import ShareOfVoiceCard, { type ShareOfVoiceItem } from "@/components/topic/Shar
 import TopicTrendGraphChart from "@/components/topic/TopicTrendGraphChart";
 import { normalizeShareOfVoice } from "@/lib/shareOfVoice";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
-import FallbackImage from "@/components/common/FallbackImage";
+import { formatCompactNumber } from "@/lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { hankenGrotesk, jetBrainsMono } from "@/lib/fonts/dashboardFonts";
 
 const RESULTS_PAGE_SIZE = 8;
 
 type SortKey = "recent" | "views";
 
-const SENTIMENT_LABEL: Record<string, string> = { positif: "Positif", netral: "Netral", negatif: "Negatif" };
 const SENTIMENT_STYLE: Record<string, string> = {
-  positif: "bg-emerald-500 text-white",
-  netral: "bg-amber-400 text-white",
-  negatif: "bg-red-500 text-white",
+  positif: "bg-emerald-600 text-white",
+  netral: "bg-slate-500 text-white",
+  negatif: "bg-red-600 text-white",
 };
 
 function groupByPlatform(posts: TopicPost[]): [string, TopicPost[]][] {
@@ -52,6 +58,7 @@ function stripMarkdown(text: string): string {
 }
 
 function PostCard({ post }: { post: TopicPost }) {
+  const { t } = useTranslation();
   let dateStr = "";
   if (post.published_at) {
     try {
@@ -61,59 +68,67 @@ function PostCard({ post }: { post: TopicPost }) {
 
   const sentimentKey = post.sentiment?.toLowerCase();
   const sentimentStyle = sentimentKey ? SENTIMENT_STYLE[sentimentKey] : undefined;
+  const sentimentLabel = sentimentKey
+    ? { positif: t.sentimentPie.positive, netral: t.sentimentPie.neutral, negatif: t.sentimentPie.negative }[sentimentKey] ?? post.sentiment
+    : undefined;
+
+  const metaParts = [
+    !!post.view_count && `${formatCompactNumber(post.view_count)} ${t.topics.detail.viewsLabel}`,
+    !!post.likes && `${formatCompactNumber(post.likes)} ${t.topics.detail.likesLabel}`,
+    dateStr,
+  ].filter(Boolean);
 
   return (
-    <a
-      href={post.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm transition-all hover:-translate-y-0.5 hover:border-indigo-300 hover:shadow-md"
-    >
-      <div className="relative aspect-video w-full shrink-0 overflow-hidden">
-        <FallbackImage
-          src={post.thumbnail_url}
-          className="h-full w-full"
-          imgClassName="h-full w-full object-cover transition duration-200 group-hover:scale-105"
-        />
+    <div className="group flex items-start justify-between gap-4 border-b border-slate-100 py-4 last:border-0 dark:border-slate-800">
+      <a
+        href={post.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex min-w-0 flex-1 flex-col gap-1.5"
+      >
         {sentimentKey && sentimentStyle && (
-          <span className={`absolute left-2 top-2 rounded-md px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide shadow ${sentimentStyle}`}>
-            {SENTIMENT_LABEL[sentimentKey] ?? post.sentiment}
+          <span className={`inline-flex w-fit items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold ${sentimentStyle}`}>
+            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-white/80" />
+            {sentimentLabel}
           </span>
         )}
-        {post.duration && (
-          <span className="absolute bottom-2 right-2 rounded-md bg-black/75 px-1.5 py-0.5 text-[11px] font-semibold text-white">
-            {post.duration}
-          </span>
-        )}
-      </div>
-
-      <div className="flex flex-1 flex-col gap-2 p-3.5">
-        <p className="line-clamp-3 text-sm font-medium leading-snug text-slate-800 dark:text-slate-200 transition-colors group-hover:text-indigo-600">
+        <p className="line-clamp-2 text-sm font-medium leading-snug text-slate-800 transition-colors group-hover:text-indigo-600 dark:text-slate-200">
           {stripMarkdown(post.title)}
         </p>
+        {metaParts.length > 0 && (
+          <p className={`${jetBrainsMono.className} text-[11px] text-slate-400 dark:text-slate-500`}>
+            {metaParts.join(" • ")}
+          </p>
+        )}
+      </a>
 
-        <div className="mt-auto space-y-1.5 pt-1">
-          <div className="flex items-center justify-between gap-2 text-[11px] text-slate-400 dark:text-slate-500">
-            <span className="truncate">{post.author ?? "—"}</span>
-            {dateStr && <span className="shrink-0">{dateStr}</span>}
-          </div>
-          {(!!post.view_count || !!post.likes) && (
-            <div className={`${jetBrainsMono.className} flex items-center gap-3 text-[11px] text-slate-400 dark:text-slate-500`}>
-              {!!post.view_count && (
-                <span className="flex items-center gap-1">
-                  <Eye size={11} /> {post.view_count.toLocaleString("id-ID")}
-                </span>
-              )}
-              {!!post.likes && (
-                <span className="flex items-center gap-1">
-                  <ThumbsUp size={11} /> {post.likes.toLocaleString("id-ID")}
-                </span>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-    </a>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button
+            type="button"
+            aria-label={t.topics.detail.moreActionsLabel}
+            className="shrink-0 rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800 dark:hover:text-slate-300"
+          >
+            <MoreVertical size={16} />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem asChild>
+            <a href={post.url} target="_blank" rel="noopener noreferrer">
+              <ExternalLink size={14} /> {t.topics.detail.openLinkLabel}
+            </a>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onSelect={() => {
+              navigator.clipboard.writeText(post.url);
+              toast.success(t.topics.detail.linkCopied);
+            }}
+          >
+            <Copy size={14} /> {t.topics.detail.copyLinkLabel}
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
   );
 }
 
@@ -167,7 +182,7 @@ function PlatformResultsSection({ platform, posts }: { platform: string; posts: 
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div>
         {visiblePosts.map((post) => (
           <PostCard key={post.id} post={post} />
         ))}

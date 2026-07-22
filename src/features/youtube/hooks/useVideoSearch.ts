@@ -1,146 +1,195 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 
-import { getSentimentDistribution, searchRecentVideos, type SentimentDistributionResponse } from "../services/search.service";
-import type { ViralSentimentBreakdown } from "../types/viral.types";
+import {
+  getVideoDetail,
+  getVideoMetadata,
+  type VideoMetadataDetail,
+  type VideoMetadataItem,
+  type VideoMetadataParams,
+} from "../services/search.service";
 
-export interface SearchedVideoItem {
-  video_id: string;
-  title: string;
-  channel: string;
-  url: string;
-  thumbnail: string;
-  views: number;
-  likes: number;
-  published_at: string;
-  /** Hanya ada di video yang ikut dianalisis backend (sentiment_top_n teratas). */
-  sentiment_summary?: ViralSentimentBreakdown;
-}
+export type { VideoMetadataDetail, VideoMetadataItem };
 
-// Bentuk mentah tiap entri array `data.sentiment` dari search-recent — flat
-// per kelas (bukan {count, percentage} seperti ViralSentimentBreakdown), dan
-// cuma ada utk video yang ikut dianalisis backend (lihat sentiment_note pada
-// response: hanya sentiment_top_n video PALING BARU dari yg baru ditemukan).
-interface RawSentimentEntry {
-  video_id: string;
-  comments_fetched?: number;
-  comments_analyzed?: number;
-  positif?: number;
-  netral?: number;
-  negatif?: number;
-}
+export type VideoSearchSort = "relevance" | "newest" | "popular";
 
-function toSentimentSummary(entry?: RawSentimentEntry): ViralSentimentBreakdown | undefined {
-  if (!entry) return undefined;
-  const positif = entry.positif ?? 0;
-  const netral = entry.netral ?? 0;
-  const negatif = entry.negatif ?? 0;
-  const total = positif + netral + negatif;
-  if (total === 0) return undefined;
+const SORT_PARAMS: Record<VideoSearchSort, Pick<VideoMetadataParams, "sortBy" | "order">> = {
+  relevance: { sortBy: "trend_score", order: "desc" },
+  newest: { sortBy: "published_at", order: "desc" },
+  popular: { sortBy: "views", order: "desc" },
+};
 
-  const pct = (n: number) => Math.round((n / total) * 1000) / 10;
-  return {
-    positif: { count: positif, percentage: pct(positif) },
-    netral: { count: netral, percentage: pct(netral) },
-    negatif: { count: negatif, percentage: pct(negatif) },
-  };
-}
+export const PAGE_SIZE = 10;
 
-// Keyword search surfaces only recently published videos (last N hours)
-// rather than searching all-time, so results stay relevant to "what's
-// happening now" for a given keyword. The window is user-selectable:
-// 24 jam (1 hari) atau 168 jam (1 minggu, default).
-const DEFAULT_HOURS_BACK = 168;
+// Backend /youtube/metadata cuma punya parameter topic/search/sort_by/order/
+// page/page_size -- tidak ada filter tanggal/usia/channel server-side. Jadi
+// begitu channel/topik/rentang-tanggal difilter di client, paginasi server
+// (dihitung dari total TANPA filter) jadi tidak sesuai lagi dengan hasil yang
+// sebenarnya ditampilkan. fetchAll() menarik semua halaman (dibatasi
+// MAX_BULK_ITEMS) supaya paginasi bisa dihitung ulang dari hasil yang SUDAH
+// difilter di client (lihat VideoSearchTab).
+const BULK_PAGE_SIZE = 100;
+const MAX_BULK_ITEMS = 1000;
 
 export function useVideoSearch() {
   const [keyword, setKeyword] = useState("");
-  const [hoursBack, setHoursBack] = useState(DEFAULT_HOURS_BACK);
-  const [items, setItems] = useState<SearchedVideoItem[] | null>(null);
+  const [sortBy, setSortBy] = useState<VideoSearchSort>("relevance");
+  const [items, setItems] = useState<VideoMetadataItem[] | null>(null);
   const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [sentimentDistribution, setSentimentDistribution] = useState<SentimentDistributionResponse | null>(null);
-  const [distributionLoading, setDistributionLoading] = useState(false);
 
-  const search = useCallback(async (q: string, hoursOverride?: number) => {
+  const [allItems, setAllItems] = useState<VideoMetadataItem[] | null>(null);
+  const [loadingAll, setLoadingAll] = useState(false);
+
+  const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
+  const [videoDetail, setVideoDetail] = useState<VideoMetadataDetail | null>(null);
+  const [detailLoading, setDetailLoading] = useState(false);
+  const [detailError, setDetailError] = useState("");
+
+  // Dipakai goToPage()/changeSort()/fetchAll() supaya tahu keyword & sort
+  // aktif tanpa ikut jadi dependency callback (menghindari stale closure
+  // kalau berubah di antara render tanpa perlu bikin ulang fungsi tsb).
+  const activeQuery = useRef({ keyword: "", sortBy: "relevance" as VideoSearchSort });
+
+  const fetchPage = useCallback(async (q: string, sort: VideoSearchSort, targetPage: number) => {
     const trimmed = q.trim();
     setKeyword(trimmed);
-    setSentimentDistribution(null);
+    activeQuery.current = { keyword: trimmed, sortBy: sort };
+    // Batch lama dari mode "semua hasil" (kalau ada) sudah tidak valid lagi
+    // begitu keyword/sort ganti -- fetchAll() dipanggil ulang kalau perlu.
+    setAllItems(null);
 
     if (!trimmed) {
       setItems(null);
       setTotal(0);
+      setPage(1);
+      setTotalPages(1);
       setError("");
       return;
     }
 
-    let keywordId: string | undefined;
-
     try {
       setLoading(true);
       setError("");
-      const raw = await searchRecentVideos({
-        keyword: trimmed,
-        hoursBack: hoursOverride ?? hoursBack,
-        maxResults: 50,
+      const data = await getVideoMetadata({
+        search: trimmed,
+        page: targetPage,
+        pageSize: PAGE_SIZE,
+        ...SORT_PARAMS[sort],
       });
-      const data = raw?.data ?? raw ?? {};
-      keywordId = data.keyword_id;
-      const videos = data.videos ?? data.items ?? [];
-      const sentimentByVideoId = new Map<string, RawSentimentEntry>(
-        (data.sentiment ?? []).map((entry: RawSentimentEntry) => [entry.video_id, entry])
-      );
-      const merged = videos.map((video: SearchedVideoItem) => ({
-        ...video,
-        sentiment_summary: toSentimentSummary(sentimentByVideoId.get(video.video_id)),
-      }));
-      setItems(merged);
-      setTotal(data.found ?? data.total ?? merged.length);
+      setItems(data.items);
+      setTotal(data.total);
+      setPage(data.page);
+      setTotalPages(data.total_pages);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Gagal mencari video");
       setItems(null);
       setTotal(0);
+      setPage(1);
+      setTotalPages(1);
     } finally {
       setLoading(false);
     }
+  }, []);
 
-    // Widget tambahan, tidak boleh memblokir/menggagalkan hasil pencarian utama
-    // di atas kalau keyword_id-nya tidak ada atau fetch-nya gagal. search-recent
-    // sendiri sudah mengembalikan keyword_id keyword yang dicari -- tidak perlu
-    // cari-cocokkan lagi ke daftar topik tersimpan.
-    if (!keywordId) return;
-    try {
-      setDistributionLoading(true);
-      setSentimentDistribution(await getSentimentDistribution(keywordId));
-    } catch (err) {
-      console.error("getSentimentDistribution failed:", err);
-      setSentimentDistribution(null);
-    } finally {
-      setDistributionLoading(false);
-    }
-  }, [hoursBack]);
+  const search = useCallback((q: string) => fetchPage(q, activeQuery.current.sortBy, 1), [fetchPage]);
 
-  // Ganti periode pencarian; kalau sudah ada keyword aktif, langsung cari
-  // ulang dengan periode baru supaya hasil di layar ikut berubah.
-  const changeHoursBack = useCallback(
-    (hours: number) => {
-      setHoursBack(hours);
-      if (keyword.trim()) void search(keyword, hours);
+  // Ganti urutan mengubah parameter sort_by/order di server, jadi halaman
+  // di-fetch ulang dari halaman 1 dengan urutan server yang baru.
+  const changeSort = useCallback(
+    (sort: VideoSearchSort) => {
+      setSortBy(sort);
+      if (activeQuery.current.keyword) void fetchPage(activeQuery.current.keyword, sort, 1);
     },
-    [keyword, search],
+    [fetchPage],
   );
+
+  const goToPage = useCallback(
+    (targetPage: number) => {
+      const { keyword: activeKeyword, sortBy: activeSort } = activeQuery.current;
+      if (!activeKeyword || targetPage === page) return;
+      void fetchPage(activeKeyword, activeSort, targetPage);
+    },
+    [fetchPage, page],
+  );
+
+  const fetchAll = useCallback(async () => {
+    const { keyword: activeKeyword, sortBy: activeSort } = activeQuery.current;
+    if (!activeKeyword) return;
+
+    setLoadingAll(true);
+    try {
+      let all: VideoMetadataItem[] = [];
+      let currentPage = 1;
+      let pagesAvailable = 1;
+
+      do {
+        const data = await getVideoMetadata({
+          search: activeKeyword,
+          page: currentPage,
+          pageSize: BULK_PAGE_SIZE,
+          ...SORT_PARAMS[activeSort],
+        });
+        all = all.concat(data.items);
+        pagesAvailable = data.total_pages;
+        currentPage += 1;
+      } while (currentPage <= pagesAvailable && all.length < MAX_BULK_ITEMS);
+
+      setAllItems(all);
+    } catch {
+      setAllItems(null);
+    } finally {
+      setLoadingAll(false);
+    }
+  }, []);
+
+  // Detail (deskripsi lengkap + komentar) tidak ikut di response list --
+  // cuma saved_comment_count (angka). Di-fetch on-demand saat modal dibuka,
+  // bukan sekaligus utk semua item di halaman.
+  const openVideoDetail = useCallback(async (id: string) => {
+    setSelectedVideoId(id);
+    setVideoDetail(null);
+    setDetailError("");
+    setDetailLoading(true);
+    try {
+      setVideoDetail(await getVideoDetail(id));
+    } catch (err) {
+      setDetailError(err instanceof Error ? err.message : "Gagal memuat detail video");
+    } finally {
+      setDetailLoading(false);
+    }
+  }, []);
+
+  const closeVideoDetail = useCallback(() => {
+    setSelectedVideoId(null);
+    setVideoDetail(null);
+    setDetailError("");
+  }, []);
 
   return {
     keyword,
     items,
     total,
+    page,
+    totalPages,
     loading,
     error,
     search,
-    hoursBack,
-    changeHoursBack,
-    sentimentDistribution,
-    distributionLoading,
+    sortBy,
+    changeSort,
+    goToPage,
+    allItems,
+    loadingAll,
+    fetchAll,
+    selectedVideoId,
+    videoDetail,
+    detailLoading,
+    detailError,
+    openVideoDetail,
+    closeVideoDetail,
   };
 }

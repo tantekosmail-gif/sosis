@@ -9,7 +9,9 @@
     "loadMore": "Muat Lebih Banyak",
     "previous": "Sebelumnya",
     "next": "Berikutnya",
-    "reload": "Muat ulang"
+    "reload": "Muat ulang",
+    "comingSoonBadge": "Segera Hadir",
+    "comingSoonDesc": "Fitur ini sedang dalam pengembangan dan akan segera tersedia."
   },
   "sidebar": {
     "mainMenu": "Menu Utama",
@@ -26,9 +28,15 @@
     "threads": "Threads",
     "news": "Berita",
     "reports": "Laporan",
-    "socialMediaGroup": "Social Media",
-    "comparePlatforms": "Bandingkan Platform",
+    "platformGroup": "Platform",
+    "comparePlatforms": "Bandingkan",
     "topics": "Topik",
+    "viral": "Viral",
+    "buzzerDetectorGroup": "Buzzer Detector",
+    "sna": "SNA",
+    "videoAnalysisGroup": "Analisis Video",
+    "videoTracking": "Video Tracking",
+    "liveStreamer": "Live Streamer",
     "settings": "Settings",
     "brandTagline": "Pemantauan Media"
   },
@@ -439,7 +447,7 @@
     "showingSuffix": "video"
   },
   "youtubeSearchTab": {
-    "title": "Cari Video YouTube Terkini",
+    "title": "Analisis Video YouTube",
     "keywordLabel": "Kata Kunci",
     "keywordPlaceholder": "Contoh: highlights, tutorial masak, berita terkini...",
     "searchButton": "Cari",
@@ -447,18 +455,11 @@
     "sortRelevance": "Paling Relevan",
     "sortNewest": "Paling Baru",
     "sortPopular": "Paling Populer",
-    "windowLabel": "Periode",
-    "window1Day": "24 Jam",
-    "window1Week": "1 Minggu",
     "loadingTitle": "Mencari video...",
-    "loadingDesc": "Mengambil video dalam 24 jam terakhir yang cocok dengan kata kunci",
+    "loadingDesc": "Mengambil video yang cocok dengan kata kunci",
     "emptyTitle": "Masukkan kata kunci untuk mencari video YouTube",
     "noResults": "Tidak ada video ditemukan untuk kata kunci ini",
-    "showingPrefix": "Menampilkan",
-    "showingMiddle": "dari",
-    "showingSuffix": "video untuk",
-    "sentimentDistributionTitle": "Distribusi Sentimen Komentar",
-    "sentimentDistributionDesc": "Dari {count} komentar yang dianalisis untuk \"{keyword}\""
+    "resultsRangeLabel": "Menampilkan {start}–{end} dari {total} hasil"
   },
   "videoFilterBar": {
     "searchPlaceholder": "Cari judul video...",
@@ -473,7 +474,19 @@
     "dateFromPlaceholder": "dari",
     "dateToPlaceholder": "sampai",
     "dateRangeSeparator": "s/d",
-    "noMatch": "Tidak ada video yang cocok dengan filter"
+    "noMatch": "Tidak ada video yang cocok dengan filter",
+    "openOnYoutube": "Buka di YouTube"
+  },
+  "videoDetailModal": {
+    "loading": "Memuat detail video...",
+    "trendScoreLabel": "Trend",
+    "engagementScoreLabel": "Engagement",
+    "freshnessScoreLabel": "Kesegaran",
+    "authorityScoreLabel": "Otoritas",
+    "aiSummaryLabel": "Ringkasan AI",
+    "keywordLabel": "Keyword",
+    "commentsLabel": "Komentar",
+    "noComments": "Belum ada komentar"
   },
   "youtubeSentimentTab": {
     "desc": "Cari keyword untuk menganalisis sentimen video & komentar YouTube",
@@ -607,6 +620,12 @@
       "sortViews": "Paling Banyak Dilihat",
       "platformResultsSuffix": "Hasil",
       "loadMoreResultsLabel": "Muat Lebih Banyak Hasil",
+      "viewsLabel": "dilihat",
+      "likesLabel": "suka",
+      "moreActionsLabel": "Aksi lainnya",
+      "openLinkLabel": "Buka Tautan",
+      "copyLinkLabel": "Salin Tautan",
+      "linkCopied": "Tautan disalin ke clipboard",
       "trendGraph": {
         "title": "Grafik Tren Topik",
         "desc": "Volume post per platform dan sentimen komentar dalam {n} hari terakhir.",

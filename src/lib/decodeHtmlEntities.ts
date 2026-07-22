@@ -18,5 +18,9 @@ export function decodeHtmlEntities(text: string | null | undefined): string {
   return text
     .replace(/&amp;|&lt;|&gt;|&quot;|&#39;|&apos;|&#x27;/g, (entity) => HTML_ENTITIES[entity])
     .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number(code)))
-    .replace(/&#x([0-9a-f]+);/gi, (_, code) => String.fromCharCode(parseInt(code, 16)));
+    .replace(/&#x([0-9a-f]+);/gi, (_, code) => String.fromCharCode(parseInt(code, 16)))
+    // Beberapa sumber (mis. komentar YouTube) mengirim line break sebagai tag
+    // <br> mentah, bukan \n -- kalau tidak dikonversi, tag itu muncul apa
+    // adanya sebagai teks "<br>" karena kita render sebagai plain text, bukan HTML.
+    .replace(/<br\s*\/?>/gi, "\n");
 }

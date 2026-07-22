@@ -3,40 +3,74 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BarChart3, ChevronDown, FileText, GitCompareArrows, Home, Newspaper, Settings, Share2, Tags, X } from "lucide-react";
+import {
+  BarChart3,
+  ChevronDown,
+  FileText,
+  Flame,
+  GitCompareArrows,
+  Home,
+  Locate,
+  Network,
+  Newspaper,
+  Radar,
+  Radio,
+  Settings,
+  Share2,
+  Tags,
+  Video,
+  X,
+} from "lucide-react";
 import { FaFacebook, FaInstagram, FaThreads, FaTiktok, FaXTwitter, FaYoutube } from "react-icons/fa6";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 // Menu dikelompokkan per fungsi: Ringkasan (dashboard lintas-platform),
-// Pemantauan (sumber data yang benar-benar dipantau — topik, media sosial,
-// berita), Sistem (output & konfigurasi aplikasi). Urutan grup mengikuti alur
-// kerja: lihat ringkasan -> pantau sumber -> ambil laporan/atur aplikasi.
+// Pemantauan (sumber data yang benar-benar dipantau — topik, platform,
+// berita, deteksi buzzer, analisis video), Sistem (output & konfigurasi
+// aplikasi). Urutan grup mengikuti alur kerja: lihat ringkasan -> pantau
+// sumber -> ambil laporan/atur aplikasi.
 const sections = [
   {
     key: "summaryGroup",
     items: [
-      { key: "overview",   href: "/overview",   icon: Home      },
-      { key: "engagement", href: "/engagement", icon: BarChart3 },
+      { key: "overview", href: "/overview", icon: Home },
     ],
   },
   {
     key: "monitoringGroup",
     items: [
       { key: "topics", href: "/topics", icon: Tags },
+      { key: "viral",  href: "/viral",  icon: Flame },
       {
-        key: "socialMediaGroup",
+        key: "platformGroup",
         icon: Share2,
         children: [
+          { key: "engagement",  href: "/engagement",  icon: BarChart3   },
           { key: "youtube",     href: "/youtube",     icon: FaYoutube   },
           { key: "instagram",   href: "/instagram",   icon: FaInstagram },
           { key: "facebook",    href: "/facebook",     icon: FaFacebook  },
-          { key: "twitter",     href: "/twitter",      icon: FaXTwitter  },
-          { key: "tiktok",      href: "/tiktok",       icon: FaTiktok    },
           { key: "threads",     href: "/threads",      icon: FaThreads   },
+          { key: "tiktok",      href: "/tiktok",       icon: FaTiktok    },
+          { key: "twitter",     href: "/twitter",      icon: FaXTwitter  },
           { key: "comparePlatforms", href: "/compare/social", icon: GitCompareArrows },
         ],
       },
       { key: "news", href: "/news", icon: Newspaper },
+      {
+        key: "buzzerDetectorGroup",
+        icon: Radar,
+        children: [
+          { key: "sna", href: "/buzzer-detector/sna", icon: Network },
+        ],
+      },
+      {
+        key: "videoAnalysisGroup",
+        icon: Video,
+        children: [
+          { key: "videoTracking", href: "/video-analysis/tracking",      icon: Locate },
+          { key: "liveStreamer",  href: "/video-analysis/live-streamer", icon: Radio  },
+        ],
+      },
     ],
   },
   {
@@ -101,7 +135,7 @@ export default function AppSidebar({ open = false, onClose, collapsed = false }:
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 overflow-y-auto p-3">
+        <nav className="scrollbar-thin flex-1 overflow-y-auto p-3">
           {sections.map((section, sectionIdx) => (
           <div key={section.key} className={sectionIdx > 0 ? "mt-5" : ""}>
           <p className={`text-slate-600 text-[10px] font-semibold uppercase tracking-widest px-3 mb-3 ${sectionIdx === 0 ? "mt-2" : ""} ${collapsed ? "lg:hidden" : ""}`}>
