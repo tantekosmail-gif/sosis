@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { History, Loader2, Search, Tag, Zap } from "lucide-react";
+import { Flame, History, Loader2, Search, Tag, Zap } from "lucide-react";
 import { toast } from "sonner";
 
 import DashboardLayout from "@/components/layout/DashboardLayout";
@@ -13,6 +13,7 @@ import VideoSearchTab, { type VideoSearchTabHandle } from "@/features/youtube/co
 import ComparePanel from "@/features/compare/components/ComparePanel";
 import { useAnalyze } from "@/features/analysis/hooks/useAnalyze";
 import { useTopics } from "@/features/topic/hooks/useTopics";
+import { useTrendRecommendations } from "@/features/keywordRecommendations/hooks/useTrendRecommendations";
 import { useRecentYoutubeSearches } from "@/features/youtube/hooks/useRecentSearches";
 import { useDashboardStore } from "@/store/dashboard.store";
 import { useFilterStore } from "@/stores/filterStore";
@@ -22,8 +23,8 @@ const SHOW_COMPARE_TAB = false;
 const SHOW_SENTIMENT_TAB = false;
 
 const TABS = [
-  { key: "trending", label: "Video Trending" },
   { key: "terkini", label: "Analisis Video" },
+  { key: "trending", label: "Video Trending" },
   { key: "sentiment", label: "Analisis Sentimen" },
   { key: "compare", label: "Bandingkan" },
 ] as const;
@@ -34,7 +35,7 @@ export default function YoutubePage() {
   const router = useRouter();
   const { t } = useTranslation();
   const [checkingAuth, setCheckingAuth] = useState(true);
-  const [tab, setTab] = useState<TabKey>("trending");
+  const [tab, setTab] = useState<TabKey>("terkini");
   const [query, setQuery] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
@@ -45,23 +46,32 @@ export default function YoutubePage() {
   const setFilterKeyword = useFilterStore((s) => s.setKeyword);
   const sentimentLoading = useDashboardStore((s) => s.loading);
   const { topics } = useTopics();
+  const { items: keywordRecommendations } = useTrendRecommendations();
   const { recent, addRecentSearch } = useRecentYoutubeSearches();
 
-  // Sumber saran ada dua: keyword yang sudah pernah dicari di sini (recent,
-  // localStorage, urutan terbaru dulu) dan keyword yang ditrack lewat fitur
-  // Topics. Recent didahulukan karena lebih relevan (sudah pernah dicari),
-  // topik cuma nambahin yang belum ada di recent -- dedupe case-insensitive.
+  // Sumber saran ada tiga: keyword yang sudah pernah dicari di sini (recent,
+  // localStorage, urutan terbaru dulu), keyword yang ditrack lewat fitur
+  // Topics, dan keyword yang ditambahkan lewat Settings > Rekomendasi Keyword
+  // (pool auto-crawl). Recent didahulukan karena lebih relevan (sudah pernah
+  // dicari), dua sumber lain cuma nambahin yang belum ada -- dedupe
+  // case-insensitive di seluruh sumber.
   const suggestionPool = useMemo(() => {
     const seen = new Set(recent.map((kw) => kw.toLowerCase()));
     const topicOnly = Array.from(new Set(topics.flatMap((topic) => topic.keywords)))
       .filter((kw) => !seen.has(kw.toLowerCase()))
       .sort((a, b) => a.localeCompare(b));
+    topicOnly.forEach((kw) => seen.add(kw.toLowerCase()));
+
+    const recommendationOnly = Array.from(new Set((keywordRecommendations ?? []).map((r) => r.topic))).filter(
+      (kw) => !seen.has(kw.toLowerCase()),
+    );
 
     return [
       ...recent.map((keyword) => ({ keyword, source: "recent" as const })),
       ...topicOnly.map((keyword) => ({ keyword, source: "topic" as const })),
+      ...recommendationOnly.map((keyword) => ({ keyword, source: "recommendation" as const })),
     ];
-  }, [recent, topics]);
+  }, [recent, topics, keywordRecommendations]);
 
   const filteredSuggestions = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -197,6 +207,8 @@ export default function YoutubePage() {
                       >
                         {s.source === "recent" ? (
                           <History size={13} className="shrink-0 text-slate-400 dark:text-slate-500" />
+                        ) : s.source === "recommendation" ? (
+                          <Flame size={13} className="shrink-0 text-orange-400" />
                         ) : (
                           <Tag size={13} className="shrink-0 text-slate-400 dark:text-slate-500" />
                         )}

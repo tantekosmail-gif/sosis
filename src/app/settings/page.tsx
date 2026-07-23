@@ -2,12 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { User, Bell, Info, LayoutGrid, Users } from "lucide-react";
+import { User, Bell, Flame, Info, LayoutGrid, Users } from "lucide-react";
 
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import AccountSection from "@/features/settings/components/AccountSection";
 import NotificationSection from "@/features/settings/components/NotificationSection";
 import OverviewWidgetsSection from "@/features/settings/components/OverviewWidgetsSection";
+import KeywordRecommendationsSection from "@/features/settings/components/KeywordRecommendationsSection";
 import AboutSection from "@/features/settings/components/AboutSection";
 import UsersSection from "@/features/users/components/UsersSection";
 import { useSettings } from "@/features/settings/hooks/useSettings";
@@ -18,6 +19,7 @@ const TABS = [
   { key: "account",      icon: User },
   { key: "notification", icon: Bell },
   { key: "widgets",      icon: LayoutGrid },
+  { key: "keywordRecs",  icon: Flame },
   { key: "users",        icon: Users },
   { key: "about",        icon: Info },
 ] as const;
@@ -125,6 +127,7 @@ export default function SettingsPage() {
           {activeTab === "widgets" && (
             <OverviewWidgetsSection settings={settings} update={update} onSave={save} saved={saved} />
           )}
+          {activeTab === "keywordRecs" && <KeywordRecommendationsSection />}
           {activeTab === "users" && <UsersSection />}
           {activeTab === "about" && <AboutSection />}
         </div>

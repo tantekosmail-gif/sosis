@@ -7,36 +7,34 @@ import { toast } from "sonner";
 
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import PageTabs from "@/components/common/PageTabs";
-import TikTokTrendingTab from "@/features/tiktok/components/TrendingTab";
-import TikTokSentimentTab from "@/features/tiktok/components/SentimentTab";
-import VideoSearchTab, { type VideoSearchTabHandle } from "@/features/tiktok/components/VideoSearchTab";
+import VideoSearchTab, { type VideoSearchTabHandle } from "@/features/crossPlatform/components/VideoSearchTab";
+import FavoritesTab from "@/features/crossPlatform/components/FavoritesTab";
 import { useTopics } from "@/features/topic/hooks/useTopics";
 import { useTrendRecommendations } from "@/features/keywordRecommendations/hooks/useTrendRecommendations";
-import { useRecentTikTokVideoSearches } from "@/features/tiktok/hooks/useRecentVideoSearches";
+import { useRecentCrossPlatformSearches } from "@/features/crossPlatform/hooks/useRecentSearches";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 const TABS = [
-  { key: "terkini", label: "Analisis Video" },
-  { key: "trending", label: "Trending" },
-  { key: "sentiment", label: "Sentiment" },
+  { key: "search", label: "Pencarian" },
+  { key: "favorites", label: "Favorit" },
 ] as const;
 
 type TabKey = (typeof TABS)[number]["key"];
 
-export default function TikTokPage() {
+export default function CrossPlatformSearchPage() {
   const router = useRouter();
   const { t } = useTranslation();
   const [checkingAuth, setCheckingAuth] = useState(true);
-  const [tab, setTab] = useState<TabKey>("terkini");
+  const [tab, setTab] = useState<TabKey>("search");
   const [query, setQuery] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
 
-  const terkiniRef = useRef<VideoSearchTabHandle>(null);
+  const searchRef = useRef<VideoSearchTabHandle>(null);
 
   const { topics } = useTopics();
   const { items: keywordRecommendations } = useTrendRecommendations();
-  const { recent, addRecentSearch } = useRecentTikTokVideoSearches();
+  const { recent, addRecentSearch } = useRecentCrossPlatformSearches();
 
   // Sumber saran ada tiga: keyword yang sudah pernah dicari di sini (recent,
   // localStorage, urutan terbaru dulu), keyword yang ditrack lewat fitur
@@ -77,11 +75,6 @@ export default function TikTokPage() {
     setCheckingAuth(false);
   }, [router]);
 
-  // Cuma tab "terkini" (Analisis Video) yang dikendalikan lewat search bar
-  // bersama ini -- Trending & Sentiment sudah punya kontrol pencarian sendiri
-  // (username utk Sentiment, tanpa pencarian utk Trending).
-  const showSearchBar = tab === "terkini";
-
   function runSearch(value: string) {
     const trimmed = value.trim();
 
@@ -91,7 +84,7 @@ export default function TikTokPage() {
     }
 
     addRecentSearch(trimmed);
-    terkiniRef.current?.search(trimmed);
+    searchRef.current?.search(trimmed);
   }
 
   function handleSubmit(e: React.FormEvent) {
@@ -121,12 +114,13 @@ export default function TikTokPage() {
     <DashboardLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">TikTok</h1>
+          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">{t.sidebar.crossPlatformSearch}</h1>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{t.crossPlatformSearchTab.subtitle}</p>
         </div>
 
         <PageTabs tabs={TABS} active={tab} onChange={setTab} />
 
-        {showSearchBar && (
+        {tab === "search" && (
         <form
           onSubmit={handleSubmit}
           className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900"
@@ -135,7 +129,7 @@ export default function TikTokPage() {
             <div className="relative flex-1">
               <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
               <input
-                placeholder={t.tiktokSearchTab.keywordPlaceholder}
+                placeholder={t.crossPlatformSearchTab.keywordPlaceholder}
                 value={query}
                 onChange={(e) => {
                   setQuery(e.target.value);
@@ -196,15 +190,13 @@ export default function TikTokPage() {
               className="flex h-10 shrink-0 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <Search size={15} />
-              {t.tiktokSearchTab.searchButton}
+              {t.crossPlatformSearchTab.searchButton}
             </button>
           </div>
         </form>
         )}
 
-        {tab === "terkini" && <VideoSearchTab ref={terkiniRef} />}
-        {tab === "trending" && <TikTokTrendingTab />}
-        {tab === "sentiment" && <TikTokSentimentTab />}
+        {tab === "search" ? <VideoSearchTab ref={searchRef} /> : <FavoritesTab />}
       </div>
     </DashboardLayout>
   );

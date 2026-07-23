@@ -35,6 +35,7 @@
     "buzzerDetectorGroup": "Buzzer Detector",
     "sna": "SNA",
     "videoAnalysisGroup": "Analisis Video",
+    "crossPlatformSearch": "Cari Semua Platform",
     "videoTracking": "Video Tracking",
     "liveStreamer": "Live Streamer",
     "settings": "Settings",
@@ -459,7 +460,40 @@
     "loadingDesc": "Mengambil video yang cocok dengan kata kunci",
     "emptyTitle": "Masukkan kata kunci untuk mencari video YouTube",
     "noResults": "Tidak ada video ditemukan untuk kata kunci ini",
-    "resultsRangeLabel": "Menampilkan {start}–{end} dari {total} hasil"
+    "resultsRangeLabel": "Menampilkan {shown} dari {total} hasil"
+  },
+  "tiktokSearchTab": {
+    "title": "Analisis Video TikTok",
+    "keywordLabel": "Kata Kunci",
+    "keywordPlaceholder": "Contoh: dance challenge, tips masak, berita terkini...",
+    "searchButton": "Cari",
+    "sortLabel": "Urutkan",
+    "sortRelevance": "Paling Relevan",
+    "sortNewest": "Paling Baru",
+    "sortPopular": "Paling Populer",
+    "loadingTitle": "Mencari video...",
+    "loadingDesc": "Mengambil video yang cocok dengan kata kunci",
+    "emptyTitle": "Masukkan kata kunci untuk mencari video TikTok",
+    "noResults": "Tidak ada video ditemukan untuk kata kunci ini",
+    "resultsRangeLabel": "Menampilkan {shown} dari {total} hasil"
+  },
+  "crossPlatformSearchTab": {
+    "title": "Analisis Video Lintas Platform",
+    "subtitle": "Cari 1 keyword sekaligus di YouTube dan TikTok, digabung dan diurutkan dalam satu daftar",
+    "keywordLabel": "Kata Kunci",
+    "keywordPlaceholder": "Contoh: hasil pemilu, tantangan viral, berita terkini...",
+    "searchButton": "Cari",
+    "sortLabel": "Urutkan",
+    "sortRelevance": "Paling Relevan",
+    "sortNewest": "Paling Baru",
+    "sortPopular": "Paling Populer",
+    "loadingDesc": "Mengambil video yang cocok dengan kata kunci dari YouTube dan TikTok",
+    "emptyTitle": "Masukkan kata kunci untuk mencari video YouTube dan TikTok sekaligus",
+    "noResults": "Tidak ada video ditemukan untuk kata kunci ini",
+    "resultsRangeLabel": "Menampilkan {shown} dari {total} hasil",
+    "searchTabLabel": "Pencarian",
+    "favoritesTabLabel": "Favorit",
+    "noFavorites": "Belum ada video favorit. Tandai video dengan ikon bintang untuk menyimpannya di sini."
   },
   "videoFilterBar": {
     "searchPlaceholder": "Cari judul video...",
@@ -475,7 +509,8 @@
     "dateToPlaceholder": "sampai",
     "dateRangeSeparator": "s/d",
     "noMatch": "Tidak ada video yang cocok dengan filter",
-    "openOnYoutube": "Buka di YouTube"
+    "openOnYoutube": "Buka di YouTube",
+    "openOnTiktok": "Buka di TikTok"
   },
   "videoDetailModal": {
     "loading": "Memuat detail video...",
@@ -483,10 +518,13 @@
     "engagementScoreLabel": "Engagement",
     "freshnessScoreLabel": "Kesegaran",
     "authorityScoreLabel": "Otoritas",
-    "aiSummaryLabel": "Ringkasan AI",
+    "aiSummaryLabel": "Ringkasan",
     "keywordLabel": "Keyword",
     "commentsLabel": "Komentar",
-    "noComments": "Belum ada komentar"
+    "noComments": "Belum ada komentar",
+    "emptySelection": "Pilih video dari daftar untuk melihat detailnya",
+    "addFavorite": "Tambah ke Favorit",
+    "removeFavorite": "Hapus dari Favorit"
   },
   "youtubeSentimentTab": {
     "desc": "Cari keyword untuk menganalisis sentimen video & komentar YouTube",
@@ -682,6 +720,7 @@
       "scraping": { "label": "Analisis", "description": "Pengumpulan Data & platform default" },
       "notification": { "label": "Notifikasi", "description": "Preferensi pemberitahuan" },
       "widgets": { "label": "Widget Overview", "description": "Tampil/sembunyikan widget" },
+      "keywordRecs": { "label": "Rekomendasi Keyword", "description": "Pool keyword auto-crawl" },
       "users": { "label": "User", "description": "Kelola akun pengguna (admin)" },
       "about": { "label": "Tentang", "description": "Informasi aplikasi" }
     },
@@ -753,6 +792,23 @@
       "saveButton": "Simpan Pengaturan",
       "moveUpAria": "Pindah ke atas",
       "moveDownAria": "Pindah ke bawah"
+    },
+    "keywordRecs": {
+      "formTitle": "Tambah / Naikkan Keyword",
+      "subtitle": "Masukkan keyword ke pool yang dibaca job auto-crawl per jam",
+      "keywordPlaceholder": "Keyword...",
+      "scoreLabel": "Score (0-1)",
+      "submitButton": "Tambah",
+      "keywordRequired": "Masukkan keyword",
+      "scoreInvalid": "Score harus di antara 0 dan 1",
+      "submitSuccess": "Keyword berhasil ditambahkan",
+      "submitError": "Gagal menambahkan keyword",
+      "listTitle": "Keyword Rekomendasi",
+      "listDesc": "Top 20 by score, yang saat ini dipakai auto-crawl",
+      "refreshButton": "Muat Ulang",
+      "empty": "Belum ada rekomendasi keyword",
+      "statusUsed": "Terpakai",
+      "statusPending": "Menunggu"
     },
     "users": {
       "searchPlaceholder": "Cari email atau username...",

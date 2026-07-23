@@ -3,18 +3,18 @@
 import { useCallback, useRef, useState } from "react";
 
 import {
-  getVideoDetail,
-  getVideoMetadata,
-  type VideoMetadataDetail,
-  type VideoMetadataItem,
-  type VideoMetadataParams,
-} from "../services/search.service";
+  getTikTokVideoDetail,
+  getTikTokVideoMetadata,
+  type TikTokVideoMetadataDetail,
+  type TikTokVideoMetadataItem,
+  type TikTokVideoMetadataParams,
+} from "../services/videoMetadata.service";
 
-export type { VideoMetadataDetail, VideoMetadataItem };
+export type { TikTokVideoMetadataDetail, TikTokVideoMetadataItem };
 
 export type VideoSearchSort = "relevance" | "newest" | "popular";
 
-const SORT_PARAMS: Record<VideoSearchSort, Pick<VideoMetadataParams, "sortBy" | "order">> = {
+const SORT_PARAMS: Record<VideoSearchSort, Pick<TikTokVideoMetadataParams, "sortBy" | "order">> = {
   relevance: { sortBy: "trend_score", order: "desc" },
   newest: { sortBy: "published_at", order: "desc" },
   popular: { sortBy: "views", order: "desc" },
@@ -22,9 +22,9 @@ const SORT_PARAMS: Record<VideoSearchSort, Pick<VideoMetadataParams, "sortBy" | 
 
 export const PAGE_SIZE = 10;
 
-// Backend /youtube/metadata cuma punya parameter topic/search/sort_by/order/
-// page/page_size -- tidak ada filter tanggal/usia/channel server-side. Jadi
-// begitu channel/topik/rentang-tanggal difilter di client, paginasi server
+// Backend /tiktok/metadata cuma punya parameter topic/search/sort_by/order/
+// page/page_size -- tidak ada filter tanggal/usia/akun server-side. Jadi
+// begitu akun/topik/rentang-tanggal difilter di client, paginasi server
 // (dihitung dari total TANPA filter) jadi tidak sesuai lagi dengan hasil yang
 // sebenarnya ditampilkan. fetchAll() menarik semua halaman (dibatasi
 // MAX_BULK_ITEMS) supaya paginasi bisa dihitung ulang dari hasil yang SUDAH
@@ -32,10 +32,10 @@ export const PAGE_SIZE = 10;
 const BULK_PAGE_SIZE = 100;
 const MAX_BULK_ITEMS = 1000;
 
-export function useVideoSearch() {
+export function useVideoMetadataSearch() {
   const [keyword, setKeyword] = useState("");
   const [sortBy, setSortBy] = useState<VideoSearchSort>("newest");
-  const [items, setItems] = useState<VideoMetadataItem[] | null>(null);
+  const [items, setItems] = useState<TikTokVideoMetadataItem[] | null>(null);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -43,11 +43,11 @@ export function useVideoSearch() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState("");
 
-  const [allItems, setAllItems] = useState<VideoMetadataItem[] | null>(null);
+  const [allItems, setAllItems] = useState<TikTokVideoMetadataItem[] | null>(null);
   const [loadingAll, setLoadingAll] = useState(false);
 
   const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
-  const [videoDetail, setVideoDetail] = useState<VideoMetadataDetail | null>(null);
+  const [videoDetail, setVideoDetail] = useState<TikTokVideoMetadataDetail | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
   const [detailError, setDetailError] = useState("");
 
@@ -76,7 +76,7 @@ export function useVideoSearch() {
     try {
       setLoading(true);
       setError("");
-      const data = await getVideoMetadata({
+      const data = await getTikTokVideoMetadata({
         search: trimmed,
         page: targetPage,
         pageSize: PAGE_SIZE,
@@ -118,7 +118,7 @@ export function useVideoSearch() {
 
     setLoadingMore(true);
     try {
-      const data = await getVideoMetadata({
+      const data = await getTikTokVideoMetadata({
         search: activeKeyword,
         page: page + 1,
         pageSize: PAGE_SIZE,
@@ -142,12 +142,12 @@ export function useVideoSearch() {
 
     setLoadingAll(true);
     try {
-      let all: VideoMetadataItem[] = [];
+      let all: TikTokVideoMetadataItem[] = [];
       let currentPage = 1;
       let pagesAvailable = 1;
 
       do {
-        const data = await getVideoMetadata({
+        const data = await getTikTokVideoMetadata({
           search: activeKeyword,
           page: currentPage,
           pageSize: BULK_PAGE_SIZE,
@@ -167,7 +167,7 @@ export function useVideoSearch() {
   }, []);
 
   // Detail (deskripsi lengkap + komentar) tidak ikut di response list --
-  // cuma saved_comment_count (angka). Di-fetch on-demand saat modal dibuka,
+  // cuma saved_comment_count (angka). Di-fetch on-demand saat panel dibuka,
   // bukan sekaligus utk semua item di halaman.
   const openVideoDetail = useCallback(async (id: string) => {
     setSelectedVideoId(id);
@@ -175,7 +175,7 @@ export function useVideoSearch() {
     setDetailError("");
     setDetailLoading(true);
     try {
-      setVideoDetail(await getVideoDetail(id));
+      setVideoDetail(await getTikTokVideoDetail(id));
     } catch (err) {
       setDetailError(err instanceof Error ? err.message : "Gagal memuat detail video");
     } finally {

@@ -2,7 +2,7 @@
 
 import { ExternalLink, Eye, Flame, MessageCircle, ThumbsUp } from "lucide-react";
 
-import type { VideoMetadataItem } from "@/features/youtube/hooks/useVideoSearch";
+import type { TikTokVideoMetadataItem } from "@/features/tiktok/hooks/useVideoMetadataSearch";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { decodeHtmlEntities } from "@/lib/decodeHtmlEntities";
 
@@ -37,7 +37,7 @@ export default function VideoSearchGrid({
   onSelectVideo,
   selectedVideoId,
 }: {
-  items: VideoMetadataItem[];
+  items: TikTokVideoMetadataItem[];
   onSelectVideo: (id: string) => void;
   selectedVideoId?: string | null;
 }) {
@@ -46,7 +46,7 @@ export default function VideoSearchGrid({
   if (!items || items.length === 0) {
     return (
       <div className="rounded-2xl border border-dashed border-slate-300 bg-white py-16 text-center text-sm text-slate-400 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-500">
-        {t.youtubeSearchTab.noResults}
+        {t.tiktokSearchTab.noResults}
       </div>
     );
   }
@@ -108,7 +108,7 @@ export default function VideoSearchGrid({
               href={item.url}
               target="_blank"
               rel="noopener noreferrer"
-              title={t.videoFilterBar.openOnYoutube}
+              title={t.videoFilterBar.openOnTiktok}
               className="shrink-0 rounded-lg p-1 text-slate-300 transition-colors hover:bg-slate-100 hover:text-indigo-600 dark:text-slate-600 dark:hover:bg-slate-800"
             >
               <ExternalLink size={13} />

@@ -35,6 +35,7 @@
     "buzzerDetectorGroup": "Buzzer Detector",
     "sna": "SNA",
     "videoAnalysisGroup": "Video Analysis",
+    "crossPlatformSearch": "Search All Platforms",
     "videoTracking": "Video Tracking",
     "liveStreamer": "Live Streamer",
     "settings": "Settings",
@@ -459,7 +460,40 @@
     "loadingDesc": "Fetching videos matching your keyword",
     "emptyTitle": "Enter a keyword to search YouTube videos",
     "noResults": "No videos found for this keyword",
-    "resultsRangeLabel": "Showing {start}–{end} of {total} results"
+    "resultsRangeLabel": "Showing {shown} of {total} results"
+  },
+  "tiktokSearchTab": {
+    "title": "TikTok Video Analysis",
+    "keywordLabel": "Keyword",
+    "keywordPlaceholder": "e.g. dance challenge, cooking hack, breaking news...",
+    "searchButton": "Search",
+    "sortLabel": "Sort by",
+    "sortRelevance": "Most Relevant",
+    "sortNewest": "Newest",
+    "sortPopular": "Most Popular",
+    "loadingTitle": "Searching videos...",
+    "loadingDesc": "Fetching videos matching your keyword",
+    "emptyTitle": "Enter a keyword to search TikTok videos",
+    "noResults": "No videos found for this keyword",
+    "resultsRangeLabel": "Showing {shown} of {total} results"
+  },
+  "crossPlatformSearchTab": {
+    "title": "Cross-Platform Video Analysis",
+    "subtitle": "Search one keyword across YouTube and TikTok at once, ranked together in a single list",
+    "keywordLabel": "Keyword",
+    "keywordPlaceholder": "e.g. election results, viral challenge, breaking news...",
+    "searchButton": "Search",
+    "sortLabel": "Sort by",
+    "sortRelevance": "Most Relevant",
+    "sortNewest": "Newest",
+    "sortPopular": "Most Popular",
+    "loadingDesc": "Fetching videos matching your keyword from YouTube and TikTok",
+    "emptyTitle": "Enter a keyword to search YouTube and TikTok videos together",
+    "noResults": "No videos found for this keyword",
+    "resultsRangeLabel": "Showing {shown} of {total} results",
+    "searchTabLabel": "Search",
+    "favoritesTabLabel": "Favorites",
+    "noFavorites": "No favorite videos yet. Star a video to save it here."
   },
   "videoFilterBar": {
     "searchPlaceholder": "Search video title...",
@@ -475,7 +509,8 @@
     "dateToPlaceholder": "until",
     "dateRangeSeparator": "to",
     "noMatch": "No videos match this filter",
-    "openOnYoutube": "Open on YouTube"
+    "openOnYoutube": "Open on YouTube",
+    "openOnTiktok": "Open on TikTok"
   },
   "videoDetailModal": {
     "loading": "Loading video detail...",
@@ -483,10 +518,13 @@
     "engagementScoreLabel": "Engagement",
     "freshnessScoreLabel": "Freshness",
     "authorityScoreLabel": "Authority",
-    "aiSummaryLabel": "AI Summary",
+    "aiSummaryLabel": "Summary",
     "keywordLabel": "Keyword",
     "commentsLabel": "Comments",
-    "noComments": "No comments yet"
+    "noComments": "No comments yet",
+    "emptySelection": "Select a video from the list to see its details",
+    "addFavorite": "Add to Favorites",
+    "removeFavorite": "Remove from Favorites"
   },
   "youtubeSentimentTab": {
     "desc": "Search a keyword to analyze YouTube video & comment sentiment",
@@ -682,6 +720,7 @@
       "scraping": { "label": "Analysis", "description": "Data Collection & default platform" },
       "notification": { "label": "Notifications", "description": "Notification preferences" },
       "widgets": { "label": "Overview Widgets", "description": "Show/hide widgets" },
+      "keywordRecs": { "label": "Keyword Recommendations", "description": "Auto-crawl keyword pool" },
       "users": { "label": "Users", "description": "Manage user accounts (admin)" },
       "about": { "label": "About", "description": "App information" }
     },
@@ -753,6 +792,23 @@
       "saveButton": "Save Settings",
       "moveUpAria": "Move up",
       "moveDownAria": "Move down"
+    },
+    "keywordRecs": {
+      "formTitle": "Add / Boost Keyword",
+      "subtitle": "Push a keyword into the pool read by the hourly auto-crawl job",
+      "keywordPlaceholder": "Keyword...",
+      "scoreLabel": "Score (0-1)",
+      "submitButton": "Add",
+      "keywordRequired": "Enter a keyword",
+      "scoreInvalid": "Score must be between 0 and 1",
+      "submitSuccess": "Keyword submitted",
+      "submitError": "Failed to submit keyword",
+      "listTitle": "Recommended Keywords",
+      "listDesc": "Top 20 by score, currently used for auto-crawl",
+      "refreshButton": "Refresh",
+      "empty": "No keyword recommendations yet",
+      "statusUsed": "Used",
+      "statusPending": "Pending"
     },
     "users": {
       "searchPlaceholder": "Search email or username...",

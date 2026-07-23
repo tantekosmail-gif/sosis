@@ -30,7 +30,7 @@ const SORT_OPTIONS: { key: SortBy; label: string }[] = [
 
 export default function YoutubeTrendingTab() {
   const { t } = useTranslation();
-  const [sortBy, setSortBy] = useState<SortBy>("trending");
+  const [sortBy, setSortBy] = useState<SortBy>("newest");
   const [filterAge, setFilterAge] = useState<VideoAgeFilter>("all");
   const [filterDateFrom, setFilterDateFrom] = useState("");
   const [filterDateTo, setFilterDateTo] = useState("");

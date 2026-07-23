@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import {
   BarChart3,
   ChevronDown,
+  Combine,
   FileText,
   Flame,
   GitCompareArrows,
@@ -67,6 +68,7 @@ const sections = [
         key: "videoAnalysisGroup",
         icon: Video,
         children: [
+          { key: "crossPlatformSearch", href: "/video-analysis/cross-platform", icon: Combine },
           { key: "videoTracking", href: "/video-analysis/tracking",      icon: Locate },
           { key: "liveStreamer",  href: "/video-analysis/live-streamer", icon: Radio  },
         ],

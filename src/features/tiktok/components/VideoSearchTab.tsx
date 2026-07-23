@@ -2,12 +2,12 @@
 
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { Loader2 } from "lucide-react";
-import { FaYoutube } from "react-icons/fa6";
+import { FaTiktok } from "react-icons/fa6";
 
-import VideoSearchGrid from "@/components/youtube/VideoSearchGrid";
-import VideoFilterBar from "@/components/youtube/VideoFilterBar";
-import VideoDetailPanel from "@/components/youtube/VideoDetailPanel";
-import { useVideoSearch, PAGE_SIZE, type VideoSearchSort, type VideoMetadataItem } from "../hooks/useVideoSearch";
+import VideoSearchGrid from "@/components/tiktok/VideoSearchGrid";
+import VideoFilterBar from "@/components/tiktok/VideoFilterBar";
+import VideoDetailPanel from "@/components/tiktok/VideoDetailPanel";
+import { useVideoMetadataSearch, PAGE_SIZE, type VideoSearchSort, type TikTokVideoMetadataItem } from "../hooks/useVideoMetadataSearch";
 import { useLoadMore } from "@/hooks/useLoadMore";
 import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
@@ -59,7 +59,7 @@ const VideoSearchTab = forwardRef<VideoSearchTabHandle>(function VideoSearchTab(
     detailLoading,
     detailError,
     openVideoDetail,
-  } = useVideoSearch();
+  } = useVideoMetadataSearch();
 
   useImperativeHandle(ref, () => ({ search }));
 
@@ -72,17 +72,17 @@ const VideoSearchTab = forwardRef<VideoSearchTabHandle>(function VideoSearchTab(
 
   const hasActiveFilter = Boolean(filterDateFrom || filterDateTo);
 
-  // Backend /youtube/metadata tidak punya filter tanggal server-side, jadi
+  // Backend /tiktok/metadata tidak punya filter tanggal server-side, jadi
   // begitu filter itu aktif, paginasi cuma bisa benar kalau dihitung dari
   // SEMUA hasil yang sudah difilter di client -- itu perlu allItems
   // (bulk-fetched), bukan cuma halaman server yang sedang aktif (lihat
-  // komentar di useVideoSearch).
+  // komentar di useVideoMetadataSearch).
   useEffect(() => {
     if (hasActiveFilter && allItems === null && !loadingAll) void fetchAll();
   }, [hasActiveFilter, allItems, loadingAll, fetchAll]);
 
   const filterPredicate = useCallback(
-    (item: VideoMetadataItem) => matchesDateRange(item.published_at, filterDateFrom, filterDateTo),
+    (item: TikTokVideoMetadataItem) => matchesDateRange(item.published_at, filterDateFrom, filterDateTo),
     [filterDateFrom, filterDateTo],
   );
 
@@ -111,7 +111,7 @@ const VideoSearchTab = forwardRef<VideoSearchTabHandle>(function VideoSearchTab(
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="font-semibold text-slate-900 dark:text-slate-100">{t.youtubeSearchTab.title}</h2>
+        <h2 className="font-semibold text-slate-900 dark:text-slate-100">{t.tiktokSearchTab.title}</h2>
       </div>
 
       {error && (
@@ -123,7 +123,7 @@ const VideoSearchTab = forwardRef<VideoSearchTabHandle>(function VideoSearchTab(
       {isBusy && (
         <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-5 py-4 text-sm shadow-sm dark:border-slate-700 dark:bg-slate-900">
           <Loader2 className="h-4 w-4 animate-spin text-indigo-600" />
-          <span className="text-slate-500 dark:text-slate-400">{t.youtubeSearchTab.loadingDesc}</span>
+          <span className="text-slate-500 dark:text-slate-400">{t.tiktokSearchTab.loadingDesc}</span>
         </div>
       )}
 
@@ -142,7 +142,7 @@ const VideoSearchTab = forwardRef<VideoSearchTabHandle>(function VideoSearchTab(
             <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-3 dark:border-slate-800">
               {displayTotalCount > 0 ? (
                 <p className="text-xs text-slate-400 dark:text-slate-500">
-                  {t.youtubeSearchTab.resultsRangeLabel
+                  {t.tiktokSearchTab.resultsRangeLabel
                     .replace("{shown}", String(displayItems.length))
                     .replace("{total}", displayTotalCount.toLocaleString("id-ID"))}
                 </p>
@@ -152,16 +152,16 @@ const VideoSearchTab = forwardRef<VideoSearchTabHandle>(function VideoSearchTab(
 
               <div className="flex items-center gap-2">
                 <label className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                  {t.youtubeSearchTab.sortLabel}
+                  {t.tiktokSearchTab.sortLabel}
                 </label>
                 <select
                   value={sortBy}
                   onChange={(e) => changeSort(e.target.value as VideoSearchSort)}
                   className="h-9 rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm text-slate-800 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200 dark:focus:bg-slate-900 transition"
                 >
-                  <option value="relevance">{t.youtubeSearchTab.sortRelevance}</option>
-                  <option value="newest">{t.youtubeSearchTab.sortNewest}</option>
-                  <option value="popular">{t.youtubeSearchTab.sortPopular}</option>
+                  <option value="relevance">{t.tiktokSearchTab.sortRelevance}</option>
+                  <option value="newest">{t.tiktokSearchTab.sortNewest}</option>
+                  <option value="popular">{t.tiktokSearchTab.sortPopular}</option>
                 </select>
               </div>
             </div>
@@ -192,8 +192,8 @@ const VideoSearchTab = forwardRef<VideoSearchTabHandle>(function VideoSearchTab(
 
       {!isBusy && !error && items === null && (
         <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-slate-300 bg-white py-20 text-center dark:border-slate-700 dark:bg-slate-900">
-          <FaYoutube size={28} className="text-slate-300 dark:text-slate-600" />
-          <p className="text-sm text-slate-400 dark:text-slate-500">{t.youtubeSearchTab.emptyTitle}</p>
+          <FaTiktok size={28} className="text-slate-300 dark:text-slate-600" />
+          <p className="text-sm text-slate-400 dark:text-slate-500">{t.tiktokSearchTab.emptyTitle}</p>
         </div>
       )}
     </div>
