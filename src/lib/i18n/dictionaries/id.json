@@ -510,7 +510,8 @@
     "dateRangeSeparator": "s/d",
     "noMatch": "Tidak ada video yang cocok dengan filter",
     "openOnYoutube": "Buka di YouTube",
-    "openOnTiktok": "Buka di TikTok"
+    "openOnTiktok": "Buka di TikTok",
+    "toggleFilters": "Filter"
   },
   "videoDetailModal": {
     "loading": "Memuat detail video...",

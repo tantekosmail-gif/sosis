@@ -55,6 +55,7 @@ export default function VideoSearchGrid({
     <div className="space-y-1">
       {items.map((item) => {
         const relativeTime = formatRelativeTime(item.published_at);
+        const trendScore = item.scores.trend_score ?? 0;
         const isSelected = item.id === selectedVideoId;
 
         return (
@@ -69,9 +70,9 @@ export default function VideoSearchGrid({
               onClick={() => onSelectVideo(item.id)}
               className="min-w-0 flex-1 text-left"
             >
-              {item.scores.trend_score > 0 && (
+              {trendScore > 0 && (
                 <span className="mb-1 inline-flex w-fit items-center gap-1 rounded-full bg-orange-500 px-1.5 py-0.5 text-[10px] font-bold text-white">
-                  <Flame size={10} /> {item.scores.trend_score.toFixed(1)}
+                  <Flame size={10} /> {trendScore.toFixed(1)}
                 </span>
               )}
               <h3

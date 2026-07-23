@@ -65,6 +65,7 @@ export default function VideoSearchGrid({
     <div className="space-y-1">
       {items.map((item) => {
         const relativeTime = formatRelativeTime(item.published_at);
+        const trendScore = item.scores.trend_score ?? 0;
         const rowId = `${item.platform}:${item.id}`;
         const isSelected = rowId === selectedVideoId;
         const { Icon: PlatformIcon, className: platformClassName } = PLATFORM_ICON[item.platform];
@@ -83,9 +84,9 @@ export default function VideoSearchGrid({
             >
               <div className="mb-1 flex items-center gap-1.5">
                 <PlatformIcon size={12} className={`shrink-0 ${platformClassName}`} />
-                {item.scores.trend_score > 0 && (
+                {trendScore > 0 && (
                   <span className="inline-flex w-fit items-center gap-1 rounded-full bg-orange-500 px-1.5 py-0.5 text-[10px] font-bold text-white">
-                    <Flame size={10} /> {item.scores.trend_score.toFixed(1)}
+                    <Flame size={10} /> {trendScore.toFixed(1)}
                   </span>
                 )}
               </div>

@@ -510,7 +510,8 @@
     "dateRangeSeparator": "to",
     "noMatch": "No videos match this filter",
     "openOnYoutube": "Open on YouTube",
-    "openOnTiktok": "Open on TikTok"
+    "openOnTiktok": "Open on TikTok",
+    "toggleFilters": "Filter"
   },
   "videoDetailModal": {
     "loading": "Loading video detail...",

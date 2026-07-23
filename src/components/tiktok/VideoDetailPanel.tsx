@@ -28,6 +28,10 @@ function formatCompact(n: number) {
   return n.toString();
 }
 
+function formatScore(n: number | null) {
+  return n == null ? "-" : n.toFixed(1);
+}
+
 function formatRelativeTime(dateStr?: string) {
   if (!dateStr) return null;
   const date = new Date(dateStr);
@@ -124,7 +128,7 @@ export default function VideoDetailPanel({ detail, loading, error }: Props) {
             className="flex flex-col items-center gap-1 rounded-xl border border-slate-200 bg-slate-50 py-2.5 dark:border-slate-700 dark:bg-slate-800"
           >
             <Icon size={14} className="text-indigo-500" />
-            <span className="text-sm font-bold text-slate-800 dark:text-slate-200">{detail.scores[key].toFixed(1)}</span>
+            <span className="text-sm font-bold text-slate-800 dark:text-slate-200">{formatScore(detail.scores[key])}</span>
             <span className="text-center text-[10px] leading-tight text-slate-400 dark:text-slate-500">
               {t.videoDetailModal[labelKey]}
             </span>

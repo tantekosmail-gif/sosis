@@ -8,10 +8,10 @@ export interface VideoMetadataMetrics {
 }
 
 export interface VideoMetadataScores {
-  trend_score: number;
-  engagement_score: number;
-  freshness_score: number;
-  authority_score: number;
+  trend_score: number | null;
+  engagement_score: number | null;
+  freshness_score: number | null;
+  authority_score: number | null;
 }
 
 export interface VideoMetadataItem {
@@ -19,14 +19,14 @@ export interface VideoMetadataItem {
   title: string;
   content: string;
   author: string;
-  channel_id: string;
+  channel_id: string | null;
   url: string;
   thumbnail: string;
   metrics: VideoMetadataMetrics;
   scores: VideoMetadataScores;
-  ai_summary: string;
+  ai_summary: string | null;
   ai_tags: string[];
-  source_topic: string;
+  source_topic: string | null;
   source_topics: string[];
   published_at: string;
   collected_at: string;
@@ -82,7 +82,7 @@ export interface VideoDetailComment {
   author: string;
   content: string;
   likes: number;
-  published_at: string;
+  published_at: string | null;
 }
 
 // List item cuma punya saved_comment_count (angka) -- detail endpoint di

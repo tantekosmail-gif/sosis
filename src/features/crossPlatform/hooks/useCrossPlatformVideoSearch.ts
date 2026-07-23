@@ -24,7 +24,7 @@ function sortItems(items: CrossPlatformVideoItem[], sort: VideoSearchSort): Cros
   const sorted = [...items];
   if (sort === "newest") return sorted.sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime());
   if (sort === "popular") return sorted.sort((a, b) => b.metrics.views - a.metrics.views);
-  return sorted.sort((a, b) => b.scores.trend_score - a.scores.trend_score);
+  return sorted.sort((a, b) => (b.scores.trend_score ?? 0) - (a.scores.trend_score ?? 0));
 }
 
 export function useCrossPlatformVideoSearch() {

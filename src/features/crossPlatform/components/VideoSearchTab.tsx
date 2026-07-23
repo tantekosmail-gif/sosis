@@ -1,7 +1,7 @@
 "use client";
 
 import { forwardRef, useCallback, useImperativeHandle, useMemo, useRef, useState } from "react";
-import { Combine, Loader2 } from "lucide-react";
+import { Combine, Filter, Loader2 } from "lucide-react";
 
 import VideoSearchGrid from "@/components/crossPlatform/VideoSearchGrid";
 import VideoFilterBar from "@/components/crossPlatform/VideoFilterBar";
@@ -37,6 +37,7 @@ function ageToDateRange(age: VideoAgeFilter): { from: string; to: string } {
 
 const VideoSearchTab = forwardRef<VideoSearchTabHandle>(function VideoSearchTab(_props, ref) {
   const { t } = useTranslation();
+  const [showFilters, setShowFilters] = useState(false);
   const [filterAge, setFilterAge] = useState<VideoAgeFilter>("all");
   const [filterDateFrom, setFilterDateFrom] = useState("");
   const [filterDateTo, setFilterDateTo] = useState("");
@@ -78,6 +79,7 @@ const VideoSearchTab = forwardRef<VideoSearchTabHandle>(function VideoSearchTab(
     return items.filter((item: CrossPlatformVideoItem) => matchesDateRange(item.published_at, filterDateFrom, filterDateTo));
   }, [items, filterDateFrom, filterDateTo]);
 
+  const hasActiveFilter = Boolean(filterDateFrom || filterDateTo);
   const hasResults = !loading && !error && items !== null;
 
   const listContainerRef = useRef<HTMLDivElement>(null);
@@ -105,25 +107,32 @@ const VideoSearchTab = forwardRef<VideoSearchTabHandle>(function VideoSearchTab(
       {hasResults && (
         <div className="grid grid-cols-1 gap-4 xl:grid-cols-[380px_minmax(0,1fr)] xl:items-start">
           <div className="min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900 space-y-3">
-            <VideoFilterBar
-              age={filterAge}
-              onAgeChange={handleAgeChange}
-              dateFrom={filterDateFrom}
-              onDateFromChange={setFilterDateFrom}
-              dateTo={filterDateTo}
-              onDateToChange={setFilterDateTo}
-            />
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowFilters((v) => !v)}
+                  title={t.videoFilterBar.toggleFilters}
+                  className={`relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border transition-colors ${
+                    showFilters
+                      ? "border-indigo-400 bg-indigo-50 text-indigo-600 dark:border-indigo-500 dark:bg-indigo-950/40 dark:text-indigo-300"
+                      : "border-slate-200 text-slate-500 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-800"
+                  }`}
+                >
+                  <Filter size={15} />
+                  {hasActiveFilter && (
+                    <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-indigo-500" />
+                  )}
+                </button>
 
-            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-3 dark:border-slate-800">
-              {total > 0 ? (
-                <p className="text-xs text-slate-400 dark:text-slate-500">
-                  {t.crossPlatformSearchTab.resultsRangeLabel
-                    .replace("{shown}", String(filteredItems?.length ?? 0))
-                    .replace("{total}", total.toLocaleString("id-ID"))}
-                </p>
-              ) : (
-                <span />
-              )}
+                {total > 0 && (
+                  <p className="text-xs text-slate-400 dark:text-slate-500">
+                    {t.crossPlatformSearchTab.resultsRangeLabel
+                      .replace("{shown}", String(filteredItems?.length ?? 0))
+                      .replace("{total}", total.toLocaleString("id-ID"))}
+                  </p>
+                )}
+              </div>
 
               <div className="flex items-center gap-2">
                 <label className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
@@ -140,6 +149,19 @@ const VideoSearchTab = forwardRef<VideoSearchTabHandle>(function VideoSearchTab(
                 </select>
               </div>
             </div>
+
+            {showFilters && (
+              <div className="border-t border-slate-100 pt-3 dark:border-slate-800">
+                <VideoFilterBar
+                  age={filterAge}
+                  onAgeChange={handleAgeChange}
+                  dateFrom={filterDateFrom}
+                  onDateFromChange={setFilterDateFrom}
+                  dateTo={filterDateTo}
+                  onDateToChange={setFilterDateTo}
+                />
+              </div>
+            )}
 
             {!filteredItems || filteredItems.length === 0 ? (
               <div className="rounded-2xl border border-dashed border-slate-300 bg-white py-16 text-center text-sm text-slate-400 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-500">
