@@ -71,10 +71,15 @@ function normalizeNotification(raw: RawTopicNotification): TopicNotification {
 // GET /api/v1/search/notifications/unread-count — badge notifikasi topik viral.
 // topicId opsional untuk badge per-topik.
 export async function getUnreadNotificationCount(topicId?: string): Promise<number> {
-  const { data } = await api.get("/api/v1/search/notifications/unread-count", {
-    params: topicId ? { topic_id: topicId } : undefined,
-  });
-  return data?.data?.unread_count ?? 0;
+  try {
+    const { data } = await api.get("/api/v1/search/notifications/unread-count", {
+      params: topicId ? { topic_id: topicId } : undefined,
+    });
+    return data?.data?.unread_count ?? 0;
+  } catch (err: any) {
+    if (err?.response?.status === 404) return 0;
+    throw err;
+  }
 }
 
 export interface ListNotificationsParams {
@@ -124,12 +129,16 @@ const MAX_UNREAD_PAGES = 5;
 
 export async function listRecentUnreadNotifications(): Promise<TopicNotification[]> {
   const recent: TopicNotification[] = [];
-  for (let page = 1; page <= MAX_UNREAD_PAGES; page++) {
-    const { items, totalPages } = await listNotifications({ isRead: false, limit: 50, page });
-    recent.push(...items.filter(isNotificationRecent));
-    const oldest = items[items.length - 1];
-    if (!oldest || page >= totalPages) break;
-    if (!isNotificationRecent({ createdAt: oldest.createdAt, publishedAt: null })) break;
+  try {
+    for (let page = 1; page <= MAX_UNREAD_PAGES; page++) {
+      const { items, totalPages } = await listNotifications({ isRead: false, limit: 50, page });
+      recent.push(...items.filter(isNotificationRecent));
+      const oldest = items[items.length - 1];
+      if (!oldest || page >= totalPages) break;
+      if (!isNotificationRecent({ createdAt: oldest.createdAt, publishedAt: null })) break;
+    }
+  } catch (err: any) {
+    if (err?.response?.status !== 404) throw err;
   }
   return recent;
 }

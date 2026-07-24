@@ -56,7 +56,9 @@
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
     "collapseMenu": "Collapse menu",
-    "expandMenu": "Expand menu"
+    "expandMenu": "Expand menu",
+    "selectTopic": "Select Topic",
+    "noTopics": "No topics yet. Add one from Topics."
   },
   "overview": {
     "title": "Overview",
@@ -495,6 +497,36 @@
     "favoritesTabLabel": "Favorites",
     "noFavorites": "No favorite videos yet. Star a video to save it here."
   },
+  "facebookSearchTab": {
+    "title": "Facebook Post Analysis",
+    "keywordLabel": "Keyword",
+    "keywordPlaceholder": "e.g. highlights, cooking tutorial, breaking news...",
+    "searchButton": "Search",
+    "sortLabel": "Sort by",
+    "sortRelevance": "Most Relevant",
+    "sortNewest": "Newest",
+    "sortPopular": "Most Popular",
+    "loadingTitle": "Searching posts...",
+    "loadingDesc": "Fetching posts matching your keyword",
+    "emptyTitle": "Enter a keyword to search Facebook posts",
+    "noResults": "No posts found for this keyword",
+    "resultsRangeLabel": "Showing {shown} of {total} results"
+  },
+  "instagramSearchTab": {
+    "title": "Instagram Post Analysis",
+    "keywordLabel": "Keyword",
+    "keywordPlaceholder": "e.g. highlights, cooking tutorial, breaking news...",
+    "searchButton": "Search",
+    "sortLabel": "Sort by",
+    "sortRelevance": "Most Relevant",
+    "sortNewest": "Newest",
+    "sortPopular": "Most Popular",
+    "loadingTitle": "Searching posts...",
+    "loadingDesc": "Fetching posts matching your keyword",
+    "emptyTitle": "Enter a keyword to search Instagram posts",
+    "noResults": "No posts found for this keyword",
+    "resultsRangeLabel": "Showing {shown} of {total} results"
+  },
   "videoFilterBar": {
     "searchPlaceholder": "Search video title...",
     "allChannels": "All Channels",
@@ -520,6 +552,7 @@
     "freshnessScoreLabel": "Freshness",
     "authorityScoreLabel": "Authority",
     "aiSummaryLabel": "Summary",
+    "tagsLabel": "Tags",
     "keywordLabel": "Keyword",
     "commentsLabel": "Comments",
     "noComments": "No comments yet",
@@ -536,21 +569,19 @@
     "emptyDescSuffix": "to get started."
   },
   "threadsSearchTab": {
-    "placeholder": "Search topics on Threads, e.g. jokowi, election, economy...",
+    "title": "Threads Post Analysis",
+    "keywordLabel": "Keyword",
+    "keywordPlaceholder": "e.g. highlights, cooking tutorial, breaking news...",
     "searchButton": "Search",
-    "recentSearches": "Recent Searches",
-    "loading": "Searching Threads posts...",
-    "pollingTitle": "Collecting new posts from Threads...",
-    "pollingDesc": "The search runs in the background (API quota is limited) — results will appear here automatically once ready.",
-    "resultsPrefix": "results for",
-    "noResultsPolling": "No posts saved yet, still searching...",
-    "noResults": "No Threads posts found for this search",
+    "sortLabel": "Sort by",
+    "sortRelevance": "Most Relevant",
     "sortNewest": "Newest",
-    "sortLikes": "Most Liked",
-    "sortReplies": "Most Replies",
-    "repliesModalTitle": "Threads Replies",
-    "emptyTitle": "Start searching Threads posts",
-    "emptyDesc": "Enter a keyword above to start searching"
+    "sortPopular": "Most Popular",
+    "loadingTitle": "Searching posts...",
+    "loadingDesc": "Fetching posts matching your keyword",
+    "emptyTitle": "Enter a keyword to search Threads posts",
+    "noResults": "No posts found for this keyword",
+    "resultsRangeLabel": "Showing {shown} of {total} results"
   },
   "notFound": {
     "title": "Page not found",
@@ -721,7 +752,6 @@
       "scraping": { "label": "Analysis", "description": "Data Collection & default platform" },
       "notification": { "label": "Notifications", "description": "Notification preferences" },
       "widgets": { "label": "Overview Widgets", "description": "Show/hide widgets" },
-      "keywordRecs": { "label": "Keyword Recommendations", "description": "Auto-crawl keyword pool" },
       "users": { "label": "Users", "description": "Manage user accounts (admin)" },
       "about": { "label": "About", "description": "App information" }
     },
@@ -794,23 +824,6 @@
       "moveUpAria": "Move up",
       "moveDownAria": "Move down"
     },
-    "keywordRecs": {
-      "formTitle": "Add / Boost Keyword",
-      "subtitle": "Push a keyword into the pool read by the hourly auto-crawl job",
-      "keywordPlaceholder": "Keyword...",
-      "scoreLabel": "Score (0-1)",
-      "submitButton": "Add",
-      "keywordRequired": "Enter a keyword",
-      "scoreInvalid": "Score must be between 0 and 1",
-      "submitSuccess": "Keyword submitted",
-      "submitError": "Failed to submit keyword",
-      "listTitle": "Recommended Keywords",
-      "listDesc": "Top 20 by score, currently used for auto-crawl",
-      "refreshButton": "Refresh",
-      "empty": "No keyword recommendations yet",
-      "statusUsed": "Used",
-      "statusPending": "Pending"
-    },
     "users": {
       "searchPlaceholder": "Search email or username...",
       "addButton": "Add User",
@@ -871,7 +884,25 @@
       "platformsTitle": "Supported Platforms",
       "infoTitle": "Information",
       "docs": "Documentation",
-      "repository": "Repository"
+       "repository": "Repository"
+     }
+   },
+    "keywordRecommendations": {
+      "formTitle": "Add Topic",
+      "subtitle": "Push a topic into the pool read by the hourly auto-crawl job",
+      "keywordPlaceholder": "Topic...",
+      "relatedKeywordsLabel": "Related Keywords",
+      "relatedKeywordsPlaceholderEmpty": "Type a keyword and press Enter...",
+      "relatedKeywordsPlaceholderMore": "Add another...",
+      "submitButton": "Add",
+      "keywordRequired": "Enter a topic",
+      "submitSuccess": "Topic submitted",
+      "submitError": "Failed to submit topic",
+      "listTitle": "Recommended Topics",
+      "listDesc": "Top 20 by score, currently used for auto-crawl",
+      "refreshButton": "Refresh",
+      "empty": "No topics yet",
+      "statusUsed": "Used",
+      "statusPending": "Pending"
     }
-  }
 }

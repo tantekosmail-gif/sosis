@@ -282,7 +282,7 @@ export default function ReportsPage() {
               <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">{insightDesc}</p>
               <span className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-indigo-200 dark:border-indigo-800 bg-white dark:bg-slate-900 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
                 <span className="h-1.5 w-1.5 rounded-full bg-indigo-500" />
-                {t.header.liveStatus}
+                <span className="hidden">{t.header.liveStatus}</span>
               </span>
             </div>
 

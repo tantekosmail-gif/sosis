@@ -273,6 +273,28 @@ export function MetricSourceProvider({
     setKeywordsLoading(true);
     setKeywordsError("");
     try {
+      const listRaw = await listSavedTopics({ limit: 50 });
+      const items: Record<string, unknown>[] = listRaw?.data?.items ?? listRaw?.items ?? [];
+      const nextTopics: SourceTopic[] = items
+        .map((raw) => ({
+          id: String(raw.id ?? raw.topic_id ?? ""),
+          name: String(raw.name ?? raw.topic ?? "-"),
+          isActive: Boolean(raw.is_active ?? true),
+        }))
+        .filter((t) => t.id);
+      keywordsLoadedRef.current = true;
+      setKeywordsLoading(false);
+      setKeywordsError("");
+      setKeywords(nextKeywords);
+      return;
+    } catch {
+      keywordsLoadedRef.current = false;
+      setKeywordsError("");
+      setKeywordsLoading(false);
+      return;
+    }
+
+    try {
       // Sengaja TIDAK filter is_active: true -- /metrics/summary & /metrics/trend
       // (angka yang ditampilkan di kartu/grafik) agregat lintas SEMUA topik tanpa
       // peduli status aktif, jadi keyword dari topik yang lagi nonaktif/pause

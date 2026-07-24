@@ -35,10 +35,10 @@ export function useTrendRecommendations() {
   }, [refresh]);
 
   const submit = useCallback(
-    async (topic: string, score?: number) => {
+    async (topic: string, score?: number, keywords?: string[]) => {
       setSubmitting(true);
       try {
-        await submitManualTopic({ topic, score });
+        await submitManualTopic({ topic, score, keywords });
         await refresh();
       } finally {
         setSubmitting(false);

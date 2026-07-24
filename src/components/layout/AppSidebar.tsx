@@ -40,7 +40,7 @@ const sections = [
   {
     key: "monitoringGroup",
     items: [
-      { key: "topics", href: "/topics", icon: Tags },
+      { key: "topics", href: "/keyword-recommendations", icon: Flame },
       { key: "viral",  href: "/viral",  icon: Flame },
       {
         key: "platformGroup",

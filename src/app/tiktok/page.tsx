@@ -12,8 +12,10 @@ import TikTokSentimentTab from "@/features/tiktok/components/SentimentTab";
 import VideoSearchTab, { type VideoSearchTabHandle } from "@/features/tiktok/components/VideoSearchTab";
 import { useTopics } from "@/features/topic/hooks/useTopics";
 import { useTrendRecommendations } from "@/features/keywordRecommendations/hooks/useTrendRecommendations";
+import { getTrendRecommendationKeywords } from "@/features/keywordRecommendations/services/trendRecommendations.service";
 import { useRecentTikTokVideoSearches } from "@/features/tiktok/hooks/useRecentVideoSearches";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
+import { useTopicStore } from "@/store/topic.store";
 
 const TABS = [
   { key: "terkini", label: "Analisis Video" },
@@ -36,6 +38,8 @@ export default function TikTokPage() {
 
   const { topics } = useTopics();
   const { items: keywordRecommendations } = useTrendRecommendations();
+  const globalTopicId = useTopicStore((s) => s.topicId);
+  const globalTopicLabel = useTopicStore((s) => s.topicLabel);
   const { recent, addRecentSearch } = useRecentTikTokVideoSearches();
 
   // Sumber saran ada tiga: keyword yang sudah pernah dicari di sini (recent,
@@ -77,6 +81,14 @@ export default function TikTokPage() {
     setCheckingAuth(false);
   }, [router]);
 
+  useEffect(() => {
+    if (globalTopicId) return;
+    if (!keywordRecommendations || keywordRecommendations.length === 0) return;
+
+    const first = keywordRecommendations[0];
+    useTopicStore.getState().setTopic(first.id, first.topic);
+  }, [keywordRecommendations, globalTopicId]);
+
   // Cuma tab "terkini" (Analisis Video) yang dikendalikan lewat search bar
   // bersama ini -- Trending & Sentiment sudah punya kontrol pencarian sendiri
   // (username utk Sentiment, tanpa pencarian utk Trending).
@@ -105,6 +117,34 @@ export default function TikTokPage() {
     setActiveSuggestionIndex(-1);
     runSearch(keyword);
   }
+
+  useEffect(() => {
+    if (!globalTopicId) return;
+
+    (async () => {
+      let keywords: string[] = [];
+      try {
+        keywords = await getTrendRecommendationKeywords(globalTopicId);
+      } catch (err) {
+        console.error("Gagal memuat keyword topik:", err);
+      }
+
+      const searchTerms = keywords.length > 0 ? keywords : globalTopicLabel ? [globalTopicLabel] : [];
+      if (searchTerms.length === 0) return;
+
+      setQuery(searchTerms.join(", "));
+      if (globalTopicLabel) addRecentSearch(globalTopicLabel);
+
+      const trySearch = (attempt = 0) => {
+        if (terkiniRef.current?.searchKeywords) {
+          terkiniRef.current.searchKeywords(searchTerms);
+        } else if (attempt < 20) {
+          setTimeout(() => trySearch(attempt + 1), 50);
+        }
+      };
+      trySearch();
+    })();
+  }, [globalTopicId, globalTopicLabel, addRecentSearch]);
 
   if (checkingAuth) {
     return (

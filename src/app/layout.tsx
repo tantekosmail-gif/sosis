@@ -56,9 +56,7 @@ export default function RootLayout({
       <body
         className={`${inter.className} min-h-screen bg-slate-50 dark:bg-slate-950 antialiased`}
       >
-        <Script id="theme-init" strategy="beforeInteractive">
-          {THEME_INIT_SCRIPT}
-        </Script>
+        <Script id="theme-init" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <Providers>{children}</Providers>
       </body>
     </html>

@@ -99,6 +99,11 @@ export function useVideoMetadataSearch() {
 
   const search = useCallback((q: string) => fetchPage(q, activeQuery.current.sortBy, 1), [fetchPage]);
 
+  const searchKeywords = useCallback(
+    (keywords: string[]) => fetchPage(keywords.join(', '), activeQuery.current.sortBy, 1),
+    [fetchPage],
+  );
+
   // Ganti urutan mengubah parameter sort_by/order di server, jadi halaman
   // di-fetch ulang dari halaman 1 dengan urutan server yang baru.
   const changeSort = useCallback(
@@ -199,6 +204,7 @@ export function useVideoMetadataSearch() {
     loadingMore,
     error,
     search,
+    searchKeywords,
     sortBy,
     changeSort,
     loadMore,

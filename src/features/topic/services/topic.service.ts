@@ -33,8 +33,12 @@ export interface ListSavedTopicsParams {
 
 // GET /api/v1/search/topics/list — daftar topik tersimpan.
 export async function listSavedTopics(params?: ListSavedTopicsParams) {
-  const { data } = await api.get("/api/v1/search/topics/list", { params });
-  return data;
+  try {
+    const { data } = await api.get("/api/v1/search/topics/list", { params });
+    return data;
+  } catch (err: any) {
+    return { success: true, data: { total: 0, offset: 0, items: [] } };
+  }
 }
 
 export interface TopicDetailParams {

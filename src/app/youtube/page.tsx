@@ -14,9 +14,11 @@ import ComparePanel from "@/features/compare/components/ComparePanel";
 import { useAnalyze } from "@/features/analysis/hooks/useAnalyze";
 import { useTopics } from "@/features/topic/hooks/useTopics";
 import { useTrendRecommendations } from "@/features/keywordRecommendations/hooks/useTrendRecommendations";
+import { getTrendRecommendationKeywords } from "@/features/keywordRecommendations/services/trendRecommendations.service";
 import { useRecentYoutubeSearches } from "@/features/youtube/hooks/useRecentSearches";
 import { useDashboardStore } from "@/store/dashboard.store";
 import { useFilterStore } from "@/stores/filterStore";
+import { useTopicStore } from "@/store/topic.store";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 const SHOW_COMPARE_TAB = false;
@@ -48,6 +50,8 @@ export default function YoutubePage() {
   const { topics } = useTopics();
   const { items: keywordRecommendations } = useTrendRecommendations();
   const { recent, addRecentSearch } = useRecentYoutubeSearches();
+  const globalTopicId = useTopicStore((s) => s.topicId);
+  const globalTopicLabel = useTopicStore((s) => s.topicLabel);
 
   // Sumber saran ada tiga: keyword yang sudah pernah dicari di sini (recent,
   // localStorage, urutan terbaru dulu), keyword yang ditrack lewat fitur
@@ -87,6 +91,47 @@ export default function YoutubePage() {
     }
     setCheckingAuth(false);
   }, [router]);
+
+  useEffect(() => {
+    if (globalTopicId) return;
+    if (!keywordRecommendations || keywordRecommendations.length === 0) return;
+
+    const first = keywordRecommendations[0];
+    useTopicStore.getState().setTopic(first.id, first.topic);
+  }, [keywordRecommendations, globalTopicId]);
+
+  useEffect(() => {
+    if (!globalTopicId) return;
+
+    if (tab !== "terkini") {
+      setTab("terkini");
+      return;
+    }
+
+    (async () => {
+      let keywords: string[] = [];
+      try {
+        keywords = await getTrendRecommendationKeywords(globalTopicId);
+      } catch (err) {
+        console.error("Gagal memuat keyword topik:", err);
+      }
+
+      const searchTerms = keywords.length > 0 ? keywords : globalTopicLabel ? [globalTopicLabel] : [];
+      if (searchTerms.length === 0) return;
+
+      setQuery(searchTerms.join(", "));
+      if (globalTopicLabel) addRecentSearch(globalTopicLabel);
+
+      const trySearch = (attempt = 0) => {
+        if (terkiniRef.current?.searchKeywords) {
+          terkiniRef.current.searchKeywords(searchTerms);
+        } else if (attempt < 20) {
+          setTimeout(() => trySearch(attempt + 1), 50);
+        }
+      };
+      trySearch();
+    })();
+  }, [globalTopicId, globalTopicLabel, tab, addRecentSearch]);
 
   // Cuma tab "terkini" (Analisis Video) & "sentiment" yang dikendalikan lewat
   // search bar bersama ini -- Video Viral (trending) sudah memuat datanya

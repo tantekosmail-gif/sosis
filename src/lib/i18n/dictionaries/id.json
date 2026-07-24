@@ -56,7 +56,9 @@
     "openMenu": "Buka menu",
     "closeMenu": "Tutup menu",
     "collapseMenu": "Perkecil menu",
-    "expandMenu": "Perbesar menu"
+    "expandMenu": "Perbesar menu",
+    "selectTopic": "Pilih Topik",
+    "noTopics": "Belum ada topik. Tambahkan lewat Topik."
   },
   "overview": {
     "title": "Overview",
@@ -495,6 +497,36 @@
     "favoritesTabLabel": "Favorit",
     "noFavorites": "Belum ada video favorit. Tandai video dengan ikon bintang untuk menyimpannya di sini."
   },
+  "facebookSearchTab": {
+    "title": "Analisis Postingan Facebook",
+    "keywordLabel": "Kata Kunci",
+    "keywordPlaceholder": "Contoh: highlights, tutorial masak, berita terkini...",
+    "searchButton": "Cari",
+    "sortLabel": "Urutkan",
+    "sortRelevance": "Paling Relevan",
+    "sortNewest": "Paling Baru",
+    "sortPopular": "Paling Populer",
+    "loadingTitle": "Mencari postingan...",
+    "loadingDesc": "Mengambil postingan yang cocok dengan kata kunci",
+    "emptyTitle": "Masukkan kata kunci untuk mencari postingan Facebook",
+    "noResults": "Tidak ada postingan ditemukan untuk kata kunci ini",
+    "resultsRangeLabel": "Menampilkan {shown} dari {total} hasil"
+  },
+  "instagramSearchTab": {
+    "title": "Analisis Postingan Instagram",
+    "keywordLabel": "Kata Kunci",
+    "keywordPlaceholder": "Contoh: highlights, tutorial masak, berita terkini...",
+    "searchButton": "Cari",
+    "sortLabel": "Urutkan",
+    "sortRelevance": "Paling Relevan",
+    "sortNewest": "Paling Baru",
+    "sortPopular": "Paling Populer",
+    "loadingTitle": "Mencari postingan...",
+    "loadingDesc": "Mengambil postingan yang cocok dengan kata kunci",
+    "emptyTitle": "Masukkan kata kunci untuk mencari postingan Instagram",
+    "noResults": "Tidak ada postingan ditemukan untuk kata kunci ini",
+    "resultsRangeLabel": "Menampilkan {shown} dari {total} hasil"
+  },
   "videoFilterBar": {
     "searchPlaceholder": "Cari judul video...",
     "allChannels": "Semua Channel",
@@ -520,6 +552,7 @@
     "freshnessScoreLabel": "Kesegaran",
     "authorityScoreLabel": "Otoritas",
     "aiSummaryLabel": "Ringkasan",
+    "tagsLabel": "Tags",
     "keywordLabel": "Keyword",
     "commentsLabel": "Komentar",
     "noComments": "Belum ada komentar",
@@ -536,21 +569,19 @@
     "emptyDescSuffix": "untuk memulai."
   },
   "threadsSearchTab": {
-    "placeholder": "Cari topik di Threads, mis. jokowi, pemilu, ekonomi...",
+    "title": "Analisis Postingan Threads",
+    "keywordLabel": "Kata Kunci",
+    "keywordPlaceholder": "Contoh: highlights, tutorial masak, berita terkini...",
     "searchButton": "Cari",
-    "recentSearches": "Pencarian Terakhir",
-    "loading": "Mencari post Threads...",
-    "pollingTitle": "Mengumpulkan post baru dari Threads...",
-    "pollingDesc": "Pencarian berjalan di background (kuota API terbatas), hasil akan muncul otomatis di sini begitu selesai.",
-    "resultsPrefix": "hasil untuk",
-    "noResultsPolling": "Belum ada post tersimpan, sedang mencari...",
-    "noResults": "Tidak ada post Threads ditemukan untuk pencarian ini",
-    "sortNewest": "Terbaru",
-    "sortLikes": "Paling Disukai",
-    "sortReplies": "Paling Banyak Balasan",
-    "repliesModalTitle": "Balasan Threads",
-    "emptyTitle": "Mulai cari post Threads",
-    "emptyDesc": "Masukkan kata kunci di atas untuk memulai pencarian"
+    "sortLabel": "Urutkan",
+    "sortRelevance": "Paling Relevan",
+    "sortNewest": "Paling Baru",
+    "sortPopular": "Paling Populer",
+    "loadingTitle": "Mencari postingan...",
+    "loadingDesc": "Mengambil postingan yang cocok dengan kata kunci",
+    "emptyTitle": "Masukkan kata kunci untuk mencari postingan Threads",
+    "noResults": "Tidak ada postingan ditemukan untuk kata kunci ini",
+    "resultsRangeLabel": "Menampilkan {shown} dari {total} hasil"
   },
   "notFound": {
     "title": "Halaman tidak ditemukan",
@@ -721,7 +752,6 @@
       "scraping": { "label": "Analisis", "description": "Pengumpulan Data & platform default" },
       "notification": { "label": "Notifikasi", "description": "Preferensi pemberitahuan" },
       "widgets": { "label": "Widget Overview", "description": "Tampil/sembunyikan widget" },
-      "keywordRecs": { "label": "Rekomendasi Keyword", "description": "Pool keyword auto-crawl" },
       "users": { "label": "User", "description": "Kelola akun pengguna (admin)" },
       "about": { "label": "Tentang", "description": "Informasi aplikasi" }
     },
@@ -794,23 +824,6 @@
       "moveUpAria": "Pindah ke atas",
       "moveDownAria": "Pindah ke bawah"
     },
-    "keywordRecs": {
-      "formTitle": "Tambah / Naikkan Keyword",
-      "subtitle": "Masukkan keyword ke pool yang dibaca job auto-crawl per jam",
-      "keywordPlaceholder": "Keyword...",
-      "scoreLabel": "Score (0-1)",
-      "submitButton": "Tambah",
-      "keywordRequired": "Masukkan keyword",
-      "scoreInvalid": "Score harus di antara 0 dan 1",
-      "submitSuccess": "Keyword berhasil ditambahkan",
-      "submitError": "Gagal menambahkan keyword",
-      "listTitle": "Keyword Rekomendasi",
-      "listDesc": "Top 20 by score, yang saat ini dipakai auto-crawl",
-      "refreshButton": "Muat Ulang",
-      "empty": "Belum ada rekomendasi keyword",
-      "statusUsed": "Terpakai",
-      "statusPending": "Menunggu"
-    },
     "users": {
       "searchPlaceholder": "Cari email atau username...",
       "addButton": "Tambah User",
@@ -871,7 +884,25 @@
       "platformsTitle": "Platform yang Didukung",
       "infoTitle": "Informasi",
       "docs": "Dokumentasi",
-      "repository": "Repository"
+       "repository": "Repository"
+     }
+   },
+    "keywordRecommendations": {
+      "formTitle": "Tambah Topik",
+      "subtitle": "Masukkan topik ke pool yang dibaca job auto-crawl per jam",
+      "keywordPlaceholder": "Topik...",
+      "relatedKeywordsLabel": "Keyword Terkait",
+      "relatedKeywordsPlaceholderEmpty": "Ketik keyword lalu Enter...",
+      "relatedKeywordsPlaceholderMore": "Tambah lagi...",
+      "submitButton": "Tambah",
+      "keywordRequired": "Masukkan topik",
+      "submitSuccess": "Topik berhasil ditambahkan",
+      "submitError": "Gagal menambahkan topik",
+      "listTitle": "Topik Rekomendasi",
+      "listDesc": "Top 20 by score, yang saat ini dipakai auto-crawl",
+      "refreshButton": "Muat Ulang",
+      "empty": "Belum ada topik",
+      "statusUsed": "Terpakai",
+      "statusPending": "Menunggu"
     }
-  }
 }

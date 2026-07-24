@@ -9,6 +9,7 @@ import { FaFacebook, FaInstagram, FaTiktok, FaXTwitter, FaYoutube } from "react-
 import { getSettings, setThemeSetting, type Theme } from "@/features/settings/hooks/useSettings";
 import { useNotifications, type NotificationType } from "@/features/notifications/hooks/useNotifications";
 import { useTopicNotifications } from "@/features/notifications/hooks/useTopicNotifications";
+import TopicSelector from "./TopicSelector";
 import { isNotificationRecent, type TopicNotification } from "@/features/notifications/services/notification.service";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { applyTheme } from "@/lib/theme";
@@ -145,7 +146,11 @@ export default function AppHeader({ onOpenHistory, historyCount = 0, onOpenSideb
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
           </span>
-          <span className="truncate text-xs font-semibold text-emerald-700 dark:text-emerald-400">{t.header.liveStatus}</span>
+          <span className="truncate text-xs font-semibold text-emerald-700 dark:text-emerald-400 hidden">{t.header.liveStatus}</span>
+        </div>
+
+        <div className="hidden sm:block">
+          <TopicSelector />
         </div>
       </div>
 

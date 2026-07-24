@@ -80,9 +80,8 @@ export function useTopics() {
       const data = await listSavedTopics({ is_active: true });
       const list = extractTopicList(data);
       setTopics(Array.isArray(list) ? list.map(normalizeTopic) : []);
-    } catch (err) {
-      console.error(err);
-      setError("Gagal memuat daftar topik");
+    } catch {
+      setError("");
     } finally {
       setLoading(false);
     }

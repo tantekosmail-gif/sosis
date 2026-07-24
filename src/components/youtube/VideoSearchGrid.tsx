@@ -89,12 +89,10 @@ export default function VideoSearchGrid({
                   <Eye size={11} className="text-slate-400 dark:text-slate-500" />
                   {formatCompact(item.metrics.views)}
                 </span>
-                {item.metrics.likes > 0 && (
-                  <span className="flex items-center gap-1">
-                    <ThumbsUp size={11} className="text-slate-400 dark:text-slate-500" />
-                    {formatCompact(item.metrics.likes)}
-                  </span>
-                )}
+                <span className="flex items-center gap-1">
+                  <ThumbsUp size={11} className="text-slate-400 dark:text-slate-500" />
+                  {formatCompact(item.metrics.likes)}
+                </span>
                 {item.saved_comment_count > 0 && (
                   <span className="flex items-center gap-1">
                     <MessageCircle size={11} className="text-slate-400 dark:text-slate-500" />

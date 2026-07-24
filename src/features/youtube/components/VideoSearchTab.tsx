@@ -16,6 +16,7 @@ import type { VideoAgeFilter } from "@/lib/videoAgeFilter";
 
 export interface VideoSearchTabHandle {
   search: (keyword: string) => void;
+  searchKeywords: (keywords: string[]) => void;
 }
 
 function toDateInputValue(d: Date): string {
@@ -48,6 +49,7 @@ const VideoSearchTab = forwardRef<VideoSearchTabHandle>(function VideoSearchTab(
     loadingMore,
     error,
     search,
+    searchKeywords,
     sortBy,
     changeSort,
     loadMore,
@@ -62,7 +64,7 @@ const VideoSearchTab = forwardRef<VideoSearchTabHandle>(function VideoSearchTab(
     openVideoDetail,
   } = useVideoSearch();
 
-  useImperativeHandle(ref, () => ({ search }));
+  useImperativeHandle(ref, () => ({ search, searchKeywords }));
 
   const handleAgeChange = useCallback((age: VideoAgeFilter) => {
     setFilterAge(age);

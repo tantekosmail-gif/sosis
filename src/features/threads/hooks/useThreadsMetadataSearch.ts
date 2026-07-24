@@ -3,62 +3,48 @@
 import { useCallback, useRef, useState } from "react";
 
 import {
-  getVideoDetail,
-  getVideoMetadata,
-  type VideoMetadataDetail,
-  type VideoMetadataItem,
-  type VideoMetadataParams,
-} from "../services/search.service";
+  getThreadsMetadata,
+  getThreadsMetadataDetail,
+  type ThreadsMetadataDetail,
+  type ThreadsMetadataItem,
+  type ThreadsMetadataParams,
+} from "../services/metadata.service";
 
-export type { VideoMetadataDetail, VideoMetadataItem };
+export type { ThreadsMetadataItem, ThreadsMetadataDetail };
 
-export type VideoSearchSort = "relevance" | "newest" | "popular";
+export type ThreadsMetadataSort = "relevance" | "newest" | "popular";
 
-const SORT_PARAMS: Record<VideoSearchSort, Pick<VideoMetadataParams, "sortBy" | "order">> = {
+const SORT_PARAMS: Record<ThreadsMetadataSort, Pick<ThreadsMetadataParams, "sortBy" | "order">> = {
   relevance: { sortBy: "trend_score", order: "desc" },
   newest: { sortBy: "published_at", order: "desc" },
-  popular: { sortBy: "views", order: "desc" },
+  popular: { sortBy: "likes", order: "desc" },
 };
 
 export const PAGE_SIZE = 10;
 
-// Backend /youtube/metadata cuma punya parameter topic/search/sort_by/order/
-// page/page_size -- tidak ada filter tanggal/usia/channel server-side. Jadi
-// begitu channel/topik/rentang-tanggal difilter di client, paginasi server
-// (dihitung dari total TANPA filter) jadi tidak sesuai lagi dengan hasil yang
-// sebenarnya ditampilkan. fetchAll() menarik semua halaman (dibatasi
-// MAX_BULK_ITEMS) supaya paginasi bisa dihitung ulang dari hasil yang SUDAH
-// difilter di client (lihat VideoSearchTab).
 const BULK_PAGE_SIZE = 100;
 const MAX_BULK_ITEMS = 1000;
 
-function sortMergedItems(items: VideoMetadataItem[], sort: VideoSearchSort): VideoMetadataItem[] {
+function sortMergedItems(items: ThreadsMetadataItem[], sort: ThreadsMetadataSort): ThreadsMetadataItem[] {
   const sorted = [...items];
   if (sort === "newest") {
     return sorted.sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime());
   }
-  if (sort === "popular") return sorted.sort((a, b) => b.metrics.views - a.metrics.views);
+  if (sort === "popular") return sorted.sort((a, b) => b.metrics.likes - a.metrics.likes);
   return sorted.sort((a, b) => (b.scores.trend_score ?? 0) - (a.scores.trend_score ?? 0));
 }
 
-// Satu topik (rekomendasi keyword) bisa punya beberapa keyword terkait
-// (mis. "KPK", "Komisi Pemberantasan Korupsi", "pimpinan KPK", dst) --
-// backend /youtube/metadata cuma menerima SATU string `search` per call, jadi
-// tiap keyword di-query paralel lalu digabung+dedupe by id di client. Dipakai
-// baik untuk halaman pertama (runSearch) maupun "load more" (halaman N dari
-// SEMUA keyword diambil bareng, bukan per-keyword independen) supaya
-// implementasinya tetap sederhana untuk jumlah keyword berapa pun.
 async function fetchMergedPage(
   keywords: string[],
-  sort: VideoSearchSort,
+  sort: ThreadsMetadataSort,
   page: number,
   pageSize: number,
-): Promise<{ items: VideoMetadataItem[]; total: number; totalPages: number }> {
+): Promise<{ items: ThreadsMetadataItem[]; total: number; totalPages: number }> {
   const pages = await Promise.all(
-    keywords.map((kw) => getVideoMetadata({ search: kw, page, pageSize, ...SORT_PARAMS[sort] })),
+    keywords.map((kw) => getThreadsMetadata({ search: kw, page, pageSize, ...SORT_PARAMS[sort] })),
   );
 
-  const merged = new Map<string, VideoMetadataItem>();
+  const merged = new Map<string, ThreadsMetadataItem>();
   let total = 0;
   let totalPages = 1;
   pages.forEach((data) => {
@@ -70,10 +56,10 @@ async function fetchMergedPage(
   return { items: sortMergedItems(Array.from(merged.values()), sort), total, totalPages };
 }
 
-export function useVideoSearch() {
+export function useThreadsMetadataSearch() {
   const [keyword, setKeyword] = useState("");
-  const [sortBy, setSortBy] = useState<VideoSearchSort>("newest");
-  const [items, setItems] = useState<VideoMetadataItem[] | null>(null);
+  const [sortBy, setSortBy] = useState<ThreadsMetadataSort>("newest");
+  const [items, setItems] = useState<ThreadsMetadataItem[] | null>(null);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -81,25 +67,20 @@ export function useVideoSearch() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState("");
 
-  const [allItems, setAllItems] = useState<VideoMetadataItem[] | null>(null);
+  const [allItems, setAllItems] = useState<ThreadsMetadataItem[] | null>(null);
   const [loadingAll, setLoadingAll] = useState(false);
 
-  const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
-  const [videoDetail, setVideoDetail] = useState<VideoMetadataDetail | null>(null);
+  const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
+  const [postDetail, setPostDetail] = useState<ThreadsMetadataDetail | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
   const [detailError, setDetailError] = useState("");
 
-  // Dipakai loadMore()/changeSort()/fetchAll() supaya tahu keyword(s) & sort
-  // aktif tanpa ikut jadi dependency callback (menghindari stale closure
-  // kalau berubah di antara render tanpa perlu bikin ulang fungsi tsb).
-  const activeQuery = useRef<{ keywords: string[]; sortBy: VideoSearchSort }>({ keywords: [], sortBy: "newest" });
+  const activeQuery = useRef<{ keywords: string[]; sortBy: ThreadsMetadataSort }>({ keywords: [], sortBy: "newest" });
 
-  const fetchPage = useCallback(async (keywords: string[], sort: VideoSearchSort, targetPage: number) => {
+  const fetchPage = useCallback(async (keywords: string[], sort: ThreadsMetadataSort, targetPage: number) => {
     const uniqueKeywords = Array.from(new Set(keywords.map((k) => k.trim()).filter(Boolean)));
     activeQuery.current = { keywords: uniqueKeywords, sortBy: sort };
     setKeyword(uniqueKeywords.join(", "));
-    // Batch lama dari mode "semua hasil" (kalau ada) sudah tidak valid lagi
-    // begitu keyword/sort ganti -- fetchAll() dipanggil ulang kalau perlu.
     setAllItems(null);
 
     if (uniqueKeywords.length === 0) {
@@ -120,7 +101,7 @@ export function useVideoSearch() {
       setPage(targetPage);
       setTotalPages(data.totalPages);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Gagal mencari video");
+      setError(err instanceof Error ? err.message : "Gagal mencari post Threads");
       setItems(null);
       setTotal(0);
       setPage(1);
@@ -132,30 +113,19 @@ export function useVideoSearch() {
 
   const search = useCallback((q: string) => fetchPage([q], activeQuery.current.sortBy, 1), [fetchPage]);
 
-  // Topik (rekomendasi keyword) bisa punya beberapa keyword terkait -- semua
-  // dicari sekaligus dan hasilnya digabung jadi satu daftar (lihat
-  // fetchMergedPage), bukan ditampilkan terpisah per keyword.
   const searchKeywords = useCallback(
     (keywords: string[]) => fetchPage(keywords, activeQuery.current.sortBy, 1),
     [fetchPage],
   );
 
-  // Ganti urutan mengubah parameter sort_by/order di server, jadi halaman
-  // di-fetch ulang dari halaman 1 dengan urutan server yang baru.
   const changeSort = useCallback(
-    (sort: VideoSearchSort) => {
+    (sort: ThreadsMetadataSort) => {
       setSortBy(sort);
       if (activeQuery.current.keywords.length > 0) void fetchPage(activeQuery.current.keywords, sort, 1);
     },
     [fetchPage],
   );
 
-  // Load more menambah (append) halaman berikutnya ke items yang sudah ada --
-  // beda dari fetchPage yang mengganti seluruh isi items (dipakai search()/
-  // changeSort() saat mulai dari halaman 1). Untuk mode multi-keyword,
-  // halaman N dari SEMUA keyword diambil bareng lalu digabung+durutkan ulang
-  // dengan yang sudah tampil (item baru bisa saja lebih relevan dari
-  // sebagian yang sudah tampil).
   const loadMore = useCallback(async () => {
     const { keywords: activeKeywords, sortBy: activeSort } = activeQuery.current;
     if (activeKeywords.length === 0 || loadingMore || page >= totalPages) return;
@@ -172,8 +142,7 @@ export function useVideoSearch() {
       setPage((p) => p + 1);
       setTotalPages(data.totalPages);
     } catch {
-      // Gagal load more tidak boleh menghapus hasil yang sudah tampil --
-      // biarkan user coba klik "muat lebih banyak" lagi.
+      // Gagal load more tidak boleh menghapus hasil yang sudah tampil.
     } finally {
       setLoadingMore(false);
     }
@@ -185,7 +154,7 @@ export function useVideoSearch() {
 
     setLoadingAll(true);
     try {
-      let all: VideoMetadataItem[] = [];
+      let all: ThreadsMetadataItem[] = [];
       let currentPage = 1;
       let pagesAvailable = 1;
 
@@ -206,26 +175,23 @@ export function useVideoSearch() {
     }
   }, []);
 
-  // Detail (deskripsi lengkap + komentar) tidak ikut di response list --
-  // cuma saved_comment_count (angka). Di-fetch on-demand saat modal dibuka,
-  // bukan sekaligus utk semua item di halaman.
-  const openVideoDetail = useCallback(async (id: string) => {
-    setSelectedVideoId(id);
-    setVideoDetail(null);
+  const openPostDetail = useCallback(async (id: string) => {
+    setSelectedPostId(id);
+    setPostDetail(null);
     setDetailError("");
     setDetailLoading(true);
     try {
-      setVideoDetail(await getVideoDetail(id));
+      setPostDetail(await getThreadsMetadataDetail(id));
     } catch (err) {
-      setDetailError(err instanceof Error ? err.message : "Gagal memuat detail video");
+      setDetailError(err instanceof Error ? err.message : "Gagal memuat detail post");
     } finally {
       setDetailLoading(false);
     }
   }, []);
 
-  const closeVideoDetail = useCallback(() => {
-    setSelectedVideoId(null);
-    setVideoDetail(null);
+  const closePostDetail = useCallback(() => {
+    setSelectedPostId(null);
+    setPostDetail(null);
     setDetailError("");
   }, []);
 
@@ -247,11 +213,11 @@ export function useVideoSearch() {
     allItems,
     loadingAll,
     fetchAll,
-    selectedVideoId,
-    videoDetail,
+    selectedPostId,
+    postDetail,
     detailLoading,
     detailError,
-    openVideoDetail,
-    closeVideoDetail,
+    openPostDetail,
+    closePostDetail,
   };
 }
