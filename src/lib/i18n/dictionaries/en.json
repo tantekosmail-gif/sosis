@@ -19,6 +19,7 @@
     "monitoringGroup": "Monitoring",
     "systemGroup": "System",
     "overview": "Overview",
+    "socialSnapshot": "Social Snapshot",
     "engagement": "Engagement",
     "youtube": "YouTube",
     "instagram": "Instagram",
@@ -68,6 +69,21 @@
     "removeWidgetConfirmDesc": "This widget will be hidden from Overview. You can bring it back later from Settings.",
     "removeWidgetConfirmYes": "Yes, remove",
     "removeWidgetConfirmNo": "Cancel"
+  },
+  "socialSnapshot": {
+    "title": "Social Snapshot",
+    "subtitle": "Post-level performance across every monitored platform, drawn from the same data as each platform page.",
+    "totalPosts": "Posts",
+    "totalLikes": "Likes",
+    "totalViews": "Views",
+    "totalComments": "Comments",
+    "avgTrendScore": "Avg Trend Score",
+    "topPostsTitle": "Top posts by {metric}",
+    "metricLikes": "likes",
+    "metricViews": "views",
+    "viewAll": "View all",
+    "error": "Failed to load data",
+    "emptyTopPosts": "No posts yet"
   },
   "overviewWidgets": {
     "common": {
@@ -230,18 +246,40 @@
     "tableAction": "Action"
   },
   "newsSearchTab": {
+    "title": "News Analysis",
     "placeholder": "Search news, e.g. jokowi, election, economy...",
     "searchButton": "Search",
     "recentSearches": "Recent Searches",
     "loading": "Searching news...",
+    "loadingDesc": "Fetching news matching your keyword",
     "resultsPrefix": "results for",
     "updated": "Updated {time}",
     "noResults": "No news found for this search",
-    "sortLabel": "Sort:",
+    "sortLabel": "Sort by",
     "sortNewest": "Newest",
     "sortMostNegative": "Most Negative",
     "emptyTitle": "Start searching news",
-    "emptyDesc": "Enter a keyword above to start searching"
+    "emptyDesc": "Enter a keyword above to start searching",
+    "keywordPlaceholder": "e.g. highlights, cooking tutorial, breaking news..."
+  },
+  "twitterSearchTab": {
+    "title": "Twitter Post Analysis",
+    "keywordLabel": "Keyword",
+    "keywordPlaceholder": "e.g. highlights, cooking tutorial, breaking news...",
+    "searchButton": "Search",
+    "sortLabel": "Sort by",
+    "sortRelevance": "Most Relevant",
+    "sortNewest": "Newest",
+    "sortPopular": "Most Popular",
+    "loadingTitle": "Searching posts...",
+    "loadingDesc": "Fetching posts matching your keyword",
+    "emptyTitle": "Enter a keyword to search Twitter posts",
+    "noResults": "No posts found for this keyword",
+    "resultsRangeLabel": "Showing {shown} of {total} results",
+    "failedRequest": "Failed to fetch tweets",
+    "fetchError": "Something went wrong while searching",
+    "retrySuggestion": "Please try again",
+    "preparing": "Preparing search..."
   },
   "newsSummary": {
     "articleSummaryTitle": "Article Summary",

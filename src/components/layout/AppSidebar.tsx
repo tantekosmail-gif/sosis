@@ -35,6 +35,7 @@ const sections = [
     key: "summaryGroup",
     items: [
       { key: "overview", href: "/overview", icon: Home },
+      { key: "socialSnapshot", href: "/overview/social", icon: Share2 },
     ],
   },
   {

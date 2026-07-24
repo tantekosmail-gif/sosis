@@ -19,6 +19,7 @@
     "monitoringGroup": "Pemantauan",
     "systemGroup": "Sistem",
     "overview": "Overview",
+    "socialSnapshot": "Ringkasan Sosial",
     "engagement": "Engagement",
     "youtube": "YouTube",
     "instagram": "Instagram",
@@ -68,6 +69,21 @@
     "removeWidgetConfirmDesc": "Widget ini akan disembunyikan dari Overview. Anda bisa memunculkannya kembali lewat Pengaturan.",
     "removeWidgetConfirmYes": "Ya, hapus",
     "removeWidgetConfirmNo": "Batal"
+  },
+  "socialSnapshot": {
+    "title": "Ringkasan Sosial",
+    "subtitle": "Performa level-post di semua platform yang dipantau, diambil dari data yang sama dengan halaman tiap platform.",
+    "totalPosts": "Post",
+    "totalLikes": "Suka",
+    "totalViews": "Tayangan",
+    "totalComments": "Komentar",
+    "avgTrendScore": "Rata-rata Skor Tren",
+    "topPostsTitle": "Post teratas berdasarkan {metric}",
+    "metricLikes": "suka",
+    "metricViews": "tayangan",
+    "viewAll": "Lihat semua",
+    "error": "Gagal memuat data",
+    "emptyTopPosts": "Belum ada post"
   },
   "overviewWidgets": {
     "common": {
@@ -230,18 +246,40 @@
     "tableAction": "Aksi"
   },
   "newsSearchTab": {
+    "title": "Analisis Berita",
     "placeholder": "Cari berita, mis. jokowi, pemilu, ekonomi...",
     "searchButton": "Cari",
     "recentSearches": "Pencarian Terakhir",
     "loading": "Mencari berita...",
+    "loadingDesc": "Mengambil berita yang cocok dengan kata kunci",
     "resultsPrefix": "hasil untuk",
     "updated": "Diperbarui {time}",
     "noResults": "Tidak ada berita ditemukan untuk pencarian ini",
-    "sortLabel": "Urutkan:",
+    "sortLabel": "Urutkan",
     "sortNewest": "Terbaru",
     "sortMostNegative": "Paling Negatif",
     "emptyTitle": "Mulai cari berita",
-    "emptyDesc": "Masukkan kata kunci di atas untuk memulai pencarian"
+    "emptyDesc": "Masukkan kata kunci di atas untuk memulai pencarian",
+    "keywordPlaceholder": "Contoh: highlights, tutorial masak, berita terkini..."
+  },
+  "twitterSearchTab": {
+    "title": "Analisis Postingan Twitter",
+    "keywordLabel": "Kata Kunci",
+    "keywordPlaceholder": "Contoh: highlights, tutorial masak, berita terkini...",
+    "searchButton": "Cari",
+    "sortLabel": "Urutkan",
+    "sortRelevance": "Paling Relevan",
+    "sortNewest": "Paling Baru",
+    "sortPopular": "Paling Populer",
+    "loadingTitle": "Mencari postingan...",
+    "loadingDesc": "Mengambil postingan yang cocok dengan kata kunci",
+    "emptyTitle": "Masukkan kata kunci untuk mencari postingan Twitter",
+    "noResults": "Tidak ada postingan ditemukan untuk kata kunci ini",
+    "resultsRangeLabel": "Menampilkan {shown} dari {total} hasil",
+    "failedRequest": "Gagal mengambil tweet",
+    "fetchError": "Terjadi kesalahan saat mencari",
+    "retrySuggestion": "Silakan coba lagi",
+    "preparing": "Menyiapkan pencarian..."
   },
   "newsSummary": {
     "articleSummaryTitle": "Ringkasan Artikel",
